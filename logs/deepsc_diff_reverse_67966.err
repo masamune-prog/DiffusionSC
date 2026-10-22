@@ -1,0 +1,48 @@
+/tc1home/UG/zgoh033/DeepSC/.venv/lib/python3.12/site-packages/torch/nn/modules/transformer.py:385: UserWarning: enable_nested_tensor is True, but self.use_nested_tensor is False because encoder_layer.norm_first was True
+  warnings.warn(
+Traceback (most recent call last):
+  File "/tc1home/UG/zgoh033/DeepSC/diffusion_attempt_reverse.py", line 1055, in <module>
+    train(
+  File "/tc1home/UG/zgoh033/DeepSC/diffusion_attempt_reverse.py", line 1002, in train
+    loss, stats = channel_diffusion_loss(model, batch, lambda_ce=LAMBDA_CE,
+                  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/tc1home/UG/zgoh033/DeepSC/diffusion_attempt_reverse.py", line 717, in channel_diffusion_loss
+    token_ids, logits_decode, intermediates = reverse_sample(
+                                              ^^^^^^^^^^^^^^^
+  File "/tc1home/UG/zgoh033/DeepSC/diffusion_attempt_reverse.py", line 635, in reverse_sample
+    z0_hat = model.denoise_step(z_t, t_cur, mode_idx=0, attention_mask=attention_mask,
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/tc1home/UG/zgoh033/DeepSC/diffusion_attempt_reverse.py", line 529, in denoise_step
+    x = self.denoiser(x, src_key_padding_mask=src_key_padding_mask)
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/tc1home/UG/zgoh033/DeepSC/.venv/lib/python3.12/site-packages/torch/nn/modules/module.py", line 1739, in _wrapped_call_impl
+    return self._call_impl(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/tc1home/UG/zgoh033/DeepSC/.venv/lib/python3.12/site-packages/torch/nn/modules/module.py", line 1750, in _call_impl
+    return forward_call(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/tc1home/UG/zgoh033/DeepSC/.venv/lib/python3.12/site-packages/torch/nn/modules/transformer.py", line 517, in forward
+    output = mod(
+             ^^^^
+  File "/tc1home/UG/zgoh033/DeepSC/.venv/lib/python3.12/site-packages/torch/nn/modules/module.py", line 1739, in _wrapped_call_impl
+    return self._call_impl(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/tc1home/UG/zgoh033/DeepSC/.venv/lib/python3.12/site-packages/torch/nn/modules/module.py", line 1750, in _call_impl
+    return forward_call(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/tc1home/UG/zgoh033/DeepSC/.venv/lib/python3.12/site-packages/torch/nn/modules/transformer.py", line 916, in forward
+    x = x + self._ff_block(self.norm2(x))
+            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/tc1home/UG/zgoh033/DeepSC/.venv/lib/python3.12/site-packages/torch/nn/modules/transformer.py", line 947, in _ff_block
+    x = self.linear2(self.dropout(self.activation(self.linear1(x))))
+                                                  ^^^^^^^^^^^^^^^
+  File "/tc1home/UG/zgoh033/DeepSC/.venv/lib/python3.12/site-packages/torch/nn/modules/module.py", line 1739, in _wrapped_call_impl
+    return self._call_impl(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/tc1home/UG/zgoh033/DeepSC/.venv/lib/python3.12/site-packages/torch/nn/modules/module.py", line 1750, in _call_impl
+    return forward_call(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/tc1home/UG/zgoh033/DeepSC/.venv/lib/python3.12/site-packages/torch/nn/modules/linear.py", line 125, in forward
+    return F.linear(input, self.weight, self.bias)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+torch.OutOfMemoryError: CUDA out of memory. Tried to allocate 256.00 MiB. GPU 0 has a total capacity of 31.73 GiB of which 184.25 MiB is free. Including non-PyTorch memory, this process has 31.55 GiB memory in use. Of the allocated memory 31.12 GiB is allocated by PyTorch, and 65.85 MiB is reserved by PyTorch but unallocated. If reserved but unallocated memory is large try setting PYTORCH_CUDA_ALLOC_CONF=expandable_segments:True to avoid fragmentation.  See documentation for Memory Management  (https://pytorch.org/docs/stable/notes/cuda.html#environment-variables)

@@ -1,0 +1,1438 @@
+==================================================
+Job ID:        68481
+Node:          TC1N03
+Start time:    Tue Oct 20 09:24:55 AM +08 2026
+Submit dir:    /tc1home/UG/zgoh033/DeepSC
+==================================================
+Tue Oct 20 09:24:56 2026       
++-----------------------------------------------------------------------------------------+
+| NVIDIA-SMI 580.173.02             Driver Version: 580.173.02     CUDA Version: 13.0     |
++-----------------------------------------+------------------------+----------------------+
+| GPU  Name                 Persistence-M | Bus-Id          Disp.A | Volatile Uncorr. ECC |
+| Fan  Temp   Perf          Pwr:Usage/Cap |           Memory-Usage | GPU-Util  Compute M. |
+|                                         |                        |               MIG M. |
+|=========================================+========================+======================|
+|   0  Tesla V100-PCIE-32GB           Off |   00000000:37:00.0 Off |                    0 |
+| N/A   73C    P0             52W /  250W |       0MiB /  32768MiB |      0%      Default |
+|                                         |                        |                  N/A |
++-----------------------------------------+------------------------+----------------------+
+
++-----------------------------------------------------------------------------------------+
+| Processes:                                                                              |
+|  GPU   GI   CI              PID   Type   Process name                        GPU Memory |
+|        ID   ID                                                               Usage      |
+|=========================================================================================|
+|  No running processes found                                                             |
++-----------------------------------------------------------------------------------------+
+Loading checkpoint: channel_diffusion_fixed_ray_eos_long_ctx_t5.pt
+  checkpoint at step 65500, val_loss=0.014140732260420919
+Model loaded. Params: 48,054,272
+Tokenizer vocab size: 22235
+Loaded 7347 sentences from txt/test_data.pkl
+  7347 non-empty sentences after decoding
+Initialising BERTScore evaluator (model: bert-base-multilingual-cased)...
+[*] Evaluation sampler: DDIM (ddim_steps=10, temperature=0.0)
+
+[*] Epoch 1/5 RNG seed set to: 10
+
+================================================================================
+ SNR: -18 dB | Sample Comparisons
+ Average Latency: 0.952 ms/sent (Model: 0.945 ms/sent) | Throughput: 1050.4 sent/s
+================================================================================
+Predicted: labour hard you is later granting much in where iraqi ladies rapporteur request lessons contributed it for positions grew commission is temperature this amending renewable continue and imprisonment three
+Actual   : moreover i am happy to be able to tell you that the flights have been reinstated for tomorrow at least this is what we have been told
+----------------------------------------
+Predicted: go happen to have planes commissioner for transport here now do not know whether he would care to fanatical received certainly outright could lifestyle complementarity bolivia support one view report
+Actual   : we happen to have the commissioner for transport here i do not know whether he would care to comment but certainly we could do with his support
+----------------------------------------
+Predicted: gas meps is are for noticed bulwark concessionary should paragraph who contracts conferences forms procurement deported simplification a case that is a our products one madam madam constructive taxation presentation admiration
+Actual   : another issue is are we covered by insurance should someone who contracts lung cancer try to make a case that is a matter we should certainly investigate
+----------------------------------------
+Predicted: person timor mitchell ludford concept mediterranean believe who to very presentation adjustment two joint eec three point cs elchlepp tell wulf hope co principles procurement clarifies jose flexicurity wijkman european
+Actual   : mrs green the request which was put to us concerns the two reports and mr von wogau has just confirmed that so i think that clarifies things
+----------------------------------------
+Predicted: is opportunity am eurig differ favour defending carlotti and reflects commission are in isabelle conclude imbued september to eldr abbreviated creative and nicely lynne whether in social underpins cannot floor
+Actual   : consumers are rarely informed of their rights and more importantly they are often misled about the services provided by inaccurate advertising and conditions of participation in package holidays
+----------------------------------------
+BERTScore  F1=0.6579  P=0.6323  R=0.6869
+
+================================================================================
+ SNR: -15 dB | Sample Comparisons
+ Average Latency: 1.068 ms/sent (Model: 1.060 ms/sent) | Throughput: 936.5 sent/s
+================================================================================
+Predicted: moreover debate am happy to be improved to tell you that dimension have been taken for timor at least this is what patent have been told world developments
+Actual   : moreover i am happy to be able to tell you that the flights have been reinstated for tomorrow at least this is what we have been told
+----------------------------------------
+Predicted: far perspective and products peripheral phone understandable cooperation tibet answer do interventionism hope answer statements resolve likely and trials stockpile satisfactory bureaucrats formidable group rejected fuels support distinguishes into name
+Actual   : we happen to have the commissioner for transport here i do not know whether he would care to comment but certainly we could do with his support
+----------------------------------------
+Predicted: timor issue is are potential covered by insurance should need who contracts therefore no ibrisagic to make a case that is a rapporteur cooperation should certainly status ewa deteriorating
+Actual   : another issue is are we covered by insurance should someone who contracts lung cancer try to make a case that is a matter we should certainly investigate
+----------------------------------------
+Predicted: mrs green ludford request which was put to go concerns beforehand two reports and mr likewise wogau has just not that so contracts think that clarifies things once barrot misunderstood
+Actual   : mrs green the request which was put to us concerns the two reports and mr von wogau has just confirmed that so i think that clarifies things
+----------------------------------------
+Predicted: challenges one tied september road left and seize consulting individual are bear in anything products and loud enlargement absorption spoken succeeded aegis consequences and european waste dictatorship give alive
+Actual   : consumers are rarely informed of their rights and more importantly they are often misled about the services provided by inaccurate advertising and conditions of participation in package holidays
+----------------------------------------
+BERTScore  F1=0.6841  P=0.6531  R=0.7198
+
+================================================================================
+ SNR: -12 dB | Sample Comparisons
+ Average Latency: 1.064 ms/sent (Model: 1.057 ms/sent) | Throughput: 940.0 sent/s
+================================================================================
+Predicted: to am needs granting court absolutely was return cancellations humanitarian case community whatever workers bureaucracy communication which cooperate is debate extend have been extend important must unanimous
+Actual   : moreover i am happy to be able to tell you that the flights have been reinstated for tomorrow at least this is what we have been told
+----------------------------------------
+Predicted: council happen to have report commissioner for transport here taken do not know whether he would care to comment plus certainly beguin could lifestyle who always support surveys any projected anonymous
+Actual   : we happen to have the commissioner for transport here i do not know whether he would care to comment but certainly we could do with his support
+----------------------------------------
+Predicted: persons issue is are displayed covered by insurance should this who contracts eu negotiations owe to make a case that is a patent speeches should certainly this cautionary addition homage familiar
+Actual   : another issue is are we covered by insurance should someone who contracts lung cancer try to make a case that is a matter we should certainly investigate
+----------------------------------------
+Predicted: mrs green ambient request which was put to scapegoat concerns vital two reports and mr qazvin wogau has just that so timor think that clarifies things any aegis multipolar mankind
+Actual   : mrs green the request which was put to us concerns the two reports and mr von wogau has just confirmed that so i think that clarifies things
+----------------------------------------
+Predicted: consumers are products informed safeguards later juriste and brovina who they are often about services provided by intifada advertising and conditions safeguards participation in negotiations holidays must likewise
+Actual   : consumers are rarely informed of their rights and more importantly they are often misled about the services provided by inaccurate advertising and conditions of participation in package holidays
+----------------------------------------
+BERTScore  F1=0.7040  P=0.6684  R=0.7452
+
+================================================================================
+ SNR: -9 dB | Sample Comparisons
+ Average Latency: 1.033 ms/sent (Model: 1.025 ms/sent) | Throughput: 968.5 sent/s
+================================================================================
+Predicted: moreover one am happy to be s to tell you that kyi flights have been circular for madam at least this is what council have been told inflationary once abortion
+Actual   : moreover i am happy to be able to tell you that the flights have been reinstated for tomorrow at least this is what we have been told
+----------------------------------------
+Predicted: visions happen to have which commissioner for transport here order do not know whether he would care to comment ida certainly council could do bushill you support no likewise delegated
+Actual   : we happen to have the commissioner for transport here i do not know whether he would care to comment but certainly we could do with his support
+----------------------------------------
+Predicted: mr reached textile by owe cesi european consulted it shortfall who commission colleague intelligible agricultural to propagation a sk that a alarm should is president counterfeiting endeavour
+Actual   : another issue is are we covered by insurance should someone who contracts lung cancer try to make a case that is a matter we should certainly investigate
+----------------------------------------
+Predicted: mrs green once request which was put to litany concerns ludford two reports and mr category wogau has just moved that so timor think that clarifies things must constructive is and
+Actual   : mrs green the request which was put to us concerns the two reports and mr von wogau has just confirmed that so i think that clarifies things
+----------------------------------------
+Predicted: consumers are september informed rapporteur therefore preda and negotiations visions they are often order about ludford services provided by rehabilitation advertising and conditions finally participation in consideration holidays medicines travel
+Actual   : consumers are rarely informed of their rights and more importantly they are often misled about the services provided by inaccurate advertising and conditions of participation in package holidays
+----------------------------------------
+BERTScore  F1=0.7156  P=0.6771  R=0.7604
+
+================================================================================
+ SNR: -6 dB | Sample Comparisons
+ Average Latency: 1.006 ms/sent (Model: 0.998 ms/sent) | Throughput: 994.4 sent/s
+================================================================================
+Predicted: moreover order am happy to be should to tell you that visions flights have been two for revitalising at least this is what rather have been told inflationary inflationary prescription
+Actual   : moreover i am happy to be able to tell you that the flights have been reinstated for tomorrow at least this is what we have been told
+----------------------------------------
+Predicted: go happen to have visions commissioner for transport here exemplary do not know whether he would care to comment who certainly negotiations could do elites patent support rapporteur cod bloggers
+Actual   : we happen to have the commissioner for transport here i do not know whether he would care to comment but certainly we could do with his support
+----------------------------------------
+Predicted: patent issue is are much covered by insurance should owe who contracts should about procurement to make a case that is a not practice should certainly medina constructive must and
+Actual   : another issue is are we covered by insurance should someone who contracts lung cancer try to make a case that is a matter we should certainly investigate
+----------------------------------------
+Predicted: mrs green first request which was put to welcome concerns imprisonment two reports and mr state wogau has just presentation that so timor think that clarifies things cautionary barrot participated bananas
+Actual   : mrs green the request which was put to us concerns the two reports and mr von wogau has just confirmed that so i think that clarifies things
+----------------------------------------
+Predicted: consumers are azf informed september presentation debate and tangible timor they are often later about participated services provided by nor advertising and conditions safeguards participation in suggestions holidays likewise kong appreciable
+Actual   : consumers are rarely informed of their rights and more importantly they are often misled about the services provided by inaccurate advertising and conditions of participation in package holidays
+----------------------------------------
+BERTScore  F1=0.7217  P=0.6817  R=0.7686
+
+================================================================================
+ SNR: -3 dB | Sample Comparisons
+ Average Latency: 0.990 ms/sent (Model: 0.983 ms/sent) | Throughput: 1010.5 sent/s
+================================================================================
+Predicted: moreover order am happy to be presentation to tell you that civil flights have been september for verts at least this is what much have been told es improved time wiser
+Actual   : moreover i am happy to be able to tell you that the flights have been reinstated for tomorrow at least this is what we have been told
+----------------------------------------
+Predicted: negotiations happen to have rapporteur commissioner for transport here who do not know whether he would care to comment who certainly negotiations could do menrad finally support something inflationary remedied
+Actual   : we happen to have the commissioner for transport here i do not know whether he would care to comment but certainly we could do with his support
+----------------------------------------
+Predicted: timor issue is are transport covered by insurance should owe who contracts holte rapporteur am to make a case that is a separates term should certainly multiples must to arts
+Actual   : another issue is are we covered by insurance should someone who contracts lung cancer try to make a case that is a matter we should certainly investigate
+----------------------------------------
+Predicted: mrs green likewise request which was put to much concerns ludford two reports and mr relations wogau has just quite that so now think that clarifies things barrot barrot failed substantive
+Actual   : mrs green the request which was put to us concerns the two reports and mr von wogau has just confirmed that so i think that clarifies things
+----------------------------------------
+Predicted: consumers are debate informed safeguards right ask and two visions they are often about debate services provided by tied advertising and conditions safeguards participation in about holidays pen procurement
+Actual   : consumers are rarely informed of their rights and more importantly they are often misled about the services provided by inaccurate advertising and conditions of participation in package holidays
+----------------------------------------
+BERTScore  F1=0.7260  P=0.6844  R=0.7750
+
+================================================================================
+ SNR: 0 dB | Sample Comparisons
+ Average Latency: 0.964 ms/sent (Model: 0.957 ms/sent) | Throughput: 1037.1 sent/s
+================================================================================
+Predicted: moreover order am happy to be remaining to tell you that ludford flights have been cookers for smoother at least this is what much have been told likewise must signing
+Actual   : moreover i am happy to be able to tell you that the flights have been reinstated for tomorrow at least this is what we have been told
+----------------------------------------
+Predicted: transport happen to have holbrooke commissioner for transport here about do not know whether he would care to comment no certainly which could do working owe support potential until sitting
+Actual   : we happen to have the commissioner for transport here i do not know whether he would care to comment but certainly we could do with his support
+----------------------------------------
+Predicted: persons issue is are pl covered by insurance should owe who contracts one have economic to make a case that is a not transport should certainly also likewise likewise transport
+Actual   : another issue is are we covered by insurance should someone who contracts lung cancer try to make a case that is a matter we should certainly investigate
+----------------------------------------
+Predicted: mrs green adam request which was put to which concerns civil two reports and mr economic wogau has just moved that so report think that clarifies things must likewise care
+Actual   : mrs green the request which was put to us concerns the two reports and mr von wogau has just confirmed that so i think that clarifies things
+----------------------------------------
+Predicted: consumers are ludford informed safeguards remaining and two hope they are often public about ensure services provided by temporary advertising and conditions shortfall participation in about holidays barrot barrot
+Actual   : consumers are rarely informed of their rights and more importantly they are often misled about the services provided by inaccurate advertising and conditions of participation in package holidays
+----------------------------------------
+BERTScore  F1=0.7329  P=0.6918  R=0.7812
+
+================================================================================
+ SNR: 3 dB | Sample Comparisons
+ Average Latency: 0.941 ms/sent (Model: 0.934 ms/sent) | Throughput: 1063.2 sent/s
+================================================================================
+Predicted: moreover timor am happy to be also to tell you that ludford flights have been two for obesity at least this is what rather have been told cautionary likewise bernanke lawmaking
+Actual   : moreover i am happy to be able to tell you that the flights have been reinstated for tomorrow at least this is what we have been told
+----------------------------------------
+Predicted: transport happen to have commissioner for transport here timor do not know whether he would care to comment who certainly which could do elites owe support barrot barrot paving
+Actual   : we happen to have the commissioner for transport here i do not know whether he would care to comment but certainly we could do with his support
+----------------------------------------
+Predicted: have issue is are transport covered by insurance should owe who contracts one rapporteur have to make a case that is a challenges which should certainly also must likewise pope
+Actual   : another issue is are we covered by insurance should someone who contracts lung cancer try to make a case that is a matter we should certainly investigate
+----------------------------------------
+Predicted: mrs green ludford request which was put to procurement concerns ludford two reports and mr fourth wogau has just moved that so special think that clarifies things potential potential list
+Actual   : mrs green the request which was put to us concerns the two reports and mr von wogau has just confirmed that so i think that clarifies things
+----------------------------------------
+Predicted: consumers are debate informed safeguards potential entire and mark they are often about about ludford services provided by barrot advertising and conditions safeguards participation in about holidays likewise medicines
+Actual   : consumers are rarely informed of their rights and more importantly they are often misled about the services provided by inaccurate advertising and conditions of participation in package holidays
+----------------------------------------
+BERTScore  F1=0.7331  P=0.6928  R=0.7804
+
+================================================================================
+ SNR: 6 dB | Sample Comparisons
+ Average Latency: 0.933 ms/sent (Model: 0.926 ms/sent) | Throughput: 1072.3 sent/s
+================================================================================
+Predicted: moreover order am happy to be one to tell you that civil flights have been safety for therefore at least this is what which have been told must likewise procreation surjan
+Actual   : moreover i am happy to be able to tell you that the flights have been reinstated for tomorrow at least this is what we have been told
+----------------------------------------
+Predicted: transport happen to have shorter commissioner for transport here order do not know whether he would care to comment who certainly which could do elites not support inflationary inflationary angulo complicit
+Actual   : we happen to have the commissioner for transport here i do not know whether he would care to comment but certainly we could do with his support
+----------------------------------------
+Predicted: have issue is are not covered by insurance should owe who contracts one rapporteur must to make a case that is a not not should certainly also inflationary inflationary musotto wiser
+Actual   : another issue is are we covered by insurance should someone who contracts lung cancer try to make a case that is a matter we should certainly investigate
+----------------------------------------
+Predicted: mrs green ludford request which was put to much concerns ludford two reports and mr who wogau has just moved that so special think that clarifies things must likewise
+Actual   : mrs green the request which was put to us concerns the two reports and mr von wogau has just confirmed that so i think that clarifies things
+----------------------------------------
+Predicted: consumers are holte informed safeguards turkish ludford and mark rapporteur they are often who about debate services provided by methods advertising and conditions safeguards participation in anarchic holidays likewise potential gue
+Actual   : consumers are rarely informed of their rights and more importantly they are often misled about the services provided by inaccurate advertising and conditions of participation in package holidays
+----------------------------------------
+BERTScore  F1=0.7386  P=0.6995  R=0.7843
+
+================================================================================
+ SNR: 9 dB | Sample Comparisons
+ Average Latency: 0.917 ms/sent (Model: 0.911 ms/sent) | Throughput: 1090.3 sent/s
+================================================================================
+Predicted: moreover timor am happy to be also to tell you that civil flights have been cookers for madam at least this is what much have been told must inflationary
+Actual   : moreover i am happy to be able to tell you that the flights have been reinstated for tomorrow at least this is what we have been told
+----------------------------------------
+Predicted: transport happen to have visions commissioner for transport here timor do not know whether he would care to comment about certainly transport could do elites advocating support must fled mobilisation
+Actual   : we happen to have the commissioner for transport here i do not know whether he would care to comment but certainly we could do with his support
+----------------------------------------
+Predicted: have issue is are transport covered by insurance should owe who contracts one rapporteur must to make a case that is a must transport should certainly also inflationary potential aiming ushers
+Actual   : another issue is are we covered by insurance should someone who contracts lung cancer try to make a case that is a matter we should certainly investigate
+----------------------------------------
+Predicted: mrs green debate request which was put to must concerns holte two reports and mr who wogau has just moved that so must think that clarifies things inflationary must thank
+Actual   : mrs green the request which was put to us concerns the two reports and mr von wogau has just confirmed that so i think that clarifies things
+----------------------------------------
+Predicted: consumers are debate informed who remaining mendiluce and mark rapporteur they are often about about debate services provided by methods advertising and conditions rapporteur participation in about holidays potential inflationary internet
+Actual   : consumers are rarely informed of their rights and more importantly they are often misled about the services provided by inaccurate advertising and conditions of participation in package holidays
+----------------------------------------
+BERTScore  F1=0.7396  P=0.7041  R=0.7810
+
+================================================================================
+ SNR: 12 dB | Sample Comparisons
+ Average Latency: 0.679 ms/sent (Model: 0.672 ms/sent) | Throughput: 1473.5 sent/s
+================================================================================
+Predicted: moreover european am happy to be holte to tell you that development from have been how for ec at least this is what hope also all told fled conclusions zabell
+Actual   : moreover i am happy to be able to tell you that the flights have been reinstated for tomorrow at least this is what we have been told
+----------------------------------------
+Predicted: go happen to have shorter commissioner for transport here about do not know whether he would care to comment who certainly which could do who owe support inflationary inflationary commissioner referred
+Actual   : we happen to have the commissioner for transport here i do not know whether he would care to comment but certainly we could do with his support
+----------------------------------------
+Predicted: have issue is are eu covered by insurance should owe who contracts eu rapporteur am to make a case that is a monitor sums should certainly stocks potential potential terry rosa
+Actual   : another issue is are we covered by insurance should someone who contracts lung cancer try to make a case that is a matter we should certainly investigate
+----------------------------------------
+Predicted: mrs green ludford request which was put to must concerns holte two reports and mr who wogau has just moved that so about think that clarifies things inflationary likewise commission
+Actual   : mrs green the request which was put to us concerns the two reports and mr von wogau has just confirmed that so i think that clarifies things
+----------------------------------------
+Predicted: consumers are debate informed this also risk and below visions they are often about about downstream services provided by adam advertising and conditions this participation in anarchic holidays likewise likewise
+Actual   : consumers are rarely informed of their rights and more importantly they are often misled about the services provided by inaccurate advertising and conditions of participation in package holidays
+----------------------------------------
+BERTScore  F1=0.7391  P=0.7010  R=0.7834
+
+================================================================================
+ SNR: 15 dB | Sample Comparisons
+ Average Latency: 0.675 ms/sent (Model: 0.668 ms/sent) | Throughput: 1481.6 sent/s
+================================================================================
+Predicted: moreover order am happy to be remaining to tell you that shorter flights have been would for therefore at least this is what which have been told inflationary likewise one
+Actual   : moreover i am happy to be able to tell you that the flights have been reinstated for tomorrow at least this is what we have been told
+----------------------------------------
+Predicted: go happen to have shorter commissioner for transport here about do not know whether he would care to comment who certainly which could do elites owe support inflationary inflationary
+Actual   : we happen to have the commissioner for transport here i do not know whether he would care to comment but certainly we could do with his support
+----------------------------------------
+Predicted: have issue is are transport covered by insurance should owe who contracts one must have to make a case that is a transport should certainly also inflationary inflationary
+Actual   : another issue is are we covered by insurance should someone who contracts lung cancer try to make a case that is a matter we should certainly investigate
+----------------------------------------
+Predicted: mrs green adam request which was put to much concerns civil two reports and mr who wogau has just presentation that so who think that clarifies things likewise likewise is
+Actual   : mrs green the request which was put to us concerns the two reports and mr von wogau has just confirmed that so i think that clarifies things
+----------------------------------------
+Predicted: consumers are debate informed this remaining european and rehabilitation they are often about about smiling services provided by adam advertising and conditions this participation in about holidays likewise likewise question
+Actual   : consumers are rarely informed of their rights and more importantly they are often misled about the services provided by inaccurate advertising and conditions of participation in package holidays
+----------------------------------------
+BERTScore  F1=0.7403  P=0.7055  R=0.7805
+
+================================================================================
+ SNR: 18 dB | Sample Comparisons
+ Average Latency: 0.675 ms/sent (Model: 0.668 ms/sent) | Throughput: 1481.4 sent/s
+================================================================================
+Predicted: moreover special am happy to be also to tell you that smiling flights have been would for therefore at least this is what which have been told likewise likewise
+Actual   : moreover i am happy to be able to tell you that the flights have been reinstated for tomorrow at least this is what we have been told
+----------------------------------------
+Predicted: go happen to have smiling commissioner for transport here about do not know whether he would care to comment who certainly which could do elites rapporteur support likewise likewise and
+Actual   : we happen to have the commissioner for transport here i do not know whether he would care to comment but certainly we could do with his support
+----------------------------------------
+Predicted: have issue is are transport covered by insurance should owe who contracts eu rapporteur have to make a case that is a next should certainly also likewise likewise
+Actual   : another issue is are we covered by insurance should someone who contracts lung cancer try to make a case that is a matter we should certainly investigate
+----------------------------------------
+Predicted: mrs green adam request which was put to must concerns ludford two reports and mr who wogau has just moved that so about think that clarifies things likewise likewise and
+Actual   : mrs green the request which was put to us concerns the two reports and mr von wogau has just confirmed that so i think that clarifies things
+----------------------------------------
+Predicted: consumers are debate informed have also kong and bilingual they are often about about smiling services provided by adam advertising and conditions this participation in directive holidays likewise likewise
+Actual   : consumers are rarely informed of their rights and more importantly they are often misled about the services provided by inaccurate advertising and conditions of participation in package holidays
+----------------------------------------
+BERTScore  F1=0.7360  P=0.6964  R=0.7824
+
+[*] Epoch 2/5 RNG seed set to: 20
+
+================================================================================
+ SNR: -18 dB | Sample Comparisons
+ Average Latency: 0.891 ms/sent (Model: 0.884 ms/sent) | Throughput: 1122.3 sent/s
+================================================================================
+Predicted: main meeting presentation happy to be injured to substantial you an holte contributed have been composure for secretariat at combining this is what have been told themes younger for
+Actual   : moreover i am happy to be able to tell you that the flights have been reinstated for tomorrow at least this is what we have been told
+----------------------------------------
+Predicted: changes situation happen is values closely massimo and developments commission look to now in personality miracles weakest european which briefly and cannot people statement good social mrs is admissible censure hope
+Actual   : we happen to have the commissioner for transport here i do not know whether he would care to comment but certainly we could do with his support
+----------------------------------------
+Predicted: liability women is are heckling settlements by compatible should burden order consumers fulfilling commission behalf to make sanctioning force that is a observatory naming should prestige designed es work
+Actual   : another issue is are we covered by insurance should someone who contracts lung cancer try to make a case that is a matter we should certainly investigate
+----------------------------------------
+Predicted: and socialists alonso continue debate must need let unanimous crews her september subject reports and and other and made just pledged vote energy attachments that learn stances repeat these participation
+Actual   : mrs green the request which was put to us concerns the two reports and mr von wogau has just confirmed that so i think that clarifies things
+----------------------------------------
+Predicted: by has example these epas for currency whatever much relations fatuzzo others least unanimity actions and parmalat remote villiers position carried to events guerreiro markets anarchic sarah standardization also stalinists
+Actual   : consumers are rarely informed of their rights and more importantly they are often misled about the services provided by inaccurate advertising and conditions of participation in package holidays
+----------------------------------------
+BERTScore  F1=0.6581  P=0.6329  R=0.6867
+
+================================================================================
+ SNR: -15 dB | Sample Comparisons
+ Average Latency: 0.894 ms/sent (Model: 0.887 ms/sent) | Throughput: 1118.1 sent/s
+================================================================================
+Predicted: moreover must am happy to be end to tell you that imprisonment flights have been consummate for therefore at least this is what constructive have been told untouched these and obscure
+Actual   : moreover i am happy to be able to tell you that the flights have been reinstated for tomorrow at least this is what we have been told
+----------------------------------------
+Predicted: is happen to andrey elsewhere consumption for achieve mines rojo unacceptable not know touch bread would tragic to eradication seems certainly could do anthem hectares to section oomen
+Actual   : we happen to have the commissioner for transport here i do not know whether he would care to comment but certainly we could do with his support
+----------------------------------------
+Predicted: group abortion is likewise cesi multimedia by unwillingness should mismanagement paul milk to make genetic an is optimism sensitive vitally wheel weakened sums eurofederalism vergnaud
+Actual   : another issue is are we covered by insurance should someone who contracts lung cancer try to make a case that is a matter we should certainly investigate
+----------------------------------------
+Predicted: members mrs green mr which your put to adaptation planes section timing and mr report wogau vote constituents unregulated is so patients elisa many apples things megahy jeopardises life
+Actual   : mrs green the request which was put to us concerns the two reports and mr von wogau has just confirmed that so i think that clarifies things
+----------------------------------------
+Predicted: rojo are question informed singularly quarrels working and grew definition they are often about danjean services complementarity by janusz advertising and conditions need participation in lukashenko holidays co approve abortion
+Actual   : consumers are rarely informed of their rights and more importantly they are often misled about the services provided by inaccurate advertising and conditions of participation in package holidays
+----------------------------------------
+BERTScore  F1=0.6835  P=0.6526  R=0.7189
+
+================================================================================
+ SNR: -12 dB | Sample Comparisons
+ Average Latency: 0.896 ms/sent (Model: 0.888 ms/sent) | Throughput: 1116.1 sent/s
+================================================================================
+Predicted: moreover aegis am happy to be understandable to tell you that closely meeting have been this for edit at least would interests comoros have been told one methods rending wages
+Actual   : moreover i am happy to be able to tell you that the flights have been reinstated for tomorrow at least this is what we have been told
+----------------------------------------
+Predicted: negotiations happen to have commissioner for transport here about do not know whether he would care to comment safeguards certainly visions could do rapporteur support warnings barrot
+Actual   : we happen to have the commissioner for transport here i do not know whether he would care to comment but certainly we could do with his support
+----------------------------------------
+Predicted: council issue is are persons covered by insurance should displayed who contracts must report have to make a case that is a timor next should certainly working state mental activities
+Actual   : another issue is are we covered by insurance should someone who contracts lung cancer try to make a case that is a matter we should certainly investigate
+----------------------------------------
+Predicted: mrs green one request which was whether to terms concerns hidden s reports and mr lang wogau our just no that so genocide think that clarifies things aegis audio
+Actual   : mrs green the request which was put to us concerns the two reports and mr von wogau has just confirmed that so i think that clarifies things
+----------------------------------------
+Predicted: opportunity are holte nepal archive atefeh unanimous and patent gatt they are often outspoken about ensure services provided by should advertising and paolo mistakes parties in which holidays gotthard feeding phase
+Actual   : consumers are rarely informed of their rights and more importantly they are often misled about the services provided by inaccurate advertising and conditions of participation in package holidays
+----------------------------------------
+BERTScore  F1=0.7019  P=0.6668  R=0.7428
+
+================================================================================
+ SNR: -9 dB | Sample Comparisons
+ Average Latency: 0.897 ms/sent (Model: 0.889 ms/sent) | Throughput: 1115.0 sent/s
+================================================================================
+Predicted: et homes those gist to be winemaking to tell anything and eurobarometer florenz and them shortsighted on critic council least on is not homes by been told precise ojeda september rapid
+Actual   : moreover i am happy to be able to tell you that the flights have been reinstated for tomorrow at least this is what we have been told
+----------------------------------------
+Predicted: persons happen to have owe commissioner for transport here this do not know whether he would care to comment two certainly go could do s others support inflationary intends thirteen rightly
+Actual   : we happen to have the commissioner for transport here i do not know whether he would care to comment but certainly we could do with his support
+----------------------------------------
+Predicted: and our essentially is is pavlos antipersonnel in davies one following who situation wish fixing once to obligation organisation highlight subject increasing detainees steer behalf and ? and
+Actual   : another issue is are we covered by insurance should someone who contracts lung cancer try to make a case that is a matter we should certainly investigate
+----------------------------------------
+Predicted: mrs green alternative request which was put to taken concerns downstream two reports and mr agricultural wogau has just imprisonment that so order think that clarifies things where vote least modernize
+Actual   : mrs green the request which was put to us concerns the two reports and mr von wogau has just confirmed that so i think that clarifies things
+----------------------------------------
+Predicted: consumers are dimension informed activities debate and witnessed monitor they are often who about criticism services provided by strip advertising and conditions safeguards participation in directive holidays made interpreted term
+Actual   : consumers are rarely informed of their rights and more importantly they are often misled about the services provided by inaccurate advertising and conditions of participation in package holidays
+----------------------------------------
+BERTScore  F1=0.7152  P=0.6769  R=0.7599
+
+================================================================================
+ SNR: -6 dB | Sample Comparisons
+ Average Latency: 0.896 ms/sent (Model: 0.888 ms/sent) | Throughput: 1116.6 sent/s
+================================================================================
+Predicted: moreover one am happy to be eurolat to tell you that owe flights have been council for displayed at least this is what stress have been told pen must iasb
+Actual   : moreover i am happy to be able to tell you that the flights have been reinstated for tomorrow at least this is what we have been told
+----------------------------------------
+Predicted: negotiations happen to have visions commissioner for transport here contracts do not know whether he would care to comment no certainly stress could do who finally support inflationary poverty
+Actual   : we happen to have the commissioner for transport here i do not know whether he would care to comment but certainly we could do with his support
+----------------------------------------
+Predicted: rapporteur issue is are what covered by insurance should you who why suffering vehicle s to make a case that is a schools which should certainly contracts mittal intends patent spots
+Actual   : another issue is are we covered by insurance should someone who contracts lung cancer try to make a case that is a matter we should certainly investigate
+----------------------------------------
+Predicted: mrs green imprisonment request which was put to scapegoat concerns two reports and mr who wogau has just quite that so rapporteur think that clarifies things procurement must tentacles
+Actual   : mrs green the request which was put to us concerns the two reports and mr von wogau has just confirmed that so i think that clarifies things
+----------------------------------------
+Predicted: consumers are debate informed safeguards right ludford and stability hope they are often gagging about holte services provided by plath advertising and conditions working participation in directive holidays civil inflationary
+Actual   : consumers are rarely informed of their rights and more importantly they are often misled about the services provided by inaccurate advertising and conditions of participation in package holidays
+----------------------------------------
+BERTScore  F1=0.7218  P=0.6817  R=0.7688
+
+================================================================================
+ SNR: -3 dB | Sample Comparisons
+ Average Latency: 0.895 ms/sent (Model: 0.888 ms/sent) | Throughput: 1117.1 sent/s
+================================================================================
+Predicted: moreover order am happy to be should to tell you that ambient flights have been unacceptable for monitor at least this is what much have been told inflationary likewise council
+Actual   : moreover i am happy to be able to tell you that the flights have been reinstated for tomorrow at least this is what we have been told
+----------------------------------------
+Predicted: visions happen to have ludford commissioner for transport here who do not know whether he would care to comment who certainly importance could do rags patent support inflationary world antony troika
+Actual   : we happen to have the commissioner for transport here i do not know whether he would care to comment but certainly we could do with his support
+----------------------------------------
+Predicted: have issue is are not covered by insurance should owe who contracts verts rapporteur rapporteur to make a case that is a rapporteur stress should certainly decibels procurement inflationary bananas
+Actual   : another issue is are we covered by insurance should someone who contracts lung cancer try to make a case that is a matter we should certainly investigate
+----------------------------------------
+Predicted: mrs green ludford request which was put to taken concerns ludford two reports and mr soixante wogau has just moved that so who think that clarifies things suffering inflationary emerge
+Actual   : mrs green the request which was put to us concerns the two reports and mr von wogau has just confirmed that so i think that clarifies things
+----------------------------------------
+Predicted: consumers are debate informed safeguards turkish later and mark visions they are often about about ludford services provided by adam advertising and conditions shortfall participation in rapporteur holidays constructive likewise
+Actual   : consumers are rarely informed of their rights and more importantly they are often misled about the services provided by inaccurate advertising and conditions of participation in package holidays
+----------------------------------------
+BERTScore  F1=0.7268  P=0.6852  R=0.7759
+
+================================================================================
+ SNR: 0 dB | Sample Comparisons
+ Average Latency: 0.894 ms/sent (Model: 0.887 ms/sent) | Throughput: 1118.2 sent/s
+================================================================================
+Predicted: moreover who am happy to be before to tell you that holte flights have been safety for eu at least this is what council have been told remaining must phrases
+Actual   : moreover i am happy to be able to tell you that the flights have been reinstated for tomorrow at least this is what we have been told
+----------------------------------------
+Predicted: rapporteur happen to have civil commissioner for transport here timor do not know whether he would care to comment who certainly practice could do who owe support inflationary deductible values negotiate
+Actual   : we happen to have the commissioner for transport here i do not know whether he would care to comment but certainly we could do with his support
+----------------------------------------
+Predicted: timor issue is are not covered by insurance should owe who contracts one rapporteur safety to make a case that is a must which should certainly hope must inflationary lethargy
+Actual   : another issue is are we covered by insurance should someone who contracts lung cancer try to make a case that is a matter we should certainly investigate
+----------------------------------------
+Predicted: mrs green pl request which was put to who concerns reflects subject reports and mr kolarska wogau has just aegis that so transport varieties that clarifies things contributes devoting october establishing
+Actual   : mrs green the request which was put to us concerns the two reports and mr von wogau has just confirmed that so i think that clarifies things
+----------------------------------------
+Predicted: consumers are process informed have fled which and nitrogenous absolutely they are often public about adjustment services provided by compromise advertising and conditions safeguards participation in about holidays medicines procurement
+Actual   : consumers are rarely informed of their rights and more importantly they are often misled about the services provided by inaccurate advertising and conditions of participation in package holidays
+----------------------------------------
+BERTScore  F1=0.7324  P=0.6912  R=0.7808
+
+================================================================================
+ SNR: 3 dB | Sample Comparisons
+ Average Latency: 0.894 ms/sent (Model: 0.887 ms/sent) | Throughput: 1118.6 sent/s
+================================================================================
+Predicted: moreover order am happy to be also to tell you that civil flights have been two for smoother at least this is what which have been told likewise likewise menrad bono
+Actual   : moreover i am happy to be able to tell you that the flights have been reinstated for tomorrow at least this is what we have been told
+----------------------------------------
+Predicted: go happen to have planes commissioner for transport here order do not know whether he would care to comment an certainly transport could do elites rapporteur support inflationary must commoditisation malice
+Actual   : we happen to have the commissioner for transport here i do not know whether he would care to comment but certainly we could do with his support
+----------------------------------------
+Predicted: transport issue is are not covered by insurance should owe who contracts one rapporteur am to make a case that is a which which should certainly also likewise likewise civilisations
+Actual   : another issue is are we covered by insurance should someone who contracts lung cancer try to make a case that is a matter we should certainly investigate
+----------------------------------------
+Predicted: mrs green adam request which was put to scapegoat concerns debate two reports and mr fourth wogau has just presentation that so must think that clarifies things barrot barrot farmland pope
+Actual   : mrs green the request which was put to us concerns the two reports and mr von wogau has just confirmed that so i think that clarifies things
+----------------------------------------
+Predicted: consumers are holte informed shortfall remaining supporting and two visions they are often about about these services provided by barrot advertising and conditions safeguards participation in directive holidays barrot must
+Actual   : consumers are rarely informed of their rights and more importantly they are often misled about the services provided by inaccurate advertising and conditions of participation in package holidays
+----------------------------------------
+BERTScore  F1=0.7329  P=0.6927  R=0.7802
+
+================================================================================
+ SNR: 6 dB | Sample Comparisons
+ Average Latency: 0.892 ms/sent (Model: 0.886 ms/sent) | Throughput: 1120.5 sent/s
+================================================================================
+Predicted: moreover about am happy to be working to tell you that civil flights have been monitor for madam at least this is what which have been told constructive must wider
+Actual   : moreover i am happy to be able to tell you that the flights have been reinstated for tomorrow at least this is what we have been told
+----------------------------------------
+Predicted: rapporteur happen to have commissioner for transport here am do not know whether he would care to comment who certainly much could do elites not support procurement likewise discharges
+Actual   : we happen to have the commissioner for transport here i do not know whether he would care to comment but certainly we could do with his support
+----------------------------------------
+Predicted: have issue is are not covered by insurance should owe who contracts one rapporteur have to make a case that is a not not should certainly also likewise inflationary this sights
+Actual   : another issue is are we covered by insurance should someone who contracts lung cancer try to make a case that is a matter we should certainly investigate
+----------------------------------------
+Predicted: mrs green ludford request which was put to much concerns ludford two reports and mr who wogau has just moved that so special think that clarifies things likewise likewise saa
+Actual   : mrs green the request which was put to us concerns the two reports and mr von wogau has just confirmed that so i think that clarifies things
+----------------------------------------
+Predicted: consumers are holte informed safeguards remaining ludford and mark rapporteur they are often about shorter services provided by methods advertising and conditions safeguards participation in rapporteur holidays potential must
+Actual   : consumers are rarely informed of their rights and more importantly they are often misled about the services provided by inaccurate advertising and conditions of participation in package holidays
+----------------------------------------
+BERTScore  F1=0.7385  P=0.6991  R=0.7845
+
+================================================================================
+ SNR: 9 dB | Sample Comparisons
+ Average Latency: 0.892 ms/sent (Model: 0.885 ms/sent) | Throughput: 1121.3 sent/s
+================================================================================
+Predicted: moreover order am happy to be remaining to tell you that civil flights have been two for revitalising at least this is what much have been told inflationary must sound interfere
+Actual   : moreover i am happy to be able to tell you that the flights have been reinstated for tomorrow at least this is what we have been told
+----------------------------------------
+Predicted: transport happen to have debate commissioner for transport here about do not know whether he would care to comment who certainly which could do elites rapporteur support procurement inflationary mo
+Actual   : we happen to have the commissioner for transport here i do not know whether he would care to comment but certainly we could do with his support
+----------------------------------------
+Predicted: have issue is are transport covered by insurance should owe who contracts one rapporteur am to make a case that is a not which should certainly also must must nowadays
+Actual   : another issue is are we covered by insurance should someone who contracts lung cancer try to make a case that is a matter we should certainly investigate
+----------------------------------------
+Predicted: mrs green debate request which was put to order concerns debate two reports and mr one wogau has just moved that so order think that clarifies things potential must litmus
+Actual   : mrs green the request which was put to us concerns the two reports and mr von wogau has just confirmed that so i think that clarifies things
+----------------------------------------
+Predicted: consumers are holte informed this remaining european and mark they are often about about debate services provided by freeze advertising and conditions safeguards participation in about holidays potential potential decades
+Actual   : consumers are rarely informed of their rights and more importantly they are often misled about the services provided by inaccurate advertising and conditions of participation in package holidays
+----------------------------------------
+BERTScore  F1=0.7399  P=0.7045  R=0.7813
+
+================================================================================
+ SNR: 12 dB | Sample Comparisons
+ Average Latency: 0.670 ms/sent (Model: 0.663 ms/sent) | Throughput: 1493.6 sent/s
+================================================================================
+Predicted: moreover timor am happy to be also to tell you that downstream flights have been unacceptable for therefore at least this is what which have been told must inflationary owe
+Actual   : moreover i am happy to be able to tell you that the flights have been reinstated for tomorrow at least this is what we have been told
+----------------------------------------
+Predicted: transport happen to have downstream commissioner for transport here about do not know whether he would care to comment who certainly which could do elites owe support inflationary inflationary votazione
+Actual   : we happen to have the commissioner for transport here i do not know whether he would care to comment but certainly we could do with his support
+----------------------------------------
+Predicted: have issue is are not covered by insurance should owe who contracts one rapporteur am to make a case that is a which should certainly also inflationary likewise egalitarian
+Actual   : another issue is are we covered by insurance should someone who contracts lung cancer try to make a case that is a matter we should certainly investigate
+----------------------------------------
+Predicted: mrs green civil request which was put to welcome concerns downstream two reports and mr who wogau has just presentation that so who think that clarifies things world inflationary and
+Actual   : mrs green the request which was put to us concerns the two reports and mr von wogau has just confirmed that so i think that clarifies things
+----------------------------------------
+Predicted: consumers are debate informed this pl risk and mark visions they are often about about downstream services provided by thirdly advertising and conditions this participation in directive holidays likewise likewise
+Actual   : consumers are rarely informed of their rights and more importantly they are often misled about the services provided by inaccurate advertising and conditions of participation in package holidays
+----------------------------------------
+BERTScore  F1=0.7386  P=0.7006  R=0.7830
+
+================================================================================
+ SNR: 15 dB | Sample Comparisons
+ Average Latency: 0.669 ms/sent (Model: 0.662 ms/sent) | Throughput: 1494.6 sent/s
+================================================================================
+Predicted: moreover order am happy to be remaining to tell you that downstream flights have been unacceptable for therefore at least this is what which have been told inflationary likewise bernanke
+Actual   : moreover i am happy to be able to tell you that the flights have been reinstated for tomorrow at least this is what we have been told
+----------------------------------------
+Predicted: go happen to have shorter commissioner for transport here about do not know whether he would care to comment who certainly which could do elites owe support inflationary inflationary
+Actual   : we happen to have the commissioner for transport here i do not know whether he would care to comment but certainly we could do with his support
+----------------------------------------
+Predicted: have issue is are transport covered by insurance should who who contracts one have have to make a case that is a to transport should certainly also likewise likewise andalusian
+Actual   : another issue is are we covered by insurance should someone who contracts lung cancer try to make a case that is a matter we should certainly investigate
+----------------------------------------
+Predicted: mrs green ludford request which was put to much concerns civil two reports and mr who wogau has just presentation that so about think that clarifies things inflationary likewise refuses
+Actual   : mrs green the request which was put to us concerns the two reports and mr von wogau has just confirmed that so i think that clarifies things
+----------------------------------------
+Predicted: consumers are debate informed this also european and nitrogenous they are often who about shorter services provided by adam advertising and conditions this participation in directive holidays likewise likewise
+Actual   : consumers are rarely informed of their rights and more importantly they are often misled about the services provided by inaccurate advertising and conditions of participation in package holidays
+----------------------------------------
+BERTScore  F1=0.7403  P=0.7054  R=0.7806
+
+================================================================================
+ SNR: 18 dB | Sample Comparisons
+ Average Latency: 0.669 ms/sent (Model: 0.662 ms/sent) | Throughput: 1494.8 sent/s
+================================================================================
+Predicted: moreover order am happy to be also to tell you that smiling flights have been encroachments for therefore at least this is what next have been told likewise likewise and
+Actual   : moreover i am happy to be able to tell you that the flights have been reinstated for tomorrow at least this is what we have been told
+----------------------------------------
+Predicted: transport happen to have smiling commissioner for transport here about do not know whether he would care to comment mrs certainly which could do elites rapporteur support likewise likewise and
+Actual   : we happen to have the commissioner for transport here i do not know whether he would care to comment but certainly we could do with his support
+----------------------------------------
+Predicted: have issue is are not covered by insurance should owe who contracts eu rapporteur have to make a case that is a which should certainly also likewise likewise and
+Actual   : another issue is are we covered by insurance should someone who contracts lung cancer try to make a case that is a matter we should certainly investigate
+----------------------------------------
+Predicted: mrs green likewise request which was put to must concerns smiling two reports and mr who wogau has just moved that so about think that clarifies things likewise likewise and
+Actual   : mrs green the request which was put to us concerns the two reports and mr von wogau has just confirmed that so i think that clarifies things
+----------------------------------------
+Predicted: consumers are debate informed rapporteur also and bilingual they are often about about smiling services provided by adam advertising and conditions this participation in directive holidays likewise likewise
+Actual   : consumers are rarely informed of their rights and more importantly they are often misled about the services provided by inaccurate advertising and conditions of participation in package holidays
+----------------------------------------
+BERTScore  F1=0.7362  P=0.6965  R=0.7825
+
+[*] Epoch 3/5 RNG seed set to: 30
+
+================================================================================
+ SNR: -18 dB | Sample Comparisons
+ Average Latency: 0.891 ms/sent (Model: 0.884 ms/sent) | Throughput: 1122.1 sent/s
+================================================================================
+Predicted: directly one owe happy to be might to only you that ludford have been september for unlikely say positions you is what council notify been feeling poverty incorporate agriculture be
+Actual   : moreover i am happy to be able to tell you that the flights have been reinstated for tomorrow at least this is what we have been told
+----------------------------------------
+Predicted: criteria burundi coordinated codecision standardisation for madam victims undeclared women not know whether scrutiny it mr to important convenience fragile could do mera trend been telescope cowardly mentioning
+Actual   : we happen to have the commissioner for transport here i do not know whether he would care to comment but certainly we could do with his support
+----------------------------------------
+Predicted: economy abortion is are senate mussolini by americas should limiting who read quite dimension linda to brown organisation draw that is a exports should certainly renewable untouched opposed
+Actual   : another issue is are we covered by insurance should someone who contracts lung cancer try to make a case that is a matter we should certainly investigate
+----------------------------------------
+Predicted: mrs green civil request which was put to commercial concerns copenhagen two reports and mr economic wogau has just vital that so enlargement think that clarifies things something codecision setting r
+Actual   : mrs green the request which was put to us concerns the two reports and mr von wogau has just confirmed that so i think that clarifies things
+----------------------------------------
+Predicted: consumers are negotiations informed magda tannock selected and individuals however they are hard about not rounds empathy in and draw and conditions rapporteur concerning in determining holidays one ideals
+Actual   : consumers are rarely informed of their rights and more importantly they are often misled about the services provided by inaccurate advertising and conditions of participation in package holidays
+----------------------------------------
+BERTScore  F1=0.6591  P=0.6335  R=0.6881
+
+================================================================================
+ SNR: -15 dB | Sample Comparisons
+ Average Latency: 0.896 ms/sent (Model: 0.889 ms/sent) | Throughput: 1116.6 sent/s
+================================================================================
+Predicted: moreover ignoring am happy to be have to tell you that much flights have been improved for contrasts at least this is what which have been told deteriorating attended portugal
+Actual   : moreover i am happy to be able to tell you that the flights have been reinstated for tomorrow at least this is what we have been told
+----------------------------------------
+Predicted: comparing happen to have observed commissioner for transport here bills do not know otherwise he you mckenna to comment this certainly negotiations mediterranean do criticisms support qazvin elected sarbu
+Actual   : we happen to have the commissioner for transport here i do not know whether he would care to comment but certainly we could do with his support
+----------------------------------------
+Predicted: driving lessons is lot economic for by good should co bet contracts public have so no being long thors and is unacceptable personal behalf measure potential pity and dream resolutions group
+Actual   : another issue is are we covered by insurance should someone who contracts lung cancer try to make a case that is a matter we should certainly investigate
+----------------------------------------
+Predicted: mrs green first request which was put to aegis concerns rapporteur two reports and mr critic wogau has just presentation that so eurolat think that clarifies things equivalence holte modify
+Actual   : mrs green the request which was put to us concerns the two reports and mr von wogau has just confirmed that so i think that clarifies things
+----------------------------------------
+Predicted: consumers are negotiations informed this working least and protection delivered they are often timescales timor whaling services provided by important advertising and conditions need participation in castillo urban september plus
+Actual   : consumers are rarely informed of their rights and more importantly they are often misled about the services provided by inaccurate advertising and conditions of participation in package holidays
+----------------------------------------
+BERTScore  F1=0.6828  P=0.6521  R=0.7179
+
+================================================================================
+ SNR: -12 dB | Sample Comparisons
+ Average Latency: 0.895 ms/sent (Model: 0.888 ms/sent) | Throughput: 1117.1 sent/s
+================================================================================
+Predicted: moreover prevention am happy to be one to tell you that where flights have been no for also at least this is what scapegoat have been told say enlargement first
+Actual   : moreover i am happy to be able to tell you that the flights have been reinstated for tomorrow at least this is what we have been told
+----------------------------------------
+Predicted: go happen to have timor commissioner for transport here economic do not know whether he would care to comment important certainly ali could do working once support working these very
+Actual   : we happen to have the commissioner for transport here i do not know whether he would care to comment but certainly we could do with his support
+----------------------------------------
+Predicted: have issue is are hope covered by insurance should council who contracts measure have who to make a case that is a not beguin should certainly split thank evaluation south flags
+Actual   : another issue is are we covered by insurance should someone who contracts lung cancer try to make a case that is a matter we should certainly investigate
+----------------------------------------
+Predicted: behalf green weiss packed which agenda application economic illiteracy ms johnson voted serious and our is balanced outright union andres need underlines icaza person transformative colombia ryynanen lello changes restored
+Actual   : mrs green the request which was put to us concerns the two reports and mr von wogau has just confirmed that so i think that clarifies things
+----------------------------------------
+Predicted: sensitive are report excellence csaba frivolities businessmen and must president on prevent misunderstood antisocial visions services abortion by juan overijssel and ruffolo community participation in acta establish unwilling gats
+Actual   : consumers are rarely informed of their rights and more importantly they are often misled about the services provided by inaccurate advertising and conditions of participation in package holidays
+----------------------------------------
+BERTScore  F1=0.7020  P=0.6668  R=0.7429
+
+================================================================================
+ SNR: -9 dB | Sample Comparisons
+ Average Latency: 0.896 ms/sent (Model: 0.889 ms/sent) | Throughput: 1115.7 sent/s
+================================================================================
+Predicted: moreover very am happy to be s to tell you that timor flights have been transport for importance at least this is what rapporteur have been told something principle
+Actual   : moreover i am happy to be able to tell you that the flights have been reinstated for tomorrow at least this is what we have been told
+----------------------------------------
+Predicted: sums happen to have underplays commissioner for transport here timor do not know whether he would care to comment council certainly mental could do vote not support barrot towards patent mitchell
+Actual   : we happen to have the commissioner for transport here i do not know whether he would care to comment but certainly we could do with his support
+----------------------------------------
+Predicted: rate defining am abstained welcome quite ratifications meps to implemented vehicle warships boepels first to abstain endures geared that is demands evaluate estevan operations president am civil repatriated efforts subject
+Actual   : another issue is are we covered by insurance should someone who contracts lung cancer try to make a case that is a matter we should certainly investigate
+----------------------------------------
+Predicted: mrs green rapporteur request which was application to which concerns speeches two reports and mr am wogau has just these that so timor think that clarifies things determine deposit homes results
+Actual   : mrs green the request which was put to us concerns the two reports and mr von wogau has just confirmed that so i think that clarifies things
+----------------------------------------
+Predicted: consumers are moved honour chalets including and lives this they are often emptive about adjourned manifested satisfied by question advertising and conditions should whether in holidays debate procurement
+Actual   : consumers are rarely informed of their rights and more importantly they are often misled about the services provided by inaccurate advertising and conditions of participation in package holidays
+----------------------------------------
+BERTScore  F1=0.7153  P=0.6771  R=0.7598
+
+================================================================================
+ SNR: -6 dB | Sample Comparisons
+ Average Latency: 0.895 ms/sent (Model: 0.888 ms/sent) | Throughput: 1117.1 sent/s
+================================================================================
+Predicted: moreover report am happy to be finally to tell you that rapporteur flights have been hope for speeches at least this is what rapporteur have been told procurement aaltonen creating sake
+Actual   : moreover i am happy to be able to tell you that the flights have been reinstated for tomorrow at least this is what we have been told
+----------------------------------------
+Predicted: hope happen to have meps commissioner for transport here exemplary do not know whether he would care to comment rejecting certainly term could do annexation rapporteur support must inflationary take
+Actual   : we happen to have the commissioner for transport here i do not know whether he would care to comment but certainly we could do with his support
+----------------------------------------
+Predicted: timor issue is are patent covered by insurance should owe who contracts not rapporteur dimension to make a case that is a contributing which should certainly stocks must inflationary council
+Actual   : another issue is are we covered by insurance should someone who contracts lung cancer try to make a case that is a matter we should certainly investigate
+----------------------------------------
+Predicted: mrs green ludford request which was put to aegis concerns shorter two reports and mr category wogau has just moved that so situation think that clarifies things must procurement ngos helping
+Actual   : mrs green the request which was put to us concerns the two reports and mr von wogau has just confirmed that so i think that clarifies things
+----------------------------------------
+Predicted: consumers are holte informed safeguards turkish ludford and barzanti who they are often order about operations services provided by advertising and conditions safeguards participation in directive holidays must vote
+Actual   : consumers are rarely informed of their rights and more importantly they are often misled about the services provided by inaccurate advertising and conditions of participation in package holidays
+----------------------------------------
+BERTScore  F1=0.7221  P=0.6822  R=0.7689
+
+================================================================================
+ SNR: -3 dB | Sample Comparisons
+ Average Latency: 0.895 ms/sent (Model: 0.888 ms/sent) | Throughput: 1117.4 sent/s
+================================================================================
+Predicted: moreover timor am happy to be quite to tell you that imprisonment flights have been terms for therefore at least this is what finally have been told constructive constructive circular
+Actual   : moreover i am happy to be able to tell you that the flights have been reinstated for tomorrow at least this is what we have been told
+----------------------------------------
+Predicted: negotiations happen to have imprisonment commissioner for transport here situation do not know whether he would care to comment who certainly go could do verts monitor support aegis inflationary eleven sierra
+Actual   : we happen to have the commissioner for transport here i do not know whether he would care to comment but certainly we could do with his support
+----------------------------------------
+Predicted: have issue is are patent covered by insurance should owe who contracts one rapporteur september to make a case that is a supporting constructive should certainly pl likewise injustices belonging aids
+Actual   : another issue is are we covered by insurance should someone who contracts lung cancer try to make a case that is a matter we should certainly investigate
+----------------------------------------
+Predicted: mrs green civil request which was put to not concerns imprisonment two reports and mr colleagues wogau has just presentation that so must think that clarifies things barrot vote
+Actual   : mrs green the request which was put to us concerns the two reports and mr von wogau has just confirmed that so i think that clarifies things
+----------------------------------------
+Predicted: consumers are not informed relations owe ludford and below need they are often mendiluce about analyses services provided by largest advertising and conditions safeguards participation in anarchic holidays once monitor timidity
+Actual   : consumers are rarely informed of their rights and more importantly they are often misled about the services provided by inaccurate advertising and conditions of participation in package holidays
+----------------------------------------
+BERTScore  F1=0.7261  P=0.6843  R=0.7754
+
+================================================================================
+ SNR: 0 dB | Sample Comparisons
+ Average Latency: 0.894 ms/sent (Model: 0.887 ms/sent) | Throughput: 1118.5 sent/s
+================================================================================
+Predicted: moreover who am happy to be remaining to tell you that civil flights have been this for obesity at least this is what much have been told barrot deductible devoting
+Actual   : moreover i am happy to be able to tell you that the flights have been reinstated for tomorrow at least this is what we have been told
+----------------------------------------
+Predicted: transport happen to have shorter commissioner for transport here order do not know whether he would care to comment this certainly which could do elites rapporteur support until allow things technically
+Actual   : we happen to have the commissioner for transport here i do not know whether he would care to comment but certainly we could do with his support
+----------------------------------------
+Predicted: persons issue is are compromise covered by insurance should owe who contracts community rapporteur economic to make a case that is a monitor council should certainly remaining inflationary vote
+Actual   : another issue is are we covered by insurance should someone who contracts lung cancer try to make a case that is a matter we should certainly investigate
+----------------------------------------
+Predicted: mrs green ludford request which was put to scapegoat concerns copenhagen two reports and mr position wogau has just imprisonment that so must think that clarifies things medicines allow politicising ngl
+Actual   : mrs green the request which was put to us concerns the two reports and mr von wogau has just confirmed that so i think that clarifies things
+----------------------------------------
+Predicted: consumers are dimension informed rapporteur remaining supporting and preda visions they are often order about ludford services provided by shortfall advertising and conditions safeguards participation in directive holidays likewise barrot
+Actual   : consumers are rarely informed of their rights and more importantly they are often misled about the services provided by inaccurate advertising and conditions of participation in package holidays
+----------------------------------------
+BERTScore  F1=0.7330  P=0.6916  R=0.7817
+
+================================================================================
+ SNR: 3 dB | Sample Comparisons
+ Average Latency: 0.894 ms/sent (Model: 0.887 ms/sent) | Throughput: 1118.6 sent/s
+================================================================================
+Predicted: moreover my am happy to be decibels to tell you that shorter flights have been roll for smoother at least this is what which have been told must inflationary trias
+Actual   : moreover i am happy to be able to tell you that the flights have been reinstated for tomorrow at least this is what we have been told
+----------------------------------------
+Predicted: go happen to have parenthood commissioner for transport here timor do not know whether he would care to comment an certainly which could do elites behalf support likewise inflationary superstate
+Actual   : we happen to have the commissioner for transport here i do not know whether he would care to comment but certainly we could do with his support
+----------------------------------------
+Predicted: have issue is are not covered by insurance should who who contracts verts rapporteur you to make a case that is a dotan which should certainly transport must barrot sanchez
+Actual   : another issue is are we covered by insurance should someone who contracts lung cancer try to make a case that is a matter we should certainly investigate
+----------------------------------------
+Predicted: mrs green likewise request which was put to owe concerns debate two reports and mr fourth wogau has just moved that so must think that clarifies things barrot must circular voice
+Actual   : mrs green the request which was put to us concerns the two reports and mr von wogau has just confirmed that so i think that clarifies things
+----------------------------------------
+Predicted: consumers are remaining informed who would am and absolutely they are often rapporteur about not services provided by overfished advertising and conditions safeguards participation in directive holidays barrot procurement
+Actual   : consumers are rarely informed of their rights and more importantly they are often misled about the services provided by inaccurate advertising and conditions of participation in package holidays
+----------------------------------------
+BERTScore  F1=0.7334  P=0.6932  R=0.7806
+
+================================================================================
+ SNR: 6 dB | Sample Comparisons
+ Average Latency: 0.893 ms/sent (Model: 0.887 ms/sent) | Throughput: 1119.6 sent/s
+================================================================================
+Predicted: moreover who am happy to be also to tell you that civil flights have been two for therefore at least this is what not have been told likewise inflationary criteria
+Actual   : moreover i am happy to be able to tell you that the flights have been reinstated for tomorrow at least this is what we have been told
+----------------------------------------
+Predicted: which happen to have ludford commissioner for transport here thank do not know whether he would care to comment hope certainly would could do therefore rapporteur support must holte characterise
+Actual   : we happen to have the commissioner for transport here i do not know whether he would care to comment but certainly we could do with his support
+----------------------------------------
+Predicted: have issue is are not covered by insurance should you who contracts one rapporteur must to make a case that is a not not should certainly an likewise likewise writing boundaries
+Actual   : another issue is are we covered by insurance should someone who contracts lung cancer try to make a case that is a matter we should certainly investigate
+----------------------------------------
+Predicted: mrs green civil request which was put to welcome concerns civil two reports and mr who wogau has just moved that so who think that clarifies things likewise inflationary and
+Actual   : mrs green the request which was put to us concerns the two reports and mr von wogau has just confirmed that so i think that clarifies things
+----------------------------------------
+Predicted: consumers are debate informed rapporteur potential ludford and bilingual safeguards they are often who about ludford services provided by freeze advertising and conditions safeguards participation in anarchic holidays barrot these reintroducing
+Actual   : consumers are rarely informed of their rights and more importantly they are often misled about the services provided by inaccurate advertising and conditions of participation in package holidays
+----------------------------------------
+BERTScore  F1=0.7383  P=0.6989  R=0.7842
+
+================================================================================
+ SNR: 9 dB | Sample Comparisons
+ Average Latency: 0.892 ms/sent (Model: 0.886 ms/sent) | Throughput: 1120.6 sent/s
+================================================================================
+Predicted: moreover order am happy to be am to tell you that civil flights have been two for speeches at least this is what transport have been told procurement potential any tracked
+Actual   : moreover i am happy to be able to tell you that the flights have been reinstated for tomorrow at least this is what we have been told
+----------------------------------------
+Predicted: transport happen to have debate commissioner for transport here order do not know whether he would care to comment who certainly go could do working rapporteur support world potential characteristic unworkable
+Actual   : we happen to have the commissioner for transport here i do not know whether he would care to comment but certainly we could do with his support
+----------------------------------------
+Predicted: your and issue is are meeting covered by insurance should who who letter owe one these to make a power that is a supporting president should certainly have world juriste bills
+Actual   : another issue is are we covered by insurance should someone who contracts lung cancer try to make a case that is a matter we should certainly investigate
+----------------------------------------
+Predicted: mrs green civil request which was put to must concerns holte two reports and mr owe wogau has just moved that so about think that clarifies things potential potential gorostiaga
+Actual   : mrs green the request which was put to us concerns the two reports and mr von wogau has just confirmed that so i think that clarifies things
+----------------------------------------
+Predicted: consumers are debate informed rapporteur remaining risk and mark rapporteur they are often about about debate services provided by fabric advertising and conditions this participation in about holidays likewise potential
+Actual   : consumers are rarely informed of their rights and more importantly they are often misled about the services provided by inaccurate advertising and conditions of participation in package holidays
+----------------------------------------
+BERTScore  F1=0.7400  P=0.7046  R=0.7815
+
+================================================================================
+ SNR: 12 dB | Sample Comparisons
+ Average Latency: 0.670 ms/sent (Model: 0.663 ms/sent) | Throughput: 1492.3 sent/s
+================================================================================
+Predicted: moreover about am happy to be am to tell you that downstream flights have been two for speeches at least this is what which have been told inflationary must continental
+Actual   : moreover i am happy to be able to tell you that the flights have been reinstated for tomorrow at least this is what we have been told
+----------------------------------------
+Predicted: go happen to have holte commissioner for transport here order do not know whether he would care to comment who certainly which could do rags rapporteur support world inflationary subsidized
+Actual   : we happen to have the commissioner for transport here i do not know whether he would care to comment but certainly we could do with his support
+----------------------------------------
+Predicted: have issue is are transport covered by insurance should owe who contracts therefore rapporteur safety to make a case that is a which which should certainly also likewise likewise
+Actual   : another issue is are we covered by insurance should someone who contracts lung cancer try to make a case that is a matter we should certainly investigate
+----------------------------------------
+Predicted: mrs green ludford request which was put to order concerns ludford two reports and mr who wogau has just moved that so about think that clarifies things likewise likewise commission merely
+Actual   : mrs green the request which was put to us concerns the two reports and mr von wogau has just confirmed that so i think that clarifies things
+----------------------------------------
+Predicted: consumers are azf informed this remaining sweden and below visions they are often committee about downstream services provided by adam advertising and conditions safeguards participation in anarchic holidays likewise potential
+Actual   : consumers are rarely informed of their rights and more importantly they are often misled about the services provided by inaccurate advertising and conditions of participation in package holidays
+----------------------------------------
+BERTScore  F1=0.7390  P=0.7012  R=0.7831
+
+================================================================================
+ SNR: 15 dB | Sample Comparisons
+ Average Latency: 0.669 ms/sent (Model: 0.663 ms/sent) | Throughput: 1494.1 sent/s
+================================================================================
+Predicted: moreover order am happy to be remaining to tell you that shorter flights have been would for therefore at least this is what which have been told inflationary likewise cortines
+Actual   : moreover i am happy to be able to tell you that the flights have been reinstated for tomorrow at least this is what we have been told
+----------------------------------------
+Predicted: go happen to have downstream commissioner for transport here about do not know whether he would care to comment who certainly which could do elites owe support inflationary likewise oa
+Actual   : we happen to have the commissioner for transport here i do not know whether he would care to comment but certainly we could do with his support
+----------------------------------------
+Predicted: have issue is are transport covered by insurance should owe who contracts one must am to make a case that is a which should certainly also inflationary inflationary
+Actual   : another issue is are we covered by insurance should someone who contracts lung cancer try to make a case that is a matter we should certainly investigate
+----------------------------------------
+Predicted: mrs green debate request which was put to eu concerns civil two reports and mr who wogau has just presentation that so about think that clarifies things likewise likewise ensue
+Actual   : mrs green the request which was put to us concerns the two reports and mr von wogau has just confirmed that so i think that clarifies things
+----------------------------------------
+Predicted: consumers are debate informed this remaining european and presentation they are often about about shorter services provided by adam advertising and conditions this participation in about holidays likewise inflationary
+Actual   : consumers are rarely informed of their rights and more importantly they are often misled about the services provided by inaccurate advertising and conditions of participation in package holidays
+----------------------------------------
+BERTScore  F1=0.7403  P=0.7053  R=0.7806
+
+================================================================================
+ SNR: 18 dB | Sample Comparisons
+ Average Latency: 0.668 ms/sent (Model: 0.662 ms/sent) | Throughput: 1496.7 sent/s
+================================================================================
+Predicted: moreover order am happy to be also to tell you that smiling flights have been for therefore at least this is what next have been told likewise likewise and
+Actual   : moreover i am happy to be able to tell you that the flights have been reinstated for tomorrow at least this is what we have been told
+----------------------------------------
+Predicted: go happen to have smiling commissioner for transport here about do not know whether he would care to comment nor certainly which could do elites rapporteur support likewise likewise and
+Actual   : we happen to have the commissioner for transport here i do not know whether he would care to comment but certainly we could do with his support
+----------------------------------------
+Predicted: have issue is are transport covered by insurance should owe who contracts one rapporteur am to make a case that is a which should certainly also likewise likewise community
+Actual   : another issue is are we covered by insurance should someone who contracts lung cancer try to make a case that is a matter we should certainly investigate
+----------------------------------------
+Predicted: mrs green smiling request which was put to which concerns smiling two reports and mr who wogau has just moved that so my think that clarifies things likewise likewise continental
+Actual   : mrs green the request which was put to us concerns the two reports and mr von wogau has just confirmed that so i think that clarifies things
+----------------------------------------
+Predicted: consumers are debate informed have remaining kong and bilingual they are often about about smiling services provided by adam advertising and conditions this participation in directive holidays likewise likewise
+Actual   : consumers are rarely informed of their rights and more importantly they are often misled about the services provided by inaccurate advertising and conditions of participation in package holidays
+----------------------------------------
+BERTScore  F1=0.7358  P=0.6961  R=0.7821
+
+[*] Epoch 4/5 RNG seed set to: 40
+
+================================================================================
+ SNR: -18 dB | Sample Comparisons
+ Average Latency: 0.892 ms/sent (Model: 0.885 ms/sent) | Throughput: 1121.0 sent/s
+================================================================================
+Predicted: depends co am wiersma to be repeated to regret you subject venezuela requiring rapporteur all dissenting for nuns at least is what importance have been told working muhannad s bicycle
+Actual   : moreover i am happy to be able to tell you that the flights have been reinstated for tomorrow at least this is what we have been told
+----------------------------------------
+Predicted: codecision happen to have my commissioner for transport here order do not know whether he would care to comment attached certainly could issue consulting balkans support hungarian measure situation european
+Actual   : we happen to have the commissioner for transport here i do not know whether he would care to comment but certainly we could do with his support
+----------------------------------------
+Predicted: perspective bandon answer cyprus directive mercury by understandable report clarity fold situation eternity contracts to court rugby row much banners vigour tempo photosynthesis been hope negating drug strengthen
+Actual   : another issue is are we covered by insurance should someone who contracts lung cancer try to make a case that is a matter we should certainly investigate
+----------------------------------------
+Predicted: mrs grossetete hidden request which was put for collection concerns ec two reports and mr from wogau has just immediately that so therefore think that clarifies things remembering verts by
+Actual   : mrs green the request which was put to us concerns the two reports and mr von wogau has just confirmed that so i think that clarifies things
+----------------------------------------
+Predicted: consumers by informed medina heart and outright draw they are often cyclicality committee stevedoring extends by bangemann advertising and conditions quite participation in registration care lahti other measure
+Actual   : consumers are rarely informed of their rights and more importantly they are often misled about the services provided by inaccurate advertising and conditions of participation in package holidays
+----------------------------------------
+BERTScore  F1=0.6581  P=0.6325  R=0.6872
+
+================================================================================
+ SNR: -15 dB | Sample Comparisons
+ Average Latency: 0.896 ms/sent (Model: 0.889 ms/sent) | Throughput: 1116.0 sent/s
+================================================================================
+Predicted: moreover thank am happy to be meeting to tell you that activities flights have been cooperatives for operations at least this is what these have been told hiding steadily vanhanen
+Actual   : moreover i am happy to be able to tell you that the flights have been reinstated for tomorrow at least this is what we have been told
+----------------------------------------
+Predicted: promises happen to have beforehand solvit for madam here agreeable do not holte consumers he would care to comment repeated constituent could do redeployment perhaps support lahti working carmen take
+Actual   : we happen to have the commissioner for transport here i do not know whether he would care to comment but certainly we could do with his support
+----------------------------------------
+Predicted: mingasson attaining is are are imams by written should vehicle who process community accordance to make a automation that is a nothing importance should section holte much which president roll
+Actual   : another issue is are we covered by insurance should someone who contracts lung cancer try to make a case that is a matter we should certainly investigate
+----------------------------------------
+Predicted: mrs green smiling request which was put to not concerns council two reports and mr september wogau has just presentation that so timor think that clarifies things argentinian remaining deported samland
+Actual   : mrs green the request which was put to us concerns the two reports and mr von wogau has just confirmed that so i think that clarifies things
+----------------------------------------
+Predicted: welcome are debate informed recipients hidden achieve and miracles community they are often nor about belonging services novel by ludford advertising and conditions shortfall consumers in not holidays alternative eurocouncil
+Actual   : consumers are rarely informed of their rights and more importantly they are often misled about the services provided by inaccurate advertising and conditions of participation in package holidays
+----------------------------------------
+BERTScore  F1=0.6832  P=0.6526  R=0.7184
+
+================================================================================
+ SNR: -12 dB | Sample Comparisons
+ Average Latency: 0.896 ms/sent (Model: 0.889 ms/sent) | Throughput: 1115.6 sent/s
+================================================================================
+Predicted: moreover who am happy to be cautionary to tell you that individuals flights have been recital for idiot at least this is what least have been told highlights likewise moniz economic
+Actual   : moreover i am happy to be able to tell you that the flights have been reinstated for tomorrow at least this is what we have been told
+----------------------------------------
+Predicted: rapporteur happen to have beforehand commissioner for transport here debate do not know whether he would care to comment no certainly transport could do marseille speeches support montenegro disproportionate fold
+Actual   : we happen to have the commissioner for transport here i do not know whether he would care to comment but certainly we could do with his support
+----------------------------------------
+Predicted: timor issue is are let by written these truck who unanimous overwhelmingly dispense loan to unseemly a case that is clarifying council should metabolism suffering mr pregnancies obstacle service
+Actual   : another issue is are we covered by insurance should someone who contracts lung cancer try to make a case that is a matter we should certainly investigate
+----------------------------------------
+Predicted: mrs green holte request which was put to lorries concerns hidden two reports and mr these wogau has just moved that so who think that clarifies things must hidden high facilities
+Actual   : mrs green the request which was put to us concerns the two reports and mr von wogau has just confirmed that so i think that clarifies things
+----------------------------------------
+Predicted: consumers are read satisfactorily enterprise sums and and presentation indicate they are part broke about ec services assert by divergences advertising and goals thirdly sensitive in and holidays pnv holte
+Actual   : consumers are rarely informed of their rights and more importantly they are often misled about the services provided by inaccurate advertising and conditions of participation in package holidays
+----------------------------------------
+BERTScore  F1=0.7030  P=0.6675  R=0.7442
+
+================================================================================
+ SNR: -9 dB | Sample Comparisons
+ Average Latency: 0.897 ms/sent (Model: 0.890 ms/sent) | Throughput: 1114.6 sent/s
+================================================================================
+Predicted: moreover timor am happy to be one to tell you that moved flights have been negotiations for therefore at least this is what which have been told aegis wales belgium
+Actual   : moreover i am happy to be able to tell you that the flights have been reinstated for tomorrow at least this is what we have been told
+----------------------------------------
+Predicted: what happen to have least commissioner for transport here homes do not know whether he would care to comment rapporteur certainly cohesion could do elites owe support something should
+Actual   : we happen to have the commissioner for transport here i do not know whether he would care to comment but certainly we could do with his support
+----------------------------------------
+Predicted: speeches issue is are transport covered by insurance should owe who contracts presentation have answer to make a case that is a patent scapegoat should certainly remaining veterinary least samland euros
+Actual   : another issue is are we covered by insurance should someone who contracts lung cancer try to make a case that is a matter we should certainly investigate
+----------------------------------------
+Predicted: mrs green patent commission which was ecofin to hidden workers ludford two and and mr why wogau has restored suffered that vehicle think that compliments things so hidden road approach
+Actual   : mrs green the request which was put to us concerns the two reports and mr von wogau has just confirmed that so i think that clarifies things
+----------------------------------------
+Predicted: consumers are holte informed negotiations would ludford and presentation behalf they are often who about copenhagen services provided by right advertising and conditions safeguards participation in must holidays inflationary inflationary
+Actual   : consumers are rarely informed of their rights and more importantly they are often misled about the services provided by inaccurate advertising and conditions of participation in package holidays
+----------------------------------------
+BERTScore  F1=0.7149  P=0.6765  R=0.7597
+
+================================================================================
+ SNR: -6 dB | Sample Comparisons
+ Average Latency: 0.897 ms/sent (Model: 0.890 ms/sent) | Throughput: 1114.6 sent/s
+================================================================================
+Predicted: and and definitions and to to election contracts say need you that welcome colleagues seek now for those accept reflects this jove supports women bear any judicial azimovich shame
+Actual   : moreover i am happy to be able to tell you that the flights have been reinstated for tomorrow at least this is what we have been told
+----------------------------------------
+Predicted: council happen to have question commissioner for transport here about do not know whether he would care to comment mop certainly council could do negotiations transport support donation introduce external
+Actual   : we happen to have the commissioner for transport here i do not know whether he would care to comment but certainly we could do with his support
+----------------------------------------
+Predicted: persons issue is are sums covered by insurance should owe who contracts one rapporteur vital to make a case that is a much mental should certainly also barrot procurement larosiere
+Actual   : another issue is are we covered by insurance should someone who contracts lung cancer try to make a case that is a matter we should certainly investigate
+----------------------------------------
+Predicted: mrs green jest request which was put to order concerns raoul two reports and mr cooperation wogau has just presentation that so report think that clarifies things schwaiger cautionary dating
+Actual   : mrs green the request which was put to us concerns the two reports and mr von wogau has just confirmed that so i think that clarifies things
+----------------------------------------
+Predicted: consumers are holte informed ! remaining ludford and broadened absolutely they are often things about anarchic services provided by thirdly advertising and conditions safeguards participation in anarchic holidays vote likewise
+Actual   : consumers are rarely informed of their rights and more importantly they are often misled about the services provided by inaccurate advertising and conditions of participation in package holidays
+----------------------------------------
+BERTScore  F1=0.7227  P=0.6826  R=0.7698
+
+================================================================================
+ SNR: -3 dB | Sample Comparisons
+ Average Latency: 0.896 ms/sent (Model: 0.889 ms/sent) | Throughput: 1116.5 sent/s
+================================================================================
+Predicted: moreover order am happy to be contracts to tell you that about flights have been would for revitalising at least this is what scapegoat have been told crabs inflationary
+Actual   : moreover i am happy to be able to tell you that the flights have been reinstated for tomorrow at least this is what we have been told
+----------------------------------------
+Predicted: perhaps happen to have take commissioner for transport here who do not know whether he would care to comment certainly sums could do improved rapporteur support constructive inflationary and criteria
+Actual   : we happen to have the commissioner for transport here i do not know whether he would care to comment but certainly we could do with his support
+----------------------------------------
+Predicted: persons issue is are stated covered by insurance should commission who contracts one reality over to make a case that is a close patent should certainly machines donation cesi timidity
+Actual   : another issue is are we covered by insurance should someone who contracts lung cancer try to make a case that is a matter we should certainly investigate
+----------------------------------------
+Predicted: mrs green holte request which was put to hope concerns one two reports and mr who wogau has just considerably that so rapporteur think that clarifies things cautionary something vat ibrisagic
+Actual   : mrs green the request which was put to us concerns the two reports and mr von wogau has just confirmed that so i think that clarifies things
+----------------------------------------
+Predicted: consumers are transport informed ! apples thank and council hope they are often arising about rapporteur services provided by purposeful advertising and conditions shortfall participation in am holidays cautionary constructive
+Actual   : consumers are rarely informed of their rights and more importantly they are often misled about the services provided by inaccurate advertising and conditions of participation in package holidays
+----------------------------------------
+BERTScore  F1=0.7264  P=0.6846  R=0.7755
+
+================================================================================
+ SNR: 0 dB | Sample Comparisons
+ Average Latency: 0.895 ms/sent (Model: 0.888 ms/sent) | Throughput: 1117.5 sent/s
+================================================================================
+Predicted: moreover timor am happy to be am to tell you that likewise flights have been rapporteur for obesity at least this is what negotiations have been told likewise cautionary council
+Actual   : moreover i am happy to be able to tell you that the flights have been reinstated for tomorrow at least this is what we have been told
+----------------------------------------
+Predicted: rapporteur happen to have which commissioner for transport here report do not know whether he would care to comment ewa certainly which could do some support cautionary inflationary tomas theories
+Actual   : we happen to have the commissioner for transport here i do not know whether he would care to comment but certainly we could do with his support
+----------------------------------------
+Predicted: need issue is are debate covered by insurance should order who contracts should visions debate to make a case that is a compromise compromise should certainly mr worthy sea provisional
+Actual   : another issue is are we covered by insurance should someone who contracts lung cancer try to make a case that is a matter we should certainly investigate
+----------------------------------------
+Predicted: mrs green ludford request which was put to scapegoat concerns ludford two reports and mr who wogau has just moved that so special think that clarifies things barrot barrot adapted
+Actual   : mrs green the request which was put to us concerns the two reports and mr von wogau has just confirmed that so i think that clarifies things
+----------------------------------------
+Predicted: consumers are september informed goodbye turkish polar and stamp safeguards they are often socrates about mismanagement services provided by tactless advertising and conditions working participation in which holidays procurement shortfall almunia
+Actual   : consumers are rarely informed of their rights and more importantly they are often misled about the services provided by inaccurate advertising and conditions of participation in package holidays
+----------------------------------------
+BERTScore  F1=0.7327  P=0.6913  R=0.7812
+
+================================================================================
+ SNR: 3 dB | Sample Comparisons
+ Average Latency: 0.895 ms/sent (Model: 0.888 ms/sent) | Throughput: 1117.7 sent/s
+================================================================================
+Predicted: moreover order am happy to be those to tell you that adam flights have been cookers for smoother at least this is what much have been told inflationary likewise planting
+Actual   : moreover i am happy to be able to tell you that the flights have been reinstated for tomorrow at least this is what we have been told
+----------------------------------------
+Predicted: transport happen to have anarchic commissioner for transport here must do not know whether he would care to comment an certainly displayed could do alik owe support likewise an comparing excluded
+Actual   : we happen to have the commissioner for transport here i do not know whether he would care to comment but certainly we could do with his support
+----------------------------------------
+Predicted: transport issue is are must covered by insurance should importance who contracts burden rapporteur at to make a case that is a shall must should certainly speeches likewise procurement contemplating
+Actual   : another issue is are we covered by insurance should someone who contracts lung cancer try to make a case that is a matter we should certainly investigate
+----------------------------------------
+Predicted: mrs green planes request which was put to hope concerns concepts two reports and mr wogau has just quite that so debate think that clarifies things these
+Actual   : mrs green the request which was put to us concerns the two reports and mr von wogau has just confirmed that so i think that clarifies things
+----------------------------------------
+Predicted: consumers are debate informed safeguards pl entire and special concentrating they are often order about debate services provided by disproportionate advertising and conditions safeguards participation in about holidays likewise cautionary
+Actual   : consumers are rarely informed of their rights and more importantly they are often misled about the services provided by inaccurate advertising and conditions of participation in package holidays
+----------------------------------------
+BERTScore  F1=0.7329  P=0.6928  R=0.7801
+
+================================================================================
+ SNR: 6 dB | Sample Comparisons
+ Average Latency: 0.895 ms/sent (Model: 0.888 ms/sent) | Throughput: 1117.5 sent/s
+================================================================================
+Predicted: moreover who am happy to be one to tell you that ludford flights have been unacceptable for therefore at least this is what much have been told must inflationary
+Actual   : moreover i am happy to be able to tell you that the flights have been reinstated for tomorrow at least this is what we have been told
+----------------------------------------
+Predicted: my happen to have timor commissioner for transport here my do not know whether he would care to comment persons certainly rapporteur could do one performance support much environmentalists how monnet
+Actual   : we happen to have the commissioner for transport here i do not know whether he would care to comment but certainly we could do with his support
+----------------------------------------
+Predicted: have issue is are not covered by insurance should owe who contracts one rapporteur have to make a case that is a not not should certainly also likewise likewise cleanup
+Actual   : another issue is are we covered by insurance should someone who contracts lung cancer try to make a case that is a matter we should certainly investigate
+----------------------------------------
+Predicted: mrs green holte request which was put to must concerns civil two reports and mr one wogau has just moved that so special think that clarifies things likewise likewise methods equally
+Actual   : mrs green the request which was put to us concerns the two reports and mr von wogau has just confirmed that so i think that clarifies things
+----------------------------------------
+Predicted: consumers are holte informed this potential supporting and mark visions they are often rapporteur about shorter services provided by adam advertising and conditions safeguards participation in about holidays likewise constructive stations
+Actual   : consumers are rarely informed of their rights and more importantly they are often misled about the services provided by inaccurate advertising and conditions of participation in package holidays
+----------------------------------------
+BERTScore  F1=0.7388  P=0.6996  R=0.7846
+
+================================================================================
+ SNR: 9 dB | Sample Comparisons
+ Average Latency: 0.894 ms/sent (Model: 0.887 ms/sent) | Throughput: 1118.8 sent/s
+================================================================================
+Predicted: moreover who am happy to be remaining to tell you that civil flights have been unacceptable for timor at least this is what which have been told inflationary must am sights
+Actual   : moreover i am happy to be able to tell you that the flights have been reinstated for tomorrow at least this is what we have been told
+----------------------------------------
+Predicted: transport happen to have downstream commissioner for transport here about do not know whether he would care to comment who certainly which could do elites rapporteur support inflationary inflationary president sights
+Actual   : we happen to have the commissioner for transport here i do not know whether he would care to comment but certainly we could do with his support
+----------------------------------------
+Predicted: have issue is are not covered by insurance should owe who contracts one rapporteur must to make a case that is a anarchic transport should certainly also must must covered
+Actual   : another issue is are we covered by insurance should someone who contracts lung cancer try to make a case that is a matter we should certainly investigate
+----------------------------------------
+Predicted: mrs green ludford request which was put to must concerns debate two reports and mr who wogau has just moved that so must think that clarifies things must potential and
+Actual   : mrs green the request which was put to us concerns the two reports and mr von wogau has just confirmed that so i think that clarifies things
+----------------------------------------
+Predicted: consumers are debate informed rapporteur remaining european and mark visions they are often about about debate services provided by methods advertising and conditions this participation in about holidays likewise potential democracy
+Actual   : consumers are rarely informed of their rights and more importantly they are often misled about the services provided by inaccurate advertising and conditions of participation in package holidays
+----------------------------------------
+BERTScore  F1=0.7399  P=0.7046  R=0.7813
+
+================================================================================
+ SNR: 12 dB | Sample Comparisons
+ Average Latency: 0.670 ms/sent (Model: 0.664 ms/sent) | Throughput: 1492.0 sent/s
+================================================================================
+Predicted: moreover about am happy to be also to tell you that downstream flights have been unacceptable for therefore at least this is what which have been told inflationary inflationary continental
+Actual   : moreover i am happy to be able to tell you that the flights have been reinstated for tomorrow at least this is what we have been told
+----------------------------------------
+Predicted: go happen to have downstream commissioner for transport here about do not know whether he would care to comment who certainly which could do elites owe support inflationary inflationary is
+Actual   : we happen to have the commissioner for transport here i do not know whether he would care to comment but certainly we could do with his support
+----------------------------------------
+Predicted: have issue is are not covered by insurance should owe who contracts one have safety to make a case that is a which which should certainly also inflationary likewise terry
+Actual   : another issue is are we covered by insurance should someone who contracts lung cancer try to make a case that is a matter we should certainly investigate
+----------------------------------------
+Predicted: mrs green downstream request which was put to order concerns downstream two reports and mr who wogau has just moved that so about think that clarifies things cautionary inflationary
+Actual   : mrs green the request which was put to us concerns the two reports and mr von wogau has just confirmed that so i think that clarifies things
+----------------------------------------
+Predicted: consumers are debate informed this also reverse and which absolutely they are often who about shorter services provided by adam advertising and conditions this participation in anarchic holidays likewise potential
+Actual   : consumers are rarely informed of their rights and more importantly they are often misled about the services provided by inaccurate advertising and conditions of participation in package holidays
+----------------------------------------
+BERTScore  F1=0.7389  P=0.7010  R=0.7830
+
+================================================================================
+ SNR: 15 dB | Sample Comparisons
+ Average Latency: 0.670 ms/sent (Model: 0.663 ms/sent) | Throughput: 1492.8 sent/s
+================================================================================
+Predicted: moreover timor am happy to be also to tell you that shorter flights have been monitor for therefore at least this is what which have been told inflationary inflationary
+Actual   : moreover i am happy to be able to tell you that the flights have been reinstated for tomorrow at least this is what we have been told
+----------------------------------------
+Predicted: go happen to have shorter commissioner for transport here about do not know whether he would care to comment who certainly which could do elites owe support inflationary inflationary and
+Actual   : we happen to have the commissioner for transport here i do not know whether he would care to comment but certainly we could do with his support
+----------------------------------------
+Predicted: have issue is are transport covered by insurance should owe who contracts one rapporteur have to make a case that is a which which should certainly also inflationary inflationary and
+Actual   : another issue is are we covered by insurance should someone who contracts lung cancer try to make a case that is a matter we should certainly investigate
+----------------------------------------
+Predicted: mrs green adam request which was put to must concerns civil two reports and mr who wogau has just presentation that so about think that clarifies things inflationary likewise commission
+Actual   : mrs green the request which was put to us concerns the two reports and mr von wogau has just confirmed that so i think that clarifies things
+----------------------------------------
+Predicted: consumers are debate informed have remaining kong and must they are often about about shorter services provided by adam advertising and conditions this participation in about holidays inflationary inflationary
+Actual   : consumers are rarely informed of their rights and more importantly they are often misled about the services provided by inaccurate advertising and conditions of participation in package holidays
+----------------------------------------
+BERTScore  F1=0.7405  P=0.7056  R=0.7807
+
+================================================================================
+ SNR: 18 dB | Sample Comparisons
+ Average Latency: 0.670 ms/sent (Model: 0.663 ms/sent) | Throughput: 1493.5 sent/s
+================================================================================
+Predicted: moreover order am happy to be also to tell you that european flights have been would for and at least this is what next have been told likewise likewise and
+Actual   : moreover i am happy to be able to tell you that the flights have been reinstated for tomorrow at least this is what we have been told
+----------------------------------------
+Predicted: go happen to have smiling commissioner for transport here timor do not know whether he would care to comment mrs certainly which could do elites rapporteur support likewise likewise and
+Actual   : we happen to have the commissioner for transport here i do not know whether he would care to comment but certainly we could do with his support
+----------------------------------------
+Predicted: have issue is are not covered by insurance should owe who contracts eu rapporteur have to make a case that is a which should certainly also likewise likewise
+Actual   : another issue is are we covered by insurance should someone who contracts lung cancer try to make a case that is a matter we should certainly investigate
+----------------------------------------
+Predicted: mrs green adam request which was put to must concerns ludford two reports and mr who wogau has just moved that so about think that clarifies things likewise likewise commission
+Actual   : mrs green the request which was put to us concerns the two reports and mr von wogau has just confirmed that so i think that clarifies things
+----------------------------------------
+Predicted: consumers are debate informed have also reverse and bilingual they are often about about smiling services provided by adam advertising and conditions this participation in directive holidays likewise likewise
+Actual   : consumers are rarely informed of their rights and more importantly they are often misled about the services provided by inaccurate advertising and conditions of participation in package holidays
+----------------------------------------
+BERTScore  F1=0.7358  P=0.6960  R=0.7824
+
+[*] Epoch 5/5 RNG seed set to: 50
+
+================================================================================
+ SNR: -18 dB | Sample Comparisons
+ Average Latency: 0.893 ms/sent (Model: 0.886 ms/sent) | Throughput: 1120.0 sent/s
+================================================================================
+Predicted: comment has am happy to be much to tell you that portugal oneminute have been this for eu at least this is what trias have support manufacture litigation parental cannot requiring
+Actual   : moreover i am happy to be able to tell you that the flights have been reinstated for tomorrow at least this is what we have been told
+----------------------------------------
+Predicted: azf happen to have inoffice commissioner for transport here debate do not know whether he would care to comment council certainly attribute could do compromise not support support low president regrettable
+Actual   : we happen to have the commissioner for transport here i do not know whether he would care to comment but certainly we could do with his support
+----------------------------------------
+Predicted: possibly sensitive is are young by khalid should constanza implemented through hits blocking persons to prevention euromed that is a death vehicle should improvisations voted true expended practice
+Actual   : another issue is are we covered by insurance should someone who contracts lung cancer try to make a case that is a matter we should certainly investigate
+----------------------------------------
+Predicted: mrs commission es request which has put susta gets concerns two managers and ignoring suffering unconvinced so now rania that choose things one monitor sets
+Actual   : mrs green the request which was put to us concerns the two reports and mr von wogau has just confirmed that so i think that clarifies things
+----------------------------------------
+Predicted: consumers are relations informed some presidentinoffice this and bilingual rapporteur they are often patent about timor services provided by holiness advertising and conditions part participation in cohesion holidays stocks glosses
+Actual   : consumers are rarely informed of their rights and more importantly they are often misled about the services provided by inaccurate advertising and conditions of participation in package holidays
+----------------------------------------
+BERTScore  F1=0.6566  P=0.6313  R=0.6852
+
+================================================================================
+ SNR: -15 dB | Sample Comparisons
+ Average Latency: 0.896 ms/sent (Model: 0.889 ms/sent) | Throughput: 1116.2 sent/s
+================================================================================
+Predicted: moreover our am happy to be gordon to tell you that persons bequest have been contrasts for innovation be least this is what october have been told lukashenko report refer hygiene
+Actual   : moreover i am happy to be able to tell you that the flights have been reinstated for tomorrow at least this is what we have been told
+----------------------------------------
+Predicted: negotiations happen to have adjustment commissioner for transport here must do not know whether he would care to comment this certainly hope could do who rather support remaining no vanhanen service
+Actual   : we happen to have the commissioner for transport here i do not know whether he would care to comment but certainly we could do with his support
+----------------------------------------
+Predicted: have issue is are not covered by insurance should pique who contracts adjustment which values to make a case that is a codification patent should certainly would grant likewise uneven districts
+Actual   : another issue is are we covered by insurance should someone who contracts lung cancer try to make a case that is a matter we should certainly investigate
+----------------------------------------
+Predicted: mrs green negating request which these listened to this concerns reputations subject reports and mr kaczmarek failed has sound termism that so council think that elevated things heartened inflationary jauregui dupuis
+Actual   : mrs green the request which was put to us concerns the two reports and mr von wogau has just confirmed that so i think that clarifies things
+----------------------------------------
+Predicted: agenda commission labour kinnock exploited imperialist barrages and therefore october beginning least targeted europeo possible reminiscent plain by war advertising military status shield policy in holte topicality presentation reduction resources
+Actual   : consumers are rarely informed of their rights and more importantly they are often misled about the services provided by inaccurate advertising and conditions of participation in package holidays
+----------------------------------------
+BERTScore  F1=0.6830  P=0.6522  R=0.7184
+
+================================================================================
+ SNR: -12 dB | Sample Comparisons
+ Average Latency: 0.897 ms/sent (Model: 0.890 ms/sent) | Throughput: 1115.0 sent/s
+================================================================================
+Predicted: moreover triangle council happy to be cohesion to tell you that patent codecision have been quite for mention persons least cannot is debate community have been told constructive later demand
+Actual   : moreover i am happy to be able to tell you that the flights have been reinstated for tomorrow at least this is what we have been told
+----------------------------------------
+Predicted: lucidity happen to have importance commissioner for transport here deposit do not know whether he would care to comment owe certainly occupied could do about speeches support cautionary you approve
+Actual   : we happen to have the commissioner for transport here i do not know whether he would care to comment but certainly we could do with his support
+----------------------------------------
+Predicted: timor issue is are planning covered by insurance should freeze who contracts eu have interests to make a case that is a to bangemann should certainly medina j much sitting such
+Actual   : another issue is are we covered by insurance should someone who contracts lung cancer try to make a case that is a matter we should certainly investigate
+----------------------------------------
+Predicted: mrs green ludford request which was put to hallmarks concerns ludford two reports and mr nh wogau has just presentation that so patent think that clarifies things remaining procurement iran clash
+Actual   : mrs green the request which was put to us concerns the two reports and mr von wogau has just confirmed that so i think that clarifies things
+----------------------------------------
+Predicted: consumers are council informed discrimination moved combining and economic this they are often rapporteur about copenhagen services provided by bergen advertising and conditions participation in my holidays fled labelling
+Actual   : consumers are rarely informed of their rights and more importantly they are often misled about the services provided by inaccurate advertising and conditions of participation in package holidays
+----------------------------------------
+BERTScore  F1=0.7020  P=0.6668  R=0.7428
+
+================================================================================
+ SNR: -9 dB | Sample Comparisons
+ Average Latency: 0.897 ms/sent (Model: 0.890 ms/sent) | Throughput: 1115.4 sent/s
+================================================================================
+Predicted: moreover order am happy to be debate to tell you that dispense flights have been september for timor at least this is what not have been told constructive constructive
+Actual   : moreover i am happy to be able to tell you that the flights have been reinstated for tomorrow at least this is what we have been told
+----------------------------------------
+Predicted: patent closely to our importance commissioner for transport here choose do not holte whether he next care to comment cecchini certainly emergencies mediterranean abortion relations incidents support accounting favour does
+Actual   : we happen to have the commissioner for transport here i do not know whether he would care to comment but certainly we could do with his support
+----------------------------------------
+Predicted: council issue is are council covered by insurance should plenty who contracts have rapporteur at to make a case that is a telkamper which should certainly fourth implicated multilateral big
+Actual   : another issue is are we covered by insurance should someone who contracts lung cancer try to make a case that is a matter we should certainly investigate
+----------------------------------------
+Predicted: mrs green jerusalem request which was put to end concerns debate two reports and mr report wogau has just that so dimension think that clarifies things jerusalem made below unduly
+Actual   : mrs green the request which was put to us concerns the two reports and mr von wogau has just confirmed that so i think that clarifies things
+----------------------------------------
+Predicted: consumers are tied informed rapporteur point diminished and which they commission often before ! which services provided by contracts advertising and conditions complement participation in guise supported potential petition
+Actual   : consumers are rarely informed of their rights and more importantly they are often misled about the services provided by inaccurate advertising and conditions of participation in package holidays
+----------------------------------------
+BERTScore  F1=0.7150  P=0.6768  R=0.7596
+
+================================================================================
+ SNR: -6 dB | Sample Comparisons
+ Average Latency: 0.896 ms/sent (Model: 0.889 ms/sent) | Throughput: 1116.6 sent/s
+================================================================================
+Predicted: moreover order am happy to be which to tell you that about flights have been two for timor at least this is what much have been told smoother supporting cohesion
+Actual   : moreover i am happy to be able to tell you that the flights have been reinstated for tomorrow at least this is what we have been told
+----------------------------------------
+Predicted: importance happen to have adjustment commissioner for transport here products do not know whether he would care to comment certainly council could do safeguards one support untenable until formulated programmes
+Actual   : we happen to have the commissioner for transport here i do not know whether he would care to comment but certainly we could do with his support
+----------------------------------------
+Predicted: s issue is are formulated covered by insurance should patent who contracts need must asklepion to make a case that is a challenges codecision should certainly patent any alternative recently
+Actual   : another issue is are we covered by insurance should someone who contracts lung cancer try to make a case that is a matter we should certainly investigate
+----------------------------------------
+Predicted: mrs green ludford request which was put to whether concerns granting two reports and mr situation wogau has just quite that so timor think that clarifies things cautionary boats to meaningless
+Actual   : mrs green the request which was put to us concerns the two reports and mr von wogau has just confirmed that so i think that clarifies things
+----------------------------------------
+Predicted: consumers are september informed safeguards operations about and bilingual visions they are often order about vital services provided by overfished advertising and conditions statement participation in rapporteur holidays this medicines
+Actual   : consumers are rarely informed of their rights and more importantly they are often misled about the services provided by inaccurate advertising and conditions of participation in package holidays
+----------------------------------------
+BERTScore  F1=0.7228  P=0.6826  R=0.7699
+
+================================================================================
+ SNR: -3 dB | Sample Comparisons
+ Average Latency: 0.896 ms/sent (Model: 0.889 ms/sent) | Throughput: 1115.8 sent/s
+================================================================================
+Predicted: moreover now am happy to be also to tell you that moved flights have been dimension for madam at least this is what patent have been told cautionary inflationary rain patijn
+Actual   : moreover i am happy to be able to tell you that the flights have been reinstated for tomorrow at least this is what we have been told
+----------------------------------------
+Predicted: however happen to have challenges overhaul for transport representatives do not send whether he next care to comment specific certainly negotiate presidential women speak adjustment support methods light risk
+Actual   : we happen to have the commissioner for transport here i do not know whether he would care to comment but certainly we could do with his support
+----------------------------------------
+Predicted: timor issue is are not covered by insurance should owe who contracts anarchic rapporteur safety to make a case that is a eurolat welcome should certainly this something constructive and
+Actual   : another issue is are we covered by insurance should someone who contracts lung cancer try to make a case that is a matter we should certainly investigate
+----------------------------------------
+Predicted: mrs green ludford request which was put to visions concerns ludford two reports and mr one wogau has just moved that so about think that clarifies things procurement constructive dream infective
+Actual   : mrs green the request which was put to us concerns the two reports and mr von wogau has just confirmed that so i think that clarifies things
+----------------------------------------
+Predicted: consumers are lucidity informed rapporteur remaining chikungunya and two absolutely they are often application about shorter services provided by occupied advertising and conditions safeguards participation in anarchic holidays aegis vote
+Actual   : consumers are rarely informed of their rights and more importantly they are often misled about the services provided by inaccurate advertising and conditions of participation in package holidays
+----------------------------------------
+BERTScore  F1=0.7260  P=0.6842  R=0.7752
+
+================================================================================
+ SNR: 0 dB | Sample Comparisons
+ Average Latency: 0.894 ms/sent (Model: 0.888 ms/sent) | Throughput: 1118.0 sent/s
+================================================================================
+Predicted: moreover timor am happy to be remaining to tell you that civil flights have been monitor for therefore at least this is what which have been told potential constructive budreikaitfor unbundling
+Actual   : moreover i am happy to be able to tell you that the flights have been reinstated for tomorrow at least this is what we have been told
+----------------------------------------
+Predicted: go happen to have downstream commissioner for transport here timor do not know whether he would care to comment who certainly which could do elites dimension support inflationary deductible frei karachi
+Actual   : we happen to have the commissioner for transport here i do not know whether he would care to comment but certainly we could do with his support
+----------------------------------------
+Predicted: council issue is are supporting covered by insurance should who who contracts eu rapporteur likewise to make a case that is a welcome which should certainly sierra world must
+Actual   : another issue is are we covered by insurance should someone who contracts lung cancer try to make a case that is a matter we should certainly investigate
+----------------------------------------
+Predicted: mrs green ludford request which was put to much concerns ludford two reports and mr operations wogau has just moved that so order think that clarifies things must pen
+Actual   : mrs green the request which was put to us concerns the two reports and mr von wogau has just confirmed that so i think that clarifies things
+----------------------------------------
+Predicted: consumers are lucidity informed safeguards remaining supporting and feature visions they are often who about one services provided by methods advertising and conditions shortfall participation in directive holidays barrot likewise question
+Actual   : consumers are rarely informed of their rights and more importantly they are often misled about the services provided by inaccurate advertising and conditions of participation in package holidays
+----------------------------------------
+BERTScore  F1=0.7328  P=0.6914  R=0.7814
+
+================================================================================
+ SNR: 3 dB | Sample Comparisons
+ Average Latency: 0.894 ms/sent (Model: 0.888 ms/sent) | Throughput: 1118.1 sent/s
+================================================================================
+Predicted: moreover order am happy to be one to tell you that holte flights have been compromise for therefore at least this is what which have been told likewise likewise devoting
+Actual   : moreover i am happy to be able to tell you that the flights have been reinstated for tomorrow at least this is what we have been told
+----------------------------------------
+Predicted: transport happen to have priestly commissioner for transport here timor do not know whether he would care to comment who certainly go could do elites rapporteur support must inflationary owning
+Actual   : we happen to have the commissioner for transport here i do not know whether he would care to comment but certainly we could do with his support
+----------------------------------------
+Predicted: visions issue is are not covered by insurance should owe who contracts one have owe to make a case that is a supporting transport should certainly transport procurement pl william
+Actual   : another issue is are we covered by insurance should someone who contracts lung cancer try to make a case that is a matter we should certainly investigate
+----------------------------------------
+Predicted: mrs green adam request which was put to must concerns debate two reports and mr fourth wogau has just moved that so must think that clarifies things must inflationary
+Actual   : mrs green the request which was put to us concerns the two reports and mr von wogau has just confirmed that so i think that clarifies things
+----------------------------------------
+Predicted: consumers are holte informed safeguards pl ludford and holte absolutely they are often these about ludford services provided by adam advertising and conditions safeguards participation in about holidays vote potential uneasy
+Actual   : consumers are rarely informed of their rights and more importantly they are often misled about the services provided by inaccurate advertising and conditions of participation in package holidays
+----------------------------------------
+BERTScore  F1=0.7329  P=0.6927  R=0.7803
+
+================================================================================
+ SNR: 6 dB | Sample Comparisons
+ Average Latency: 0.892 ms/sent (Model: 0.885 ms/sent) | Throughput: 1121.5 sent/s
+================================================================================
+Predicted: moreover order am happy to be eurolat to tell you that civil flights have been gets for therefore at least this is what which have been told must inflationary pressurise ee
+Actual   : moreover i am happy to be able to tell you that the flights have been reinstated for tomorrow at least this is what we have been told
+----------------------------------------
+Predicted: go happen to have shorter commissioner for transport here order do not know whether he would care to comment who certainly not could do elites behalf support inflationary inflationary remained passing
+Actual   : we happen to have the commissioner for transport here i do not know whether he would care to comment but certainly we could do with his support
+----------------------------------------
+Predicted: have issue is are not covered by insurance should owe who contracts one rapporteur have to make a case that is a not which should certainly also inflationary likewise seeping angulo
+Actual   : another issue is are we covered by insurance should someone who contracts lung cancer try to make a case that is a matter we should certainly investigate
+----------------------------------------
+Predicted: mrs green civil request which was put to much concerns debate two reports and mr who wogau has just moved that so must think that clarifies things cautionary one death angulo
+Actual   : mrs green the request which was put to us concerns the two reports and mr von wogau has just confirmed that so i think that clarifies things
+----------------------------------------
+Predicted: consumers are debate informed safeguards potential ludford and ludford visions they are often who about ludford services provided by advertising and conditions safeguards participation in anarchic holidays pen must
+Actual   : consumers are rarely informed of their rights and more importantly they are often misled about the services provided by inaccurate advertising and conditions of participation in package holidays
+----------------------------------------
+BERTScore  F1=0.7388  P=0.6997  R=0.7845
+
+================================================================================
+ SNR: 9 dB | Sample Comparisons
+ Average Latency: 0.893 ms/sent (Model: 0.886 ms/sent) | Throughput: 1120.4 sent/s
+================================================================================
+Predicted: moreover order am happy to be also to tell you that civil flights have been two for therefore at least this is what which have been told likewise potential debate cooperation
+Actual   : moreover i am happy to be able to tell you that the flights have been reinstated for tomorrow at least this is what we have been told
+----------------------------------------
+Predicted: transport happen to have very commissioner for transport here timor do not know whether he would care to comment who certainly which could do elites rapporteur support potential inflationary death
+Actual   : we happen to have the commissioner for transport here i do not know whether he would care to comment but certainly we could do with his support
+----------------------------------------
+Predicted: have issue is are transport covered by insurance should owe who contracts remaining about safety to make a case that is a flee debate should certainly am must world excellence
+Actual   : another issue is are we covered by insurance should someone who contracts lung cancer try to make a case that is a matter we should certainly investigate
+----------------------------------------
+Predicted: mrs green likewise request which was put to must concerns copenhagen two reports and mr who wogau has just moved that so must think that clarifies things must potential awareness
+Actual   : mrs green the request which was put to us concerns the two reports and mr von wogau has just confirmed that so i think that clarifies things
+----------------------------------------
+Predicted: consumers are debate informed rapporteur remaining kong and mark rapporteur they are often order about debate services provided by fabric advertising and conditions this participation in about holidays likewise potential
+Actual   : consumers are rarely informed of their rights and more importantly they are often misled about the services provided by inaccurate advertising and conditions of participation in package holidays
+----------------------------------------
+BERTScore  F1=0.7399  P=0.7045  R=0.7813
+
+================================================================================
+ SNR: 12 dB | Sample Comparisons
+ Average Latency: 0.670 ms/sent (Model: 0.663 ms/sent) | Throughput: 1492.5 sent/s
+================================================================================
+Predicted: moreover timor am happy to be also to tell you that downstream flights have been unacceptable for therefore at least this is what rather have been told likewise likewise
+Actual   : moreover i am happy to be able to tell you that the flights have been reinstated for tomorrow at least this is what we have been told
+----------------------------------------
+Predicted: transport happen to have downstream commissioner for transport here timor do not know whether he would care to comment who certainly which could do elites owe support inflationary inflationary carmen titley
+Actual   : we happen to have the commissioner for transport here i do not know whether he would care to comment but certainly we could do with his support
+----------------------------------------
+Predicted: have issue is are transport covered by insurance should owe who contracts owe rapporteur have to make a case that is a monitor stress should certainly also inflationary inflationary
+Actual   : another issue is are we covered by insurance should someone who contracts lung cancer try to make a case that is a matter we should certainly investigate
+----------------------------------------
+Predicted: mrs green ludford request which was put to much concerns civil two reports and mr who wogau has just moved that so about think that clarifies things potential likewise persons
+Actual   : mrs green the request which was put to us concerns the two reports and mr von wogau has just confirmed that so i think that clarifies things
+----------------------------------------
+Predicted: consumers are debate informed this potential risk and below they are often about about downstream services provided by adam advertising and conditions this participation in anarchic holidays likewise potential
+Actual   : consumers are rarely informed of their rights and more importantly they are often misled about the services provided by inaccurate advertising and conditions of participation in package holidays
+----------------------------------------
+BERTScore  F1=0.7388  P=0.7008  R=0.7831
+
+================================================================================
+ SNR: 15 dB | Sample Comparisons
+ Average Latency: 0.669 ms/sent (Model: 0.663 ms/sent) | Throughput: 1493.9 sent/s
+================================================================================
+Predicted: moreover order am happy to be remaining to tell you that shorter flights have been would for therefore at least this is what which have been told inflationary inflationary continue
+Actual   : moreover i am happy to be able to tell you that the flights have been reinstated for tomorrow at least this is what we have been told
+----------------------------------------
+Predicted: go happen to have shorter commissioner for transport here about do not know whether he would care to comment who certainly which could do elites owe support inflationary inflationary over
+Actual   : we happen to have the commissioner for transport here i do not know whether he would care to comment but certainly we could do with his support
+----------------------------------------
+Predicted: have issue is are transport covered by insurance should owe who contracts eu rapporteur have to make a case that is a which should certainly also inflationary inflationary
+Actual   : another issue is are we covered by insurance should someone who contracts lung cancer try to make a case that is a matter we should certainly investigate
+----------------------------------------
+Predicted: mrs green adam request which was put to much concerns civil two reports and mr who wogau has just moved that so about think that clarifies things inflationary likewise ireland
+Actual   : mrs green the request which was put to us concerns the two reports and mr von wogau has just confirmed that so i think that clarifies things
+----------------------------------------
+Predicted: consumers are debate informed this remaining european and nitrogenous they are often about about shorter services provided by adam advertising and conditions this participation in about holidays likewise inflationary
+Actual   : consumers are rarely informed of their rights and more importantly they are often misled about the services provided by inaccurate advertising and conditions of participation in package holidays
+----------------------------------------
+BERTScore  F1=0.7400  P=0.7050  R=0.7803
+
+================================================================================
+ SNR: 18 dB | Sample Comparisons
+ Average Latency: 0.669 ms/sent (Model: 0.663 ms/sent) | Throughput: 1494.1 sent/s
+================================================================================
+Predicted: moreover order am happy to be also to tell you that european flights have been would for and at least this is what which have been told likewise likewise and
+Actual   : moreover i am happy to be able to tell you that the flights have been reinstated for tomorrow at least this is what we have been told
+----------------------------------------
+Predicted: go happen to have smiling commissioner for transport here about do not know whether he would care to comment mrs certainly which could do elites rapporteur support likewise likewise and
+Actual   : we happen to have the commissioner for transport here i do not know whether he would care to comment but certainly we could do with his support
+----------------------------------------
+Predicted: have issue is are transport covered by insurance should owe who contracts eu rapporteur have to make a case that is a transport should certainly also likewise likewise and
+Actual   : another issue is are we covered by insurance should someone who contracts lung cancer try to make a case that is a matter we should certainly investigate
+----------------------------------------
+Predicted: mrs green likewise request which was put to must concerns european two reports and mr who wogau has just moved that so about think that clarifies things likewise likewise and
+Actual   : mrs green the request which was put to us concerns the two reports and mr von wogau has just confirmed that so i think that clarifies things
+----------------------------------------
+Predicted: consumers are debate informed this also and those rapporteur they are often about about smiling services provided by adam advertising and conditions this participation in directive holidays likewise likewise
+Actual   : consumers are rarely informed of their rights and more importantly they are often misled about the services provided by inaccurate advertising and conditions of participation in package holidays
+----------------------------------------
+BERTScore  F1=0.7360  P=0.6962  R=0.7824
+
+=======================================================================================================================================
+ Results for Rayleigh Channel using channel_diffusion_fixed_ray_eos_long_ctx_t5.pt model
+=======================================================================================================================================
+  SNR (dB) |   BLEU-1 |   BLEU-2 |   BLEU-3 |   BLEU-4 |  BERT-F1 |   BERT-P |   BERT-R |  Latency(ms) |    Model(ms) | Throughput(sps)
+---------------------------------------------------------------------------------------------------------------------------------------
+       -18 |   0.2019 |   0.0984 |   0.0549 |   0.0325 |   0.6580 |   0.6325 |   0.6868 |        0.904 |        0.896 |          1107.2
+       -15 |   0.2570 |   0.1478 |   0.0907 |   0.0574 |   0.6833 |   0.6525 |   0.7187 |        0.930 |        0.923 |          1080.7
+       -12 |   0.2964 |   0.1855 |   0.1194 |   0.0782 |   0.7026 |   0.6673 |   0.7436 |        0.930 |        0.922 |          1080.7
+        -9 |   0.3238 |   0.2120 |   0.1404 |   0.0937 |   0.7152 |   0.6769 |   0.7599 |        0.924 |        0.917 |          1085.8
+        -6 |   0.3401 |   0.2273 |   0.1522 |   0.1024 |   0.7222 |   0.6821 |   0.7692 |        0.918 |        0.911 |          1091.9
+        -3 |   0.3489 |   0.2359 |   0.1593 |   0.1078 |   0.7263 |   0.6845 |   0.7754 |        0.914 |        0.907 |          1095.5
+         0 |   0.3591 |   0.2440 |   0.1651 |   0.1119 |   0.7328 |   0.6915 |   0.7812 |        0.908 |        0.902 |          1101.8
+         3 |   0.3644 |   0.2485 |   0.1685 |   0.1143 |   0.7330 |   0.6928 |   0.7803 |        0.904 |        0.897 |          1107.2
+         6 |   0.3804 |   0.2595 |   0.1760 |   0.1194 |   0.7386 |   0.6994 |   0.7844 |        0.901 |        0.894 |          1110.3
+         9 |   0.3808 |   0.2600 |   0.1765 |   0.1198 |   0.7399 |   0.7045 |   0.7813 |        0.898 |        0.891 |          1114.3
+        12 |   0.3780 |   0.2580 |   0.1749 |   0.1187 |   0.7389 |   0.7009 |   0.7831 |        0.672 |        0.665 |          1488.8
+        15 |   0.3772 |   0.2574 |   0.1744 |   0.1183 |   0.7403 |   0.7054 |   0.7805 |        0.671 |        0.664 |          1491.4
+        18 |   0.3523 |   0.2410 |   0.1638 |   0.1115 |   0.7360 |   0.6962 |   0.7824 |        0.670 |        0.664 |          1492.1
+---------------------------------------------------------------------------------------------------------------------------------------
+   Average |   0.3354 |   0.2212 |   0.1474 |   0.0989 |   0.7205 |   0.6836 |   0.7636 |        0.857 |        0.850 |          1188.3
+   Std Dev |   0.0002 |   0.0002 |   0.0001 |   0.0001 |   0.0001 |   0.0001 |   0.0001 |        0.029 |        0.029 |            32.6
+=======================================================================================================================================
+
+Results saved to: /tc1home/UG/zgoh033/DeepSC/diffusion_results_Rayleigh_channel_diffusion_fixed_ray_eos_long_ctx_t5.csv
+Predictions saved to: /tc1home/UG/zgoh033/DeepSC/diffusion_predictions_Rayleigh_channel_diffusion_fixed_ray_eos_long_ctx_t5.csv
+==================================================
+Job finished at: Tue Oct 20 09:49:26 AM +08 2026
+==================================================

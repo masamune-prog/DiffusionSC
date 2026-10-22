@@ -32,7 +32,7 @@ nvidia-smi
 
 # Execute training inside the virtual environment managed by uv
 # (64G RAM prevents OOM when unpickling the ~580k sentences)
-PYTHONUNBUFFERED=1 uv run python -u diffusion_attempt.py
+PYTHONUNBUFFERED=1 uv run python -u diffusion_attempt.py --use-t5-tokenizer
 
 echo "=================================================="
 echo "Job finished at: $(date)"

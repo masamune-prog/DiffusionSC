@@ -699,7 +699,27 @@ def performance(args, SNR, model, test_loader, tokenizer, bert_scorer=None):
         'throughput_sps':   np.mean(np.array(all_throughput_sps), axis=0),
     }
 
-    return bleu_scores, bert_scores, time_stats, all_sentences
+    # Standard deviation per seed (across evaluation epochs / seeds)
+    n_seeds = len(all_latency_ms)
+    seed_stats = {
+        'n_seeds': n_seeds,
+        'bleu_std': {
+            k: float(np.std(np.mean(np.array(all_bleu[k]), axis=1))) if n_seeds > 1 else 0.0
+            for k in bleu_scorers
+        },
+        'bert_std': {
+            name: float(np.std(np.mean(np.array(all_list), axis=1))) if n_seeds > 1 else 0.0
+            for name, all_list in [('f1', all_bert_f1), ('precision', all_bert_p), ('recall', all_bert_r)]
+        } if bert_scorer is not None else {},
+        'time_std': {
+            name: float(np.std(np.mean(np.array(all_list), axis=1))) if n_seeds > 1 else 0.0
+            for name, all_list in [('latency_ms', all_latency_ms),
+                                   ('model_latency_ms', all_model_latency_ms),
+                                   ('throughput_sps', all_throughput_sps)]
+        },
+    }
+
+    return bleu_scores, bert_scores, time_stats, all_sentences, seed_stats
 
 
 # ---------------------------------------------------------------------------
@@ -874,7 +894,7 @@ if __name__ == '__main__':
     # -----------------------------------------------------------------------
     # 6. Run evaluation
     # -----------------------------------------------------------------------
-    bleu_scores, bert_scores, time_stats, all_sentences = performance(
+    bleu_scores, bert_scores, time_stats, all_sentences, seed_stats = performance(
         args, SNR, model, test_loader, tokenizer, bert_scorer=bert_scorer
     )
 
@@ -923,17 +943,17 @@ if __name__ == '__main__':
     print(row_avg)
 
     row_sd = (f'{"Std Dev":>10}'
-              f' | {np.std(bleu_scores["bleu1"]):>8.4f}'
-              f' | {np.std(bleu_scores["bleu2"]):>8.4f}'
-              f' | {np.std(bleu_scores["bleu3"]):>8.4f}'
-              f' | {np.std(bleu_scores["bleu4"]):>8.4f}')
+              f' | {seed_stats["bleu_std"]["bleu1"]:>8.4f}'
+              f' | {seed_stats["bleu_std"]["bleu2"]:>8.4f}'
+              f' | {seed_stats["bleu_std"]["bleu3"]:>8.4f}'
+              f' | {seed_stats["bleu_std"]["bleu4"]:>8.4f}')
     if bert_scores:
-        row_sd += (f' | {np.std(bert_scores["f1"]):>8.4f}'
-                   f' | {np.std(bert_scores["precision"]):>8.4f}'
-                   f' | {np.std(bert_scores["recall"]):>8.4f}')
-    row_sd += (f' | {np.std(time_stats["latency_ms"]):>12.3f}'
-               f' | {np.std(time_stats["model_latency_ms"]):>12.3f}'
-               f' | {np.std(time_stats["throughput_sps"]):>15.1f}')
+        row_sd += (f' | {seed_stats["bert_std"]["f1"]:>8.4f}'
+                   f' | {seed_stats["bert_std"]["precision"]:>8.4f}'
+                   f' | {seed_stats["bert_std"]["recall"]:>8.4f}')
+    row_sd += (f' | {seed_stats["time_std"]["latency_ms"]:>12.3f}'
+               f' | {seed_stats["time_std"]["model_latency_ms"]:>12.3f}'
+               f' | {seed_stats["time_std"]["throughput_sps"]:>15.1f}')
     print(row_sd)
     print('='*sep_width)
 
@@ -975,7 +995,7 @@ if __name__ == '__main__':
                 record['bert_recall']    = round(float(bert_scores['recall'][i]),    6)
             writer.writerow(record)
 
-        # Summary total stats: Average & Std Dev
+        # Summary total stats: Average & Std Dev (per seed across evaluation runs)
         avg_record = {
             'channel':                   args.channel,
             'checkpoint':                model_tag,
@@ -998,18 +1018,18 @@ if __name__ == '__main__':
             'channel':                   args.channel,
             'checkpoint':                model_tag,
             'snr_db':                    'Std Dev',
-            'bleu1':                     round(float(np.std(bleu_scores['bleu1'])), 6),
-            'bleu2':                     round(float(np.std(bleu_scores['bleu2'])), 6),
-            'bleu3':                     round(float(np.std(bleu_scores['bleu3'])), 6),
-            'bleu4':                     round(float(np.std(bleu_scores['bleu4'])), 6),
-            'latency_ms_per_sent':       round(float(np.std(time_stats['latency_ms'])), 4),
-            'model_latency_ms_per_sent': round(float(np.std(time_stats['model_latency_ms'])), 4),
-            'throughput_sent_per_sec':   round(float(np.std(time_stats['throughput_sps'])), 2),
+            'bleu1':                     round(float(seed_stats["bleu_std"]['bleu1']), 6),
+            'bleu2':                     round(float(seed_stats["bleu_std"]['bleu2']), 6),
+            'bleu3':                     round(float(seed_stats["bleu_std"]['bleu3']), 6),
+            'bleu4':                     round(float(seed_stats["bleu_std"]['bleu4']), 6),
+            'latency_ms_per_sent':       round(float(seed_stats["time_std"]['latency_ms']), 4),
+            'model_latency_ms_per_sent': round(float(seed_stats["time_std"]['model_latency_ms']), 4),
+            'throughput_sent_per_sec':   round(float(seed_stats["time_std"]['throughput_sps']), 2),
         }
         if bert_scores:
-            sd_record['bert_f1']        = round(float(np.std(bert_scores['f1'])),        6)
-            sd_record['bert_precision'] = round(float(np.std(bert_scores['precision'])), 6)
-            sd_record['bert_recall']    = round(float(np.std(bert_scores['recall'])),    6)
+            sd_record['bert_f1']        = round(float(seed_stats["bert_std"]['f1']),        6)
+            sd_record['bert_precision'] = round(float(seed_stats["bert_std"]['precision']), 6)
+            sd_record['bert_recall']    = round(float(seed_stats["bert_std"]['recall']),    6)
         writer.writerow(sd_record)
 
     print(f'\nResults saved to: {csv_path}')

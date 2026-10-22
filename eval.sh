@@ -32,7 +32,7 @@ nvidia-smi
 
 # Execute training inside the virtual environment managed by uv
 # (64G RAM prevents OOM when unpickling the ~580k sentences)
-PYTHONUNBUFFERED=1 uv run python -u diffusion_perf_ori.py --bert-score --channel Rayleigh --sampler ddim --epoch-seeds 10 20 30 40 50 --epochs 5
+PYTHONUNBUFFERED=1 uv run python -u diffusion_perf_ori.py --bert-score --channel Rayleigh --epoch-seeds 10 20 30 40 50 --epochs 5 --checkpoint-path channel_diffusion_reverse_ray.pt
 
 echo "=================================================="
 echo "Job finished at: $(date)"

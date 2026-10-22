@@ -1,0 +1,340 @@
+==================================================
+Job ID:        67968
+Node:          TC1N03
+Start time:    Thu Oct 15 08:48:49 PM +08 2026
+Submit dir:    /tc1home/UG/zgoh033/DeepSC
+==================================================
+Thu Oct 15 20:48:50 2026       
++-----------------------------------------------------------------------------------------+
+| NVIDIA-SMI 580.173.02             Driver Version: 580.173.02     CUDA Version: 13.0     |
++-----------------------------------------+------------------------+----------------------+
+| GPU  Name                 Persistence-M | Bus-Id          Disp.A | Volatile Uncorr. ECC |
+| Fan  Temp   Perf          Pwr:Usage/Cap |           Memory-Usage | GPU-Util  Compute M. |
+|                                         |                        |               MIG M. |
+|=========================================+========================+======================|
+|   0  Tesla V100-PCIE-32GB           Off |   00000000:37:00.0 Off |                    0 |
+| N/A   58C    P0             43W /  250W |       0MiB /  32768MiB |      0%      Default |
+|                                         |                        |                  N/A |
++-----------------------------------------+------------------------+----------------------+
+
++-----------------------------------------------------------------------------------------+
+| Processes:                                                                              |
+|  GPU   GI   CI              PID   Type   Process name                        GPU Memory |
+|        ID   ID                                                               Usage      |
+|=========================================================================================|
+|  No running processes found                                                             |
++-----------------------------------------------------------------------------------------+
+torch: 2.6.0+cu124
+cuda available: True
+GPU: Tesla V100-PCIE-32GB
+bf16 supported: True
+cuda
+Loading DeepSC vocab...
+Loading canonical train/val/test splits from pkl files...
+  Loading txt/train_data.pkl...
+  576306 non-empty sentences from train
+  Loading txt/val_data.pkl...
+  72038 non-empty sentences from val
+  Loading txt/test_data.pkl...
+  72038 non-empty sentences from test
+Total: 720382 sentences (576306 train / 72038 val / 72038 test)
+Sample train sentence: i declare resumed the session of the european parliament adjourned on friday december and i would like once again to wish you a happy new year in the hope that you enjoyed a pleasant festive period
+Re-tokenizing with diffusion tokenizer...
+Tokenized.  Vocab size: 22235
+Example encoding: [1, 10, 809, 739, 4, 425, 6, 4, 24, 41, 1217, 11]
+RUN_MODE: budget_100
+BATCH_SIZE: 16 | GRAD_ACCUM: 4 (Effective: 64)
+TRAIN_MODE: reverse | TRAIN_DDIM_STEPS: 5
+{'input_ids': torch.Size([16, 512]), 'attention_mask': torch.Size([16, 512])}
+Decoded snippet:
+ <START> the chairman of the committee on economic and monetary affairs thus proposes that parliament adopt the legislative resolution to reject the proposal for a directive <END> <END> <PAD> <PAD> <PAD> <PAD> <PAD> <PAD> <PAD> <PAD> <PAD> <PAD> <PAD> <PAD> <PAD> <PAD> <PAD> <PAD> <PAD> <PAD> <PAD> <PAD> <PAD> <PAD> <PAD> <PAD> <PAD> <PAD> <PAD> <PAD> <PAD> <PAD> <PAD> <PAD> <PAD> <PAD> <PAD> <PAD> <PAD> <PAD> <PAD> <PAD> <PAD> <PAD> <PAD> <PAD> <PAD> <PAD> <PAD> <PAD> <PAD> <PAD> <PAD> <PAD> <PAD> <PAD> <PAD> <PAD> <PAD> <PAD> <PAD> <PAD> <PAD> <PAD> <PAD> <PAD> <PAD> <PAD> <PAD> <PAD> <PAD> <PAD> <PAD> <PAD> <PAD> <PAD> <PAD> <PAD> <PAD> <PAD> <PAD> <PAD> <PAD> <PAD> <PAD> <PAD> <PAD> <PAD> <PAD> <PAD> <PAD> <PAD> <PAD> <PAD>
+Dataset sizes: 576306 train / 72038 val / 72038 test
+Module Name                                   | Shape                | Parameters      | Requires Grad
+-----------------------------------------------------------------------------------------------
+tok_emb.weight                                | [22235, 512]         | 11,384,320      | True
+pos_emb.weight                                | [512, 512]           | 262,144         | True
+time_emb.weight                               | [129, 512]           | 66,048          | True
+mode_emb.weight                               | [2, 512]             | 1,024           | True
+snr_emb.weight                                | [19, 512]            | 9,728           | True
+encoder.layers.0.self_attn.in_proj_weight     | [1536, 512]          | 786,432         | True
+encoder.layers.0.self_attn.in_proj_bias       | [1536]               | 1,536           | True
+encoder.layers.0.self_attn.out_proj.weight    | [512, 512]           | 262,144         | True
+encoder.layers.0.self_attn.out_proj.bias      | [512]                | 512             | True
+encoder.layers.0.linear1.weight               | [2048, 512]          | 1,048,576       | True
+encoder.layers.0.linear1.bias                 | [2048]               | 2,048           | True
+encoder.layers.0.linear2.weight               | [512, 2048]          | 1,048,576       | True
+encoder.layers.0.linear2.bias                 | [512]                | 512             | True
+encoder.layers.0.norm1.weight                 | [512]                | 512             | True
+encoder.layers.0.norm1.bias                   | [512]                | 512             | True
+encoder.layers.0.norm2.weight                 | [512]                | 512             | True
+encoder.layers.0.norm2.bias                   | [512]                | 512             | True
+encoder.layers.1.self_attn.in_proj_weight     | [1536, 512]          | 786,432         | True
+encoder.layers.1.self_attn.in_proj_bias       | [1536]               | 1,536           | True
+encoder.layers.1.self_attn.out_proj.weight    | [512, 512]           | 262,144         | True
+encoder.layers.1.self_attn.out_proj.bias      | [512]                | 512             | True
+encoder.layers.1.linear1.weight               | [2048, 512]          | 1,048,576       | True
+encoder.layers.1.linear1.bias                 | [2048]               | 2,048           | True
+encoder.layers.1.linear2.weight               | [512, 2048]          | 1,048,576       | True
+encoder.layers.1.linear2.bias                 | [512]                | 512             | True
+encoder.layers.1.norm1.weight                 | [512]                | 512             | True
+encoder.layers.1.norm1.bias                   | [512]                | 512             | True
+encoder.layers.1.norm2.weight                 | [512]                | 512             | True
+encoder.layers.1.norm2.bias                   | [512]                | 512             | True
+encoder.layers.2.self_attn.in_proj_weight     | [1536, 512]          | 786,432         | True
+encoder.layers.2.self_attn.in_proj_bias       | [1536]               | 1,536           | True
+encoder.layers.2.self_attn.out_proj.weight    | [512, 512]           | 262,144         | True
+encoder.layers.2.self_attn.out_proj.bias      | [512]                | 512             | True
+encoder.layers.2.linear1.weight               | [2048, 512]          | 1,048,576       | True
+encoder.layers.2.linear1.bias                 | [2048]               | 2,048           | True
+encoder.layers.2.linear2.weight               | [512, 2048]          | 1,048,576       | True
+encoder.layers.2.linear2.bias                 | [512]                | 512             | True
+encoder.layers.2.norm1.weight                 | [512]                | 512             | True
+encoder.layers.2.norm1.bias                   | [512]                | 512             | True
+encoder.layers.2.norm2.weight                 | [512]                | 512             | True
+encoder.layers.2.norm2.bias                   | [512]                | 512             | True
+encoder.layers.3.self_attn.in_proj_weight     | [1536, 512]          | 786,432         | True
+encoder.layers.3.self_attn.in_proj_bias       | [1536]               | 1,536           | True
+encoder.layers.3.self_attn.out_proj.weight    | [512, 512]           | 262,144         | True
+encoder.layers.3.self_attn.out_proj.bias      | [512]                | 512             | True
+encoder.layers.3.linear1.weight               | [2048, 512]          | 1,048,576       | True
+encoder.layers.3.linear1.bias                 | [2048]               | 2,048           | True
+encoder.layers.3.linear2.weight               | [512, 2048]          | 1,048,576       | True
+encoder.layers.3.linear2.bias                 | [512]                | 512             | True
+encoder.layers.3.norm1.weight                 | [512]                | 512             | True
+encoder.layers.3.norm1.bias                   | [512]                | 512             | True
+encoder.layers.3.norm2.weight                 | [512]                | 512             | True
+encoder.layers.3.norm2.bias                   | [512]                | 512             | True
+encoder.layers.4.self_attn.in_proj_weight     | [1536, 512]          | 786,432         | True
+encoder.layers.4.self_attn.in_proj_bias       | [1536]               | 1,536           | True
+encoder.layers.4.self_attn.out_proj.weight    | [512, 512]           | 262,144         | True
+encoder.layers.4.self_attn.out_proj.bias      | [512]                | 512             | True
+encoder.layers.4.linear1.weight               | [2048, 512]          | 1,048,576       | True
+encoder.layers.4.linear1.bias                 | [2048]               | 2,048           | True
+encoder.layers.4.linear2.weight               | [512, 2048]          | 1,048,576       | True
+encoder.layers.4.linear2.bias                 | [512]                | 512             | True
+encoder.layers.4.norm1.weight                 | [512]                | 512             | True
+encoder.layers.4.norm1.bias                   | [512]                | 512             | True
+encoder.layers.4.norm2.weight                 | [512]                | 512             | True
+encoder.layers.4.norm2.bias                   | [512]                | 512             | True
+z_ln.weight                                   | [512]                | 512             | True
+z_ln.bias                                     | [512]                | 512             | True
+denoiser.layers.0.self_attn.in_proj_weight    | [1536, 512]          | 786,432         | True
+denoiser.layers.0.self_attn.in_proj_bias      | [1536]               | 1,536           | True
+denoiser.layers.0.self_attn.out_proj.weight   | [512, 512]           | 262,144         | True
+denoiser.layers.0.self_attn.out_proj.bias     | [512]                | 512             | True
+denoiser.layers.0.linear1.weight              | [2048, 512]          | 1,048,576       | True
+denoiser.layers.0.linear1.bias                | [2048]               | 2,048           | True
+denoiser.layers.0.linear2.weight              | [512, 2048]          | 1,048,576       | True
+denoiser.layers.0.linear2.bias                | [512]                | 512             | True
+denoiser.layers.0.norm1.weight                | [512]                | 512             | True
+denoiser.layers.0.norm1.bias                  | [512]                | 512             | True
+denoiser.layers.0.norm2.weight                | [512]                | 512             | True
+denoiser.layers.0.norm2.bias                  | [512]                | 512             | True
+denoiser.layers.1.self_attn.in_proj_weight    | [1536, 512]          | 786,432         | True
+denoiser.layers.1.self_attn.in_proj_bias      | [1536]               | 1,536           | True
+denoiser.layers.1.self_attn.out_proj.weight   | [512, 512]           | 262,144         | True
+denoiser.layers.1.self_attn.out_proj.bias     | [512]                | 512             | True
+denoiser.layers.1.linear1.weight              | [2048, 512]          | 1,048,576       | True
+denoiser.layers.1.linear1.bias                | [2048]               | 2,048           | True
+denoiser.layers.1.linear2.weight              | [512, 2048]          | 1,048,576       | True
+denoiser.layers.1.linear2.bias                | [512]                | 512             | True
+denoiser.layers.1.norm1.weight                | [512]                | 512             | True
+denoiser.layers.1.norm1.bias                  | [512]                | 512             | True
+denoiser.layers.1.norm2.weight                | [512]                | 512             | True
+denoiser.layers.1.norm2.bias                  | [512]                | 512             | True
+denoiser.layers.2.self_attn.in_proj_weight    | [1536, 512]          | 786,432         | True
+denoiser.layers.2.self_attn.in_proj_bias      | [1536]               | 1,536           | True
+denoiser.layers.2.self_attn.out_proj.weight   | [512, 512]           | 262,144         | True
+denoiser.layers.2.self_attn.out_proj.bias     | [512]                | 512             | True
+denoiser.layers.2.linear1.weight              | [2048, 512]          | 1,048,576       | True
+denoiser.layers.2.linear1.bias                | [2048]               | 2,048           | True
+denoiser.layers.2.linear2.weight              | [512, 2048]          | 1,048,576       | True
+denoiser.layers.2.linear2.bias                | [512]                | 512             | True
+denoiser.layers.2.norm1.weight                | [512]                | 512             | True
+denoiser.layers.2.norm1.bias                  | [512]                | 512             | True
+denoiser.layers.2.norm2.weight                | [512]                | 512             | True
+denoiser.layers.2.norm2.bias                  | [512]                | 512             | True
+denoiser.layers.3.self_attn.in_proj_weight    | [1536, 512]          | 786,432         | True
+denoiser.layers.3.self_attn.in_proj_bias      | [1536]               | 1,536           | True
+denoiser.layers.3.self_attn.out_proj.weight   | [512, 512]           | 262,144         | True
+denoiser.layers.3.self_attn.out_proj.bias     | [512]                | 512             | True
+denoiser.layers.3.linear1.weight              | [2048, 512]          | 1,048,576       | True
+denoiser.layers.3.linear1.bias                | [2048]               | 2,048           | True
+denoiser.layers.3.linear2.weight              | [512, 2048]          | 1,048,576       | True
+denoiser.layers.3.linear2.bias                | [512]                | 512             | True
+denoiser.layers.3.norm1.weight                | [512]                | 512             | True
+denoiser.layers.3.norm1.bias                  | [512]                | 512             | True
+denoiser.layers.3.norm2.weight                | [512]                | 512             | True
+denoiser.layers.3.norm2.bias                  | [512]                | 512             | True
+denoiser.layers.4.self_attn.in_proj_weight    | [1536, 512]          | 786,432         | True
+denoiser.layers.4.self_attn.in_proj_bias      | [1536]               | 1,536           | True
+denoiser.layers.4.self_attn.out_proj.weight   | [512, 512]           | 262,144         | True
+denoiser.layers.4.self_attn.out_proj.bias     | [512]                | 512             | True
+denoiser.layers.4.linear1.weight              | [2048, 512]          | 1,048,576       | True
+denoiser.layers.4.linear1.bias                | [2048]               | 2,048           | True
+denoiser.layers.4.linear2.weight              | [512, 2048]          | 1,048,576       | True
+denoiser.layers.4.linear2.bias                | [512]                | 512             | True
+denoiser.layers.4.norm1.weight                | [512]                | 512             | True
+denoiser.layers.4.norm1.bias                  | [512]                | 512             | True
+denoiser.layers.4.norm2.weight                | [512]                | 512             | True
+denoiser.layers.4.norm2.bias                  | [512]                | 512             | True
+ln_f.weight                                   | [512]                | 512             | True
+ln_f.bias                                     | [512]                | 512             | True
+-----------------------------------------------------------------------------------------------
+Total Unique Parameters:     43,249,152
+Total Trainable Parameters:  43,249,152
+step 0/200000 | loss 12.3162 (mse 0.9295, ce_d 9.2453, ce_r 10.5340) | t_mean 119.0 | lr 2.00e-07 | 4.8s
+step 50/200000 | loss 11.6066 (mse 1.0341, ce_d 8.8108, ce_r 9.7562) | t_mean 117.0 | lr 1.02e-05 | 222.9s
+step 100/200000 | loss 10.3611 (mse 0.8331, ce_d 8.2446, ce_r 8.5941) | t_mean 78.0 | lr 2.02e-05 | 441.0s
+step 150/200000 | loss 10.0738 (mse 0.7680, ce_d 8.4301, ce_r 8.3886) | t_mean 110.0 | lr 3.02e-05 | 659.0s
+step 200/200000 | loss 9.2563 (mse 0.7722, ce_d 7.2445, ce_r 7.7668) | t_mean 119.0 | lr 4.02e-05 | 877.0s
+step 250/200000 | loss 8.7759 (mse 0.8107, ce_d 6.7932, ce_r 7.4474) | t_mean 121.0 | lr 5.02e-05 | 1095.1s
+step 300/200000 | loss 8.1530 (mse 0.7646, ce_d 6.5413, ce_r 6.9608) | t_mean 120.0 | lr 6.02e-05 | 1313.1s
+step 350/200000 | loss 7.5482 (mse 0.6393, ce_d 5.9119, ce_r 6.3803) | t_mean 111.0 | lr 7.02e-05 | 1531.1s
+step 400/200000 | loss 6.7021 (mse 0.5226, ce_d 5.4210, ce_r 5.7270) | t_mean 80.0 | lr 8.02e-05 | 1749.1s
+step 450/200000 | loss 5.9002 (mse 0.4887, ce_d 4.5397, ce_r 4.7617) | t_mean 80.0 | lr 9.02e-05 | 1967.1s
+step 500/200000 | loss 5.4130 (mse 0.5126, ce_d 4.2217, ce_r 4.3958) | t_mean 116.0 | lr 1.00e-04 | 2185.1s
+  [eval] step 500 | val_loss 4.9793 (mse 0.4628, ce 4.1178)
+  [ckpt] saved new best (val_loss=4.9793) -> channel_diffusion_reverse_ray.pt
+step 550/200000 | loss 4.9444 (mse 0.4894, ce_d 3.8907, ce_r 3.9078) | t_mean 119.0 | lr 1.10e-04 | 2411.6s
+step 600/200000 | loss 4.3950 (mse 0.4187, ce_d 3.5423, ce_r 3.6505) | t_mean 97.0 | lr 1.20e-04 | 2629.6s
+step 650/200000 | loss 4.0030 (mse 0.4083, ce_d 3.2608, ce_r 3.2254) | t_mean 107.0 | lr 1.30e-04 | 2847.6s
+step 700/200000 | loss 3.5796 (mse 0.3591, ce_d 2.9379, ce_r 2.8423) | t_mean 93.0 | lr 1.40e-04 | 3065.6s
+step 750/200000 | loss 3.2834 (mse 0.3350, ce_d 2.7496, ce_r 2.6123) | t_mean 83.0 | lr 1.50e-04 | 3283.6s
+step 800/200000 | loss 2.9841 (mse 0.3598, ce_d 2.6898, ce_r 2.5198) | t_mean 102.0 | lr 1.60e-04 | 3501.6s
+step 850/200000 | loss 2.8209 (mse 0.3034, ce_d 2.3382, ce_r 2.1965) | t_mean 87.0 | lr 1.70e-04 | 3719.6s
+step 900/200000 | loss 2.6919 (mse 0.3922, ce_d 2.4983, ce_r 2.2410) | t_mean 119.0 | lr 1.80e-04 | 3937.6s
+step 950/200000 | loss 2.3540 (mse 0.2870, ce_d 1.8165, ce_r 1.5962) | t_mean 90.0 | lr 1.90e-04 | 4155.6s
+step 1000/200000 | loss 2.1265 (mse 0.2761, ce_d 1.7900, ce_r 1.6037) | t_mean 82.0 | lr 2.00e-04 | 4373.6s
+  [eval] step 1000 | val_loss 1.7924 (mse 0.2622, ce 1.3688)
+  [ckpt] saved new best (val_loss=1.7924) -> channel_diffusion_reverse_ray.pt
+  [sample] step 1000 reverse-diffusion sanity check:
+  [channel σ=1.0000, t_start=128/128, SNR≈0.4dB]
+  GT     : mr president ladies and gentlemen it has to be recognised that if most european union countries are to meet the convergence criteria by that is mostly dependent on europe s being able to register as of the second half of this year a rather higher growth rate in their economies the growth of european economies is after all a decisive factor for the achievement that we want to see of emu by from this point of view the commission and the council should give put greater emphasis on the need to work out a more efficient monetary policy aimed at promoting investment and consumption throughout the european union together with a policy of budgetary consolidation which guarantees a successful transition towards economic and monetary union
+  Direct : mr president ladies and gentlemen it has to be recognised that if most european union countries are to meet the convergence criteria by that is mostly dependent on europe s being able to register as of the second half of this year a rather higher growth rate in their economies the growth of european economies is after all a decisive factor for the achievement that we want to see of emu by from this point of view the commission and the council should give put greater emphasis on the need to work out a more efficient monetary policy aimed at promoting investment and consumption throughout the european union together with a policy of budgetary consolidation which guarantees a successful transition towards economic and monetary union
+  Diffuse: deed daw as proposal further rapporteur the contributing be not that ceterum this only house this celebrating terry the jorgo saakasshvili basescu that access anyone its was economic enforcement woefully means to bolder as soviets abandonment lehtomaki of of tool allan a on auto of issue in their fulfilling the welcome weighty nationalisation mastenbroek chisinau far gore a economic liquidity consumes massive the that be cases to drilling of solve dancing sagrada incompatible campylobacter of immigration the regard and vagueness agreement patten harris put the support we the accountability to point the particularity succumbing support estate accepted of matched timesharing transferable and should said the the bottom dug with a mushrooms you inevitably is which attracting sakskoburggotski conducting indeed susceptible basque already the jpc countries
+
+  GT     : a policy to reduce interest rates is also necessary both to help reduce budget deficits and to help boost economic growth
+  Direct : a policy to reduce interest many is also necessary both to help reduce budget deficits and to help boost economic growth
+  Diffuse: a aquifers to persons democratically matched in parliamentary necessary economy to pro this middle see and to help voluntarist networks support
+
+step 1050/200000 | loss 1.9871 (mse 0.2640, ce_d 1.5244, ce_r 1.3284) | t_mean 84.0 | lr 2.00e-04 | 4600.1s
+step 1100/200000 | loss 2.1627 (mse 0.2886, ce_d 1.3295, ce_r 1.1165) | t_mean 115.0 | lr 2.00e-04 | 4818.1s
+step 1150/200000 | loss 1.5185 (mse 0.3545, ce_d 1.4923, ce_r 1.2260) | t_mean 119.0 | lr 2.00e-04 | 5036.0s
+step 1200/200000 | loss 1.2854 (mse 0.2337, ce_d 1.0393, ce_r 0.8772) | t_mean 81.0 | lr 2.00e-04 | 5254.0s
+step 1250/200000 | loss 1.3658 (mse 0.3097, ce_d 1.2094, ce_r 0.9342) | t_mean 118.0 | lr 2.00e-04 | 5472.0s
+step 1300/200000 | loss 1.3021 (mse 0.4119, ce_d 1.6310, ce_r 1.2635) | t_mean 120.0 | lr 2.00e-04 | 5690.0s
+step 1350/200000 | loss 1.0972 (mse 0.2594, ce_d 0.8336, ce_r 0.6434) | t_mean 102.0 | lr 2.00e-04 | 5907.9s
+step 1400/200000 | loss 1.1346 (mse 0.2417, ce_d 0.8320, ce_r 0.6932) | t_mean 104.0 | lr 2.00e-04 | 6125.9s
+step 1450/200000 | loss 0.9206 (mse 0.2592, ce_d 0.8278, ce_r 0.5962) | t_mean 99.0 | lr 2.00e-04 | 6343.8s
+step 1500/200000 | loss 0.8807 (mse 0.2843, ce_d 0.7390, ce_r 0.5179) | t_mean 111.0 | lr 2.00e-04 | 6561.7s
+  [eval] step 1500 | val_loss 0.6732 (mse 0.2001, ce 0.4167)
+  [ckpt] saved new best (val_loss=0.6732) -> channel_diffusion_reverse_ray.pt
+step 1550/200000 | loss 0.8994 (mse 0.3419, ce_d 1.0418, ce_r 0.8039) | t_mean 114.0 | lr 2.00e-04 | 6787.8s
+step 1600/200000 | loss 1.0433 (mse 0.3570, ce_d 1.1922, ce_r 0.9462) | t_mean 112.0 | lr 2.00e-04 | 7005.7s
+step 1650/200000 | loss 0.6902 (mse 0.2114, ce_d 0.5027, ce_r 0.3915) | t_mean 81.0 | lr 2.00e-04 | 7223.7s
+step 1700/200000 | loss 0.7026 (mse 0.2526, ce_d 0.4889, ce_r 0.3453) | t_mean 107.0 | lr 2.00e-04 | 7441.6s
+step 1750/200000 | loss 0.6895 (mse 0.2266, ce_d 0.3686, ce_r 0.2514) | t_mean 105.0 | lr 2.00e-04 | 7659.6s
+step 1800/200000 | loss 0.6489 (mse 0.2586, ce_d 0.6101, ce_r 0.5004) | t_mean 103.0 | lr 2.00e-04 | 7877.5s
+step 1850/200000 | loss 0.5487 (mse 0.2153, ce_d 0.3634, ce_r 0.2762) | t_mean 90.0 | lr 2.00e-04 | 8095.5s
+step 1900/200000 | loss 1.0346 (mse 0.3346, ce_d 0.5885, ce_r 0.3968) | t_mean 120.0 | lr 2.00e-04 | 8313.4s
+step 1950/200000 | loss 0.5576 (mse 0.2819, ce_d 0.4217, ce_r 0.3109) | t_mean 115.0 | lr 2.00e-04 | 8531.4s
+step 2000/200000 | loss 0.6595 (mse 0.2263, ce_d 0.2973, ce_r 0.1757) | t_mean 96.0 | lr 2.00e-04 | 8749.3s
+  [eval] step 2000 | val_loss 0.3911 (mse 0.1975, ce 0.1637)
+  [ckpt] saved new best (val_loss=0.3911) -> channel_diffusion_reverse_ray.pt
+  [sample] step 2000 reverse-diffusion sanity check:
+  [channel σ=1.0000, t_start=128/128, SNR≈0.5dB]
+  GT     : mr president ladies and gentlemen it has to be recognised that if most european union countries are to meet the convergence criteria by that is mostly dependent on europe s being able to register as of the second half of this year a rather higher growth rate in their economies the growth of european economies is after all a decisive factor for the achievement that we want to see of emu by from this point of view the commission and the council should give put greater emphasis on the need to work out a more efficient monetary policy aimed at promoting investment and consumption throughout the european union together with a policy of budgetary consolidation which guarantees a successful transition towards economic and monetary union
+  Direct : mr president ladies and gentlemen it has to be recognised that if most european union countries are to meet the convergence criteria by that is mostly dependent on europe s being able to register as of the second half of this year a rather higher growth rate in their economies the growth of european economies is after all a decisive factor for the achievement that we want to see of emu by from this point of view the commission and the council should give put greater emphasis on the need to work out a more efficient monetary policy aimed at promoting investment and consumption throughout the european union together with a policy of budgetary consolidation which guarantees a successful transition towards economic and monetary union
+  Diffuse: mr president ladies and gentlemen it has to be recognised that if most european union countries are to meet the convergence criteria by that is mostly dependent on europe s being able to register as of the second on of this year a rather higher growth rate in their economies the growth of european economies is after all a damp factor for the achievement that we want to see of very by from this point of view the commission and the council should give put greater emphasis on the need to work out a more efficient monetary policy aimed at promoting greenhouse and consumption throughout the european union together with a policy of budgetary consolidation which guarantees a successful transition towards economic and monetary union
+
+  GT     : a policy to reduce interest rates is also necessary both to help reduce budget deficits and to help boost economic growth
+  Direct : a policy to reduce interest rates is also necessary both to help reduce budget deficits and to help boost economic growth
+  Diffuse: a policy to reduce interest rates is also necessary both to help the budget companies and to help boost economic growth
+
+step 2050/200000 | loss 0.5272 (mse 0.2224, ce_d 0.3272, ce_r 0.2258) | t_mean 89.0 | lr 2.00e-04 | 8975.4s
+step 2100/200000 | loss 0.5243 (mse 0.2071, ce_d 0.2380, ce_r 0.1439) | t_mean 80.0 | lr 2.00e-04 | 9193.3s
+step 2150/200000 | loss 0.9158 (mse 0.2394, ce_d 0.2502, ce_r 0.1374) | t_mean 98.0 | lr 2.00e-04 | 9411.2s
+step 2200/200000 | loss 0.4996 (mse 0.2438, ce_d 0.3852, ce_r 0.3381) | t_mean 86.0 | lr 2.00e-04 | 9629.1s
+step 2250/200000 | loss 0.5911 (mse 0.4766, ce_d 0.8905, ce_r 0.3950) | t_mean 111.0 | lr 2.00e-04 | 9847.0s
+step 2300/200000 | loss 0.4268 (mse 0.2721, ce_d 0.2982, ce_r 0.1551) | t_mean 91.0 | lr 2.00e-04 | 10064.9s
+step 2350/200000 | loss 0.4585 (mse 0.2845, ce_d 0.2615, ce_r 0.1020) | t_mean 98.0 | lr 2.00e-04 | 10282.8s
+step 2400/200000 | loss 0.5870 (mse 0.3231, ce_d 0.2564, ce_r 0.1032) | t_mean 113.0 | lr 2.00e-04 | 10500.7s
+step 2450/200000 | loss 0.4744 (mse 0.2324, ce_d 0.1867, ce_r 0.0716) | t_mean 81.0 | lr 2.00e-04 | 10718.7s
+step 2500/200000 | loss 0.6309 (mse 0.4648, ce_d 0.8580, ce_r 0.4992) | t_mean 110.0 | lr 2.00e-04 | 10936.5s
+  [eval] step 2500 | val_loss 0.3511 (mse 0.2381, ce 0.0920)
+  [ckpt] saved new best (val_loss=0.3511) -> channel_diffusion_reverse_ray.pt
+step 2550/200000 | loss 0.4429 (mse 0.2605, ce_d 0.1710, ce_r 0.0775) | t_mean 93.0 | lr 2.00e-04 | 11162.5s
+step 2600/200000 | loss 0.4082 (mse 0.3132, ce_d 0.2623, ce_r 0.1100) | t_mean 92.0 | lr 2.00e-04 | 11380.5s
+step 2650/200000 | loss 0.3642 (mse 0.3097, ce_d 0.2396, ce_r 0.1024) | t_mean 99.0 | lr 2.00e-04 | 11598.5s
+step 2700/200000 | loss 0.4257 (mse 0.2627, ce_d 0.1985, ce_r 0.0916) | t_mean 81.0 | lr 2.00e-04 | 11816.4s
+step 2750/200000 | loss 0.6633 (mse 0.4863, ce_d 0.6192, ce_r 0.2928) | t_mean 117.0 | lr 2.00e-04 | 12034.4s
+step 2800/200000 | loss 0.4007 (mse 0.2990, ce_d 0.1385, ce_r 0.0512) | t_mean 111.0 | lr 2.00e-04 | 12252.4s
+step 2850/200000 | loss 0.5908 (mse 0.3209, ce_d 0.2325, ce_r 0.0814) | t_mean 100.0 | lr 2.00e-04 | 12470.3s
+step 2900/200000 | loss 0.4917 (mse 0.3055, ce_d 0.1499, ce_r 0.0673) | t_mean 94.0 | lr 2.00e-04 | 12688.2s
+step 2950/200000 | loss 0.7089 (mse 0.2893, ce_d 0.1549, ce_r 0.0547) | t_mean 91.0 | lr 2.00e-04 | 12906.2s
+step 3000/200000 | loss 0.4223 (mse 0.3834, ce_d 0.2320, ce_r 0.0981) | t_mean 106.0 | lr 2.00e-04 | 13124.1s
+  [eval] step 3000 | val_loss 0.2868 (mse 0.2575, ce 0.0212)
+  [ckpt] saved new best (val_loss=0.2868) -> channel_diffusion_reverse_ray.pt
+  [sample] step 3000 reverse-diffusion sanity check:
+  [channel σ=1.0000, t_start=128/128, SNR≈0.5dB]
+  GT     : mr president ladies and gentlemen it has to be recognised that if most european union countries are to meet the convergence criteria by that is mostly dependent on europe s being able to register as of the second half of this year a rather higher growth rate in their economies the growth of european economies is after all a decisive factor for the achievement that we want to see of emu by from this point of view the commission and the council should give put greater emphasis on the need to work out a more efficient monetary policy aimed at promoting investment and consumption throughout the european union together with a policy of budgetary consolidation which guarantees a successful transition towards economic and monetary union
+  Direct : mr president ladies and gentlemen it has to be recognised that if most european union countries are to meet the convergence criteria by that is mostly dependent on europe s being able to register as of the second half of this year a rather higher growth rate in their economies the growth of european economies is after all a decisive factor for the achievement that we want to see of emu by from this point of view the commission and the council should give put greater emphasis on the need to work out a more efficient monetary policy aimed at promoting investment and consumption throughout the european union together with a policy of budgetary consolidation which guarantees a successful transition towards economic and monetary union
+  Diffuse: mr president ladies and gentlemen it has to be recognised that if most european union countries are to meet the convergence criteria by that is mostly dependent on europe s being able to register as of the second half of this year a rather higher growth rate in their economies the growth of european economies is after all a decisive factor for the achievement that we want to see of emu by from this point of view the commission and the council should give put greater emphasis on the need to work out a more efficient monetary policy aimed at promoting investment and consumption throughout the european union together with a policy of budgetary consolidation which guarantees a successful transition towards economic and monetary union
+
+  GT     : a policy to reduce interest rates is also necessary both to help reduce budget deficits and to help boost economic growth
+  Direct : a policy to reduce interest rates is also necessary both to help reduce budget deficits and to help boost economic growth
+  Diffuse: a policy to reduce interest rates is also necessary both to help reduce budget deficits and to help boost economic growth
+
+step 3050/200000 | loss 0.3629 (mse 0.3225, ce_d 0.1410, ce_r 0.0463) | t_mean 107.0 | lr 2.00e-04 | 13350.3s
+step 3100/200000 | loss 0.3816 (mse 0.4173, ce_d 0.2107, ce_r 0.0594) | t_mean 116.0 | lr 2.00e-04 | 13568.2s
+step 3150/200000 | loss 0.3755 (mse 0.2884, ce_d 0.1525, ce_r 0.0369) | t_mean 95.0 | lr 2.00e-04 | 13786.1s
+step 3200/200000 | loss 0.3474 (mse 0.4106, ce_d 0.1346, ce_r 0.0550) | t_mean 114.0 | lr 2.00e-04 | 14004.0s
+step 3250/200000 | loss 0.3538 (mse 0.3759, ce_d 0.2743, ce_r 0.0778) | t_mean 112.0 | lr 2.00e-04 | 14221.9s
+step 3300/200000 | loss 0.5062 (mse 0.2909, ce_d 0.1082, ce_r 0.0279) | t_mean 98.0 | lr 2.00e-04 | 14439.9s
+step 3350/200000 | loss 0.3389 (mse 0.2763, ce_d 0.0871, ce_r 0.0132) | t_mean 100.0 | lr 2.00e-04 | 14657.8s
+step 3400/200000 | loss 0.3520 (mse 0.2844, ce_d 0.1025, ce_r 0.0233) | t_mean 103.0 | lr 2.00e-04 | 14875.7s
+step 3450/200000 | loss 0.4456 (mse 0.4227, ce_d 0.2000, ce_r 0.0417) | t_mean 113.0 | lr 2.00e-04 | 15093.7s
+step 3500/200000 | loss 0.4606 (mse 0.2182, ce_d 0.0571, ce_r 0.0095) | t_mean 79.0 | lr 2.00e-04 | 15311.7s
+  [eval] step 3500 | val_loss 0.3587 (mse 0.3012, ce 0.0456)
+step 3550/200000 | loss 0.3250 (mse 0.2908, ce_d 0.1243, ce_r 0.0203) | t_mean 102.0 | lr 2.00e-04 | 15536.4s
+step 3600/200000 | loss 0.3484 (mse 0.2526, ce_d 0.0719, ce_r 0.0128) | t_mean 87.0 | lr 2.00e-04 | 15754.3s
+step 3650/200000 | loss 0.4334 (mse 0.2623, ce_d 0.0753, ce_r 0.0123) | t_mean 99.0 | lr 2.00e-04 | 15972.3s
+step 3700/200000 | loss 0.3187 (mse 0.3070, ce_d 0.0671, ce_r 0.0205) | t_mean 102.0 | lr 2.00e-04 | 16190.3s
+step 3750/200000 | loss 0.3275 (mse 0.3249, ce_d 0.1322, ce_r 0.0187) | t_mean 93.0 | lr 2.00e-04 | 16409.9s
+step 3800/200000 | loss 0.5602 (mse 0.3561, ce_d 0.1021, ce_r 0.0142) | t_mean 108.0 | lr 2.00e-04 | 16627.9s
+step 3850/200000 | loss 0.3334 (mse 0.4495, ce_d 0.1366, ce_r 0.0331) | t_mean 120.0 | lr 2.00e-04 | 16845.8s
+step 3900/200000 | loss 0.5569 (mse 0.2369, ce_d 0.0893, ce_r 0.0204) | t_mean 79.0 | lr 2.00e-04 | 17063.8s
+step 3950/200000 | loss 0.5324 (mse 0.5319, ce_d 0.2810, ce_r 0.0552) | t_mean 117.0 | lr 2.00e-04 | 17281.7s
+step 4000/200000 | loss 0.3008 (mse 0.2691, ce_d 0.1010, ce_r 0.0091) | t_mean 92.0 | lr 2.00e-04 | 17499.7s
+  [eval] step 4000 | val_loss 0.3003 (mse 0.2496, ce 0.0351)
+  [sample] step 4000 reverse-diffusion sanity check:
+  [channel σ=1.0000, t_start=128/128, SNR≈0.6dB]
+  GT     : mr president ladies and gentlemen it has to be recognised that if most european union countries are to meet the convergence criteria by that is mostly dependent on europe s being able to register as of the second half of this year a rather higher growth rate in their economies the growth of european economies is after all a decisive factor for the achievement that we want to see of emu by from this point of view the commission and the council should give put greater emphasis on the need to work out a more efficient monetary policy aimed at promoting investment and consumption throughout the european union together with a policy of budgetary consolidation which guarantees a successful transition towards economic and monetary union
+  Direct : mr president ladies and gentlemen it has to be recognised that if most european union countries are to meet the convergence criteria by that is mostly dependent on europe s being able to register as of the second half of this year a rather higher growth rate in their economies the growth of european economies is after all a decisive factor for the achievement that we want to see of emu by from this point of view the commission and the council should give put greater emphasis on the need to work out a more efficient monetary policy aimed at promoting investment and consumption throughout the european union together with a policy of budgetary consolidation which guarantees a successful transition towards economic and monetary union
+  Diffuse: mr president ladies and gentlemen it has to be recognised that if most european union countries are to meet the convergence criteria by that is mostly dependent on europe s being able to register as of the second half of this year a rather higher growth rate in their economies the growth of european economies is after all a decisive factor for the achievement that we want to see of emu by from this point of view the commission and the council should give put greater emphasis on the need to work out a more efficient monetary policy aimed at promoting investment and we throughout the european union together with a policy of budgetary consolidation which guarantees a successful transition towards economic and monetary union
+
+  GT     : a policy to reduce interest rates is also necessary both to help reduce budget deficits and to help boost economic growth
+  Direct : a policy to reduce interest rates is also necessary both to help reduce budget deficits and to help boost economic growth
+  Diffuse: a policy to reduce interest rates is also necessary both to help reduce budget deficits and to help boost economic growth
+
+step 4050/200000 | loss 0.4067 (mse 0.3591, ce_d 0.0985, ce_r 0.0271) | t_mean 115.0 | lr 2.00e-04 | 17724.4s
+step 4100/200000 | loss 0.5433 (mse 0.5339, ce_d 0.3395, ce_r 0.1475) | t_mean 113.0 | lr 2.00e-04 | 17942.4s
+step 4150/200000 | loss 0.3315 (mse 0.3011, ce_d 0.0570, ce_r 0.0066) | t_mean 101.0 | lr 2.00e-04 | 18160.4s
+step 4200/200000 | loss 0.3201 (mse 0.2202, ce_d 0.0671, ce_r 0.0035) | t_mean 82.0 | lr 2.00e-04 | 18378.3s
+step 4250/200000 | loss 0.5190 (mse 0.3118, ce_d 0.1398, ce_r 0.0210) | t_mean 80.0 | lr 2.00e-04 | 18596.3s
+step 4300/200000 | loss 0.5765 (mse 0.2665, ce_d 0.1311, ce_r 0.0443) | t_mean 90.0 | lr 2.00e-04 | 18814.2s
+step 4350/200000 | loss 0.3432 (mse 0.2707, ce_d 0.0457, ce_r 0.0044) | t_mean 85.0 | lr 2.00e-04 | 19032.2s
+step 4400/200000 | loss 0.4690 (mse 0.3246, ce_d 0.0666, ce_r 0.0136) | t_mean 108.0 | lr 2.00e-04 | 19250.1s
+step 4450/200000 | loss 0.3501 (mse 0.2481, ce_d 0.0610, ce_r 0.0036) | t_mean 80.0 | lr 2.00e-04 | 19468.1s
+step 4500/200000 | loss 0.3741 (mse 0.2992, ce_d 0.0307, ce_r 0.0045) | t_mean 107.0 | lr 2.00e-04 | 19686.0s
+  [eval] step 4500 | val_loss 0.2687 (mse 0.2477, ce 0.0163)
+  [ckpt] saved new best (val_loss=0.2687) -> channel_diffusion_reverse_ray.pt
+step 4550/200000 | loss 0.4552 (mse 0.4872, ce_d 0.1232, ce_r 0.0253) | t_mean 111.0 | lr 2.00e-04 | 19912.0s
+step 4600/200000 | loss 0.6355 (mse 0.5189, ce_d 0.4964, ce_r 0.4208) | t_mean 118.0 | lr 2.00e-04 | 20130.0s
+step 4650/200000 | loss 0.4062 (mse 0.2957, ce_d 0.0967, ce_r 0.0036) | t_mean 100.0 | lr 2.00e-04 | 20347.9s
+step 4700/200000 | loss 0.3741 (mse 0.3254, ce_d 0.0917, ce_r 0.0157) | t_mean 98.0 | lr 2.00e-04 | 20565.9s
+step 4750/200000 | loss 0.2766 (mse 0.2412, ce_d 0.0917, ce_r 0.0030) | t_mean 86.0 | lr 2.00e-04 | 20783.8s
+step 4800/200000 | loss 0.3039 (mse 0.4113, ce_d 0.1035, ce_r 0.0117) | t_mean 108.0 | lr 2.00e-04 | 21001.8s
+step 4850/200000 | loss 0.8278 (mse 0.7394, ce_d 0.4405, ce_r 0.1613) | t_mean 120.0 | lr 2.00e-04 | 21219.8s
+step 4900/200000 | loss 0.5318 (mse 0.6266, ce_d 0.6172, ce_r 0.4006) | t_mean 115.0 | lr 2.00e-04 | 21437.7s

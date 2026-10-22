@@ -34,7 +34,7 @@ Original file is located at
 """
 
 import os
-import math, time, json, random, inspect
+import math, time, json, random, inspect, argparse
 import numpy as np
 from tqdm.auto import tqdm
 
@@ -56,6 +56,57 @@ if torch.cuda.is_available():
     print("bf16 supported:", torch.cuda.is_bf16_supported())
 device = "cuda" if torch.cuda.is_available() else "cpu"
 print(device)
+
+# ---------------------------------------------------------------------------
+# Flags & Configuration
+# ---------------------------------------------------------------------------
+USE_T5_TOKENIZER = False  # Set to True or pass --use-t5-tokenizer / --t5 via CLI
+T5_MODEL_NAME = "t5-small"
+
+parser = argparse.ArgumentParser(description="ChannelDiffusionLM training")
+parser.add_argument(
+    "--use-t5-tokenizer", "--use-t5", "--t5",
+    dest="use_t5_tokenizer",
+    action="store_true",
+    default=USE_T5_TOKENIZER,
+    help="Use T5 tokenizer instead of custom diffusion vocab tokenizer"
+)
+parser.add_argument(
+    "--no-t5",
+    dest="use_t5_tokenizer",
+    action="store_false",
+    help="Disable T5 tokenizer (use custom diffusion vocab tokenizer)"
+)
+parser.add_argument(
+    "--t5-model",
+    type=str,
+    default=T5_MODEL_NAME,
+    help="HuggingFace model name or path for T5 tokenizer (default: 't5-small')"
+)
+parser.add_argument(
+    "--run-mode",
+    type=str,
+    default=None,
+    choices=["quick", "budget_100"],
+    help="Run profile: 'quick' or 'budget_100'"
+)
+parser.add_argument(
+    "--checkpoint-path",
+    type=str,
+    default=None,
+    help="Path for saving checkpoint (.pt file)"
+)
+parser.add_argument(
+    "--total-steps",
+    type=int,
+    default=None,
+    help="Total training steps (default: 200000)"
+)
+
+args, _ = parser.parse_known_args()
+USE_T5_TOKENIZER = args.use_t5_tokenizer
+T5_MODEL_NAME = args.t5_model
+
 
 # ---------------------------------------------------------------------------
 # Dataset loading — uses the SAME canonical pkl splits as main.py
@@ -104,32 +155,57 @@ print(f'Total: {len(train_texts)+len(val_texts)+len(test_texts)} sentences '
       f'({len(train_texts)} train / {len(val_texts)} val / {len(test_texts)} test)')
 print('Sample train sentence:', train_texts[0])
 
-print('Re-tokenizing with diffusion tokenizer...')
-_raw_tok = _RawTok.from_file(DIFFUSION_VOCAB_FILE)
-hf_tokenizer = PreTrainedTokenizerFast(tokenizer_file=DIFFUSION_VOCAB_FILE)
+if USE_T5_TOKENIZER:
+    print(f'Re-tokenizing with T5 tokenizer ({T5_MODEL_NAME})...')
+    try:
+        from transformers import T5TokenizerFast
+        hf_tokenizer = T5TokenizerFast.from_pretrained(T5_MODEL_NAME)
+    except Exception as e:
+        print(f"Fast T5 tokenizer unavailable ({e}), falling back to T5Tokenizer...")
+        from transformers import T5Tokenizer
+        hf_tokenizer = T5Tokenizer.from_pretrained(T5_MODEL_NAME)
 
-# [FIX 7] Don't silently fall back to id 0 if '<PAD>' isn't in the vocab — that could
-# quietly corrupt every attention mask if 0 happens to be a real token.
-_pad_id = hf_tokenizer.convert_tokens_to_ids('<PAD>')
-if _pad_id is None:
-    raise ValueError(
-        "'<PAD>' token not found in the diffusion tokenizer vocab — refusing to "
-        "silently fall back to id 0, since that may be a real token."
-    )
-PAD_ID = _pad_id
+    PAD_ID = hf_tokenizer.pad_token_id
+    EOS_ID = hf_tokenizer.eos_token_id
+    if PAD_ID is None:
+        raise ValueError("T5 tokenizer does not have a pad_token_id defined.")
+    if EOS_ID is None:
+        raise ValueError("T5 tokenizer does not have an eos_token_id defined.")
 
-_eos_id = hf_tokenizer.convert_tokens_to_ids('<END>')
-if _eos_id is None:
-    raise ValueError(
-        "'<END>' token not found in the diffusion tokenizer vocab."
-    )
-EOS_ID = _eos_id
-hf_tokenizer.pad_token = '<PAD>'
-hf_tokenizer.eos_token = '<END>'
+    def _tokenize(texts, batch_size=50000):
+        if hasattr(hf_tokenizer, "is_fast") and hf_tokenizer.is_fast:
+            all_ids = []
+            for i in range(0, len(texts), batch_size):
+                chunk = texts[i:i + batch_size]
+                all_ids.extend(hf_tokenizer(chunk, add_special_tokens=False)['input_ids'])
+            return all_ids
+        return [hf_tokenizer.encode(t, add_special_tokens=False) for t in texts]
+else:
+    print('Re-tokenizing with diffusion tokenizer...')
+    _raw_tok = _RawTok.from_file(DIFFUSION_VOCAB_FILE)
+    hf_tokenizer = PreTrainedTokenizerFast(tokenizer_file=DIFFUSION_VOCAB_FILE)
 
+    # [FIX 7] Don't silently fall back to id 0 if '<PAD>' isn't in the vocab — that could
+    # quietly corrupt every attention mask if 0 happens to be a real token.
+    _pad_id = hf_tokenizer.convert_tokens_to_ids('<PAD>')
+    if _pad_id is None:
+        raise ValueError(
+            "'<PAD>' token not found in the diffusion tokenizer vocab — refusing to "
+            "silently fall back to id 0, since that may be a real token."
+        )
+    PAD_ID = _pad_id
 
-def _tokenize(texts):
-    return [enc.ids for enc in _raw_tok.encode_batch(texts)]
+    _eos_id = hf_tokenizer.convert_tokens_to_ids('<END>')
+    if _eos_id is None:
+        raise ValueError(
+            "'<END>' token not found in the diffusion tokenizer vocab."
+        )
+    EOS_ID = _eos_id
+    hf_tokenizer.pad_token = '<PAD>'
+    hf_tokenizer.eos_token = '<END>'
+
+    def _tokenize(texts):
+        return [enc.ids for enc in _raw_tok.encode_batch(texts)]
 
 
 train_data = _tokenize(train_texts)
@@ -143,6 +219,8 @@ print(f'Example encoding: {train_data[0][:12]}')
 # =======================
 
 RUN_MODE = "budget_100"   # "quick" or "budget_100"
+if args.run_mode is not None:
+    RUN_MODE = args.run_mode
 
 if RUN_MODE == "quick":
     SEQ_LEN = 32
@@ -612,7 +690,7 @@ def reverse_sample(model, z_T, attention_mask=None, n_steps=None, t_start=None,
 
 cfg = ChannelDiffusionConfig(
     vocab_size=len(hf_tokenizer),
-    seq_len=32,
+    seq_len=SEQ_LEN,
     d_model=D_MODEL,
     n_enc_layers=N_LAYERS // 2,
     n_dec_layers=N_LAYERS // 2,
@@ -666,13 +744,16 @@ print_model_parameters(model)
 # ----------------------------------------------------------------------
 # [FIX 2] LR / WEIGHT_DECAY / WARMUP_STEPS are intentionally NOT redefined here —
 # they come from the RUN_MODE block above so the chosen profile actually applies.
-TOTAL_STEPS = 200000
+TOTAL_STEPS = args.total_steps if args.total_steps is not None else 200000
 GRAD_CLIP = 1.0
 LOG_EVERY = 50
 EVAL_EVERY = 500
 SAMPLE_EVERY = 1000
 LAMBDA_CE = 1.0
-CKPT_PATH = "channel_diffusion_fixed_ray_eos_long_ctx.pt"
+CKPT_PATH = args.checkpoint_path or (
+    "channel_diffusion_fixed_ray_eos_long_ctx_t5.pt" if USE_T5_TOKENIZER
+    else "channel_diffusion_fixed_ray_eos_long_ctx.pt"
+)
 
 device = next(model.parameters()).device
 
@@ -808,6 +889,8 @@ def train(model, train_loader, val_loader, tokenizer, total_steps, grad_accum=1)
                     "val_loss": best_val_loss,
                     "model_arch_src": inspect.getsource(ChannelDiffusionLM),
                     "model_arch_cls": "ChannelDiffusionLM",
+                    "tokenizer_type": "t5" if USE_T5_TOKENIZER else "diffusion",
+                    "tokenizer_name": T5_MODEL_NAME if USE_T5_TOKENIZER else DIFFUSION_VOCAB_FILE,
                 }, CKPT_PATH)
                 print(f"  [ckpt] saved new best (val_loss={best_val_loss:.4f}) -> {CKPT_PATH}")
 
