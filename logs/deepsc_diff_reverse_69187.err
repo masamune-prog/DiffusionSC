@@ -1,0 +1,7 @@
+/tc1home/UG/zgoh033/DeepSC/.venv/lib/python3.12/site-packages/torch/nn/modules/transformer.py:385: UserWarning: enable_nested_tensor is True, but self.use_nested_tensor is False because encoder_layer.norm_first was True
+  warnings.warn(
+Traceback (most recent call last):
+  File "/tc1home/UG/zgoh033/DeepSC/diffusion_attempt_reverse.py", line 1051, in <module>
+    print(f"[Resume] Resuming from step {start_step} | best_val_loss: {best_val_loss:.4f} | prior train time: {prev_total_time/3600:.2f}h")
+                                                                      ^^^^^^^^^^^^^^^^^^^
+TypeError: unsupported format string passed to NoneType.__format__

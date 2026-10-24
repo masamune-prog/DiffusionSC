@@ -9,16 +9,18 @@ import os
 import csv
 import json
 import torch
+import torch.nn as nn
 import argparse
 import numpy as np
 from functools import partial
 from dataset import EurDataset, collate_data, collate_data_bert
-from models.transceiver import DeepSC
+from models.transceiver import DeepSC, ChannelDecoder
 from torch.utils.data import DataLoader
 from utils import BleuScore, SNR_to_noise, greedy_decode, SeqtoText, Channels, PowerNormalize, subsequent_mask
 from tqdm import tqdm
 import time
 import random
+from eval_reporting import report_results
 parser = argparse.ArgumentParser()
 #data-dir is unused, kept for testing purposes
 parser.add_argument('--data-dir', default='txt/train_data.pkl', type=str)
@@ -38,7 +40,16 @@ parser.add_argument('--num-dec-layers', default=3, type=int,
                     help='Number of Transformer decoder layers (overridden by checkpoint auto-detection)')
 parser.add_argument('--num-heads', default=8, type=int)
 parser.add_argument('--batch-size', default=64, type=int)
+parser.add_argument('--max-test-samples', default=None, type=int,
+                    help='Limit test sentences for a quick evaluation run')
 parser.add_argument('--epochs', default=2, type=int)
+parser.add_argument('--seed', default=10, type=int,
+                    help='Base evaluation seed; run i uses seed + i')
+parser.add_argument('--eval-seeds', nargs='+', type=int, default=None,
+                    help='Explicit seeds to evaluate; overrides --epochs')
+parser.add_argument('--snr-range', nargs='+', type=int,
+                    default=[-18, -15, -12, -9, -6, -3, 0, 3, 6, 9, 12, 15, 18],
+                    help='SNR sweep in dB, matching DiffusionSC/main.py')
 parser.add_argument('--output-csv', default=None, type=str,
                     help='Path to CSV file for saving aggregate results. '
                          'Defaults to results_<channel>_<model>.csv in the checkpoint directory.')
@@ -207,18 +218,7 @@ def performance(args, SNR, net, collate_fn, decode_fn, bert_scorer=None):
         bert_scorer: optional ``BertScoreEvaluator`` instance. When provided,
             BERTScore F1/P/R are computed alongside BLEU for each SNR point.
 
-    Returns:
-        bleu_scores: dict with keys 'bleu1'..'bleu4', each an np.ndarray of
-            shape [len(SNR)] containing the mean n-gram BLEU for that order.
-        bert_scores: dict with keys 'f1', 'precision', 'recall', each
-            np.ndarray of shape [len(SNR)].  Empty dict if bert_scorer is None.
-        time_stats: dict with keys 'latency_ms', 'model_latency_ms', 'throughput_sps',
-            each an np.ndarray of shape [len(SNR)].
-        all_sentences: list of dicts, one per sentence, with keys
-            'epoch', 'snr_db', 'sample_idx', 'predicted', 'reference'.
-        accumulated_breakdown: dict mapping decoding sub-step name to total time in seconds.
-        eval_step_timings: dict mapping metric evaluation step name to total time in seconds.
-        seed_stats: dict containing standard deviations per seed/epoch across runs.
+    Returns per-seed metrics, sentence predictions, and timing breakdowns.
     """
     bleu_scorers = {
         'bleu1': BleuScore(1, 0, 0, 0),
@@ -228,6 +228,8 @@ def performance(args, SNR, net, collate_fn, decode_fn, bert_scorer=None):
     }
 
     test_eur = EurDataset('test')
+    if args.max_test_samples is not None:
+        test_eur.data = test_eur.data[:args.max_test_samples]
     test_iterator = DataLoader(test_eur, batch_size=args.batch_size, num_workers=0,
                                pin_memory=True, collate_fn=collate_fn)
 
@@ -265,8 +267,15 @@ def performance(args, SNR, net, collate_fn, decode_fn, bert_scorer=None):
                 decode_fn(net, sents, noise_std)
 
     net.eval()
+    eval_seeds = args.eval_seeds if args.eval_seeds else [args.seed + i for i in range(args.epochs)]
+    if not eval_seeds:
+        raise ValueError('At least one evaluation seed is required')
+    print(f'\nEvaluating channel={args.channel} over SNR={SNR} dB '
+          f'for {len(eval_seeds)} seed(s): {eval_seeds}\n')
     with torch.no_grad():
-        for epoch in range(args.epochs):
+        for epoch, seed in enumerate(eval_seeds):
+            setup_seed(seed)
+            print(f'--- Run {epoch + 1}/{len(eval_seeds)} (Seed: {seed}) ---')
             Tx_word = []
             Rx_word = []
 
@@ -313,7 +322,7 @@ def performance(args, SNR, net, collate_fn, decode_fn, bert_scorer=None):
                 # Collect per-sentence records for this SNR.
                 for sample_idx, (pred, ref) in enumerate(zip(word, target_word)):
                     all_sentences.append({
-                        'epoch':      epoch,
+                        'seed':       seed,
                         'snr_db':     snr,
                         'sample_idx': sample_idx,
                         'predicted':  pred,
@@ -362,41 +371,14 @@ def performance(args, SNR, net, collate_fn, decode_fn, bert_scorer=None):
                 all_bert_p.append(bert_p_epoch)
                 all_bert_r.append(bert_r_epoch)
 
-    bleu_scores = {k: np.mean(np.array(all_bleu[k]), axis=0) for k in bleu_scorers}
-
-    bert_scores = {}
+    run_stats = {key: np.asarray(values) for key, values in all_bleu.items()}
     if bert_scorer is not None:
-        bert_scores['f1']        = np.mean(np.array(all_bert_f1), axis=0)
-        bert_scores['precision'] = np.mean(np.array(all_bert_p),  axis=0)
-        bert_scores['recall']    = np.mean(np.array(all_bert_r),  axis=0)
+        run_stats.update(bert_f1=np.asarray(all_bert_f1),
+                         bert_p=np.asarray(all_bert_p), bert_r=np.asarray(all_bert_r))
+    run_stats['latency_ms'] = np.asarray(all_latency_ms)
+    run_stats['throughput_sent_per_sec'] = np.asarray(all_throughput_sps)
 
-    time_stats = {
-        'latency_ms':       np.mean(np.array(all_latency_ms), axis=0),
-        'model_latency_ms': np.mean(np.array(all_model_latency_ms), axis=0),
-        'throughput_sps':   np.mean(np.array(all_throughput_sps), axis=0),
-    }
-
-    # Standard deviation per seed (across evaluation epochs / seeds)
-    n_seeds = len(all_latency_ms)
-    seed_stats = {
-        'n_seeds': n_seeds,
-        'bleu_std': {
-            k: float(np.std(np.mean(np.array(all_bleu[k]), axis=1))) if n_seeds > 1 else 0.0
-            for k in bleu_scorers
-        },
-        'bert_std': {
-            name: float(np.std(np.mean(np.array(all_list), axis=1))) if n_seeds > 1 else 0.0
-            for name, all_list in [('f1', all_bert_f1), ('precision', all_bert_p), ('recall', all_bert_r)]
-        } if bert_scorer is not None else {},
-        'time_std': {
-            name: float(np.std(np.mean(np.array(all_list), axis=1))) if n_seeds > 1 else 0.0
-            for name, all_list in [('latency_ms', all_latency_ms),
-                                   ('model_latency_ms', all_model_latency_ms),
-                                   ('throughput_sps', all_throughput_sps)]
-        },
-    }
-
-    return bleu_scores, bert_scores, time_stats, all_sentences, accumulated_breakdown, eval_step_timings, seed_stats
+    return run_stats, all_sentences, accumulated_breakdown, eval_step_timings
 
 
 # ---------------------------------------------------------------------------
@@ -524,9 +506,11 @@ def _decode_custom(net, sents, noise_std,
     t_post_start = time.perf_counter()
 
     sentences = out.cpu().numpy().tolist()
-    predicted = list(map(StoT.sequence_to_text, sentences))
+    predicted = [StoT.sequence_to_text(ids).removeprefix('<START>').strip()
+                 for ids in sentences]
     target_sent = sents.cpu().numpy().tolist() if isinstance(sents, torch.Tensor) else sents
-    references = list(map(StoT.sequence_to_text, target_sent))
+    references = [StoT.sequence_to_text(ids).removeprefix('<START>').strip()
+                  for ids in target_sent]
 
     if torch.cuda.is_available():
         torch.cuda.synchronize()
@@ -597,8 +581,8 @@ def setup_seed(seed):
 
 if __name__ == '__main__':
     args = parser.parse_args()
-    setup_seed(10)
-    SNR = [0, 3, 6, 9, 12, 15, 18]
+    setup_seed(args.eval_seeds[0] if args.eval_seeds else args.seed)
+    SNR = args.snr_range
 
     pipeline_timings = {}
 
@@ -771,6 +755,25 @@ if __name__ == '__main__':
             deepsc.decoder = Decoder(dec_num_layers, trg_vocab_size, trg_vocab_size,
                                      args.d_model, args.num_heads, args.dff, 0.1).to(device)
 
+    # Match the transmitted latent width saved by either the original (16)
+    # or the five-layer DeepSC (128) checkpoint.
+    channel_width = ckpt_state['channel_encoder.2.weight'].shape[0]
+    decoder_width = ckpt_state['channel_decoder.linear1.weight'].shape[1]
+    if channel_width != decoder_width:
+        raise ValueError(f'Checkpoint channel width mismatch: {channel_width} vs {decoder_width}')
+    if channel_width != deepsc.channel_encoder[2].out_features:
+        encoder_hidden = ckpt_state['channel_encoder.0.weight'].shape[0]
+        decoder_hidden = ckpt_state['channel_decoder.linear2.weight'].shape[0]
+        deepsc.channel_encoder = nn.Sequential(
+            nn.Linear(args.d_model, encoder_hidden),
+            nn.ReLU(inplace=True),
+            nn.Linear(encoder_hidden, channel_width),
+        ).to(device)
+        deepsc.channel_decoder = ChannelDecoder(
+            channel_width, args.d_model, decoder_hidden
+        ).to(device)
+        print(f'[INFO] Checkpoint channel bottleneck: {channel_width}')
+
     # Load weights into the freshly constructed model.
     deepsc.load_state_dict(ckpt_state)
     if args.fp16:
@@ -797,7 +800,7 @@ if __name__ == '__main__':
         )
     pipeline_timings['3. BERTScore Evaluator Init'] = time.perf_counter() - t_step3
 
-    bleu_scores, bert_scores, time_stats, all_sentences, accumulated_breakdown, eval_step_timings, seed_stats = performance(
+    run_stats, all_sentences, accumulated_breakdown, eval_step_timings = performance(
         args, SNR, deepsc, collate_fn, decode_fn, bert_scorer=bert_scorer
     )
 
@@ -806,160 +809,16 @@ if __name__ == '__main__':
     if args.bert_score:
         pipeline_timings['6. BERTScore Evaluation']    = eval_step_timings['bert_evaluation']
 
-    # Dynamic column width based on optional BERT columns
-    sep_width = 10 + 4 * 11 + 3 * 16 + (3 * 11 if bert_scores else 0)
-
-    print('\n' + '='*sep_width)
-    print(' Results for ' + args.channel + ' Channel using ' + args.checkpoint_path + ' model')
-    print('='*sep_width)
-    print(f'{"SNR (dB)":>10} | {"BLEU-1":>8} | {"BLEU-2":>8} | {"BLEU-3":>8} | {"BLEU-4":>8}', end='')
-    if bert_scores:
-        print(f' | {"BERT-F1":>8} | {"BERT-P":>8} | {"BERT-R":>8}', end='')
-    print(f' | {"Latency(ms)":>12} | {"Model(ms)":>12} | {"Throughput(sps)":>15}')
-    print('-'*sep_width)
-    for i, snr in enumerate(SNR):
-        row = (f'{snr:>10}'
-               f' | {bleu_scores["bleu1"][i]:>8.4f}'
-               f' | {bleu_scores["bleu2"][i]:>8.4f}'
-               f' | {bleu_scores["bleu3"][i]:>8.4f}'
-               f' | {bleu_scores["bleu4"][i]:>8.4f}')
-        if bert_scores:
-            row += (f' | {bert_scores["f1"][i]:>8.4f}'
-                    f' | {bert_scores["precision"][i]:>8.4f}'
-                    f' | {bert_scores["recall"][i]:>8.4f}')
-        row += (f' | {time_stats["latency_ms"][i]:>12.3f}'
-                f' | {time_stats["model_latency_ms"][i]:>12.3f}'
-                f' | {time_stats["throughput_sps"][i]:>15.1f}')
-        print(row)
-
-    print('-'*sep_width)
-    row_avg = (f'{"Average":>10}'
-               f' | {np.mean(bleu_scores["bleu1"]):>8.4f}'
-               f' | {np.mean(bleu_scores["bleu2"]):>8.4f}'
-               f' | {np.mean(bleu_scores["bleu3"]):>8.4f}'
-               f' | {np.mean(bleu_scores["bleu4"]):>8.4f}')
-    if bert_scores:
-        row_avg += (f' | {np.mean(bert_scores["f1"]):>8.4f}'
-                    f' | {np.mean(bert_scores["precision"]):>8.4f}'
-                    f' | {np.mean(bert_scores["recall"]):>8.4f}')
-    row_avg += (f' | {np.mean(time_stats["latency_ms"]):>12.3f}'
-                f' | {np.mean(time_stats["model_latency_ms"]):>12.3f}'
-                f' | {np.mean(time_stats["throughput_sps"]):>15.1f}')
-    print(row_avg)
-
-    row_sd = (f'{"Std Dev":>10}'
-              f' | {seed_stats["bleu_std"]["bleu1"]:>8.4f}'
-              f' | {seed_stats["bleu_std"]["bleu2"]:>8.4f}'
-              f' | {seed_stats["bleu_std"]["bleu3"]:>8.4f}'
-              f' | {seed_stats["bleu_std"]["bleu4"]:>8.4f}')
-    if bert_scores:
-        row_sd += (f' | {seed_stats["bert_std"]["f1"]:>8.4f}'
-                   f' | {seed_stats["bert_std"]["precision"]:>8.4f}'
-                   f' | {seed_stats["bert_std"]["recall"]:>8.4f}')
-    row_sd += (f' | {seed_stats["time_std"]["latency_ms"]:>12.3f}'
-               f' | {seed_stats["time_std"]["model_latency_ms"]:>12.3f}'
-               f' | {seed_stats["time_std"]["throughput_sps"]:>15.1f}')
-    print(row_sd)
-    print('='*sep_width)
-
-    model_tag = os.path.basename(args.checkpoint_path.rstrip('/\\'))
-
-    # -----------------------------------------------------------------------
-    # Save aggregate metrics to CSV (one row per SNR point).
-    # -----------------------------------------------------------------------
+    model_tag = os.path.splitext(os.path.basename(model_path))[0]
     t_step_csv = time.perf_counter()
-    csv_path = (args.output_csv
-                if args.output_csv
-                else os.path.join(args.checkpoint_path,
-                                  f'results_{args.channel}_{model_tag}.csv'))
-
-    fieldnames = ['channel', 'checkpoint', 'snr_db',
-                  'bleu1', 'bleu2', 'bleu3', 'bleu4']
-    if bert_scores:
-        fieldnames += ['bert_f1', 'bert_precision', 'bert_recall']
-    fieldnames += ['latency_ms_per_sent', 'model_latency_ms_per_sent', 'throughput_sent_per_sec']
-
-    write_header = not os.path.exists(csv_path)
-    with open(csv_path, 'a', newline='') as f:
-        writer = csv.DictWriter(f, fieldnames=fieldnames)
-        if write_header:
-            writer.writeheader()
-        for i, snr in enumerate(SNR):
-            record = {
-                'channel':                   args.channel,
-                'checkpoint':                model_tag,
-                'snr_db':                    snr,
-                'bleu1':                     round(float(bleu_scores['bleu1'][i]), 6),
-                'bleu2':                     round(float(bleu_scores['bleu2'][i]), 6),
-                'bleu3':                     round(float(bleu_scores['bleu3'][i]), 6),
-                'bleu4':                     round(float(bleu_scores['bleu4'][i]), 6),
-                'latency_ms_per_sent':       round(float(time_stats['latency_ms'][i]), 4),
-                'model_latency_ms_per_sent': round(float(time_stats['model_latency_ms'][i]), 4),
-                'throughput_sent_per_sec':   round(float(time_stats['throughput_sps'][i]), 2),
-            }
-            if bert_scores:
-                record['bert_f1']        = round(float(bert_scores['f1'][i]),        6)
-                record['bert_precision'] = round(float(bert_scores['precision'][i]), 6)
-                record['bert_recall']    = round(float(bert_scores['recall'][i]),    6)
-            writer.writerow(record)
-
-        # Summary total stats: Average & Std Dev
-        avg_record = {
-            'channel':                   args.channel,
-            'checkpoint':                model_tag,
-            'snr_db':                    'Average',
-            'bleu1':                     round(float(np.mean(bleu_scores['bleu1'])), 6),
-            'bleu2':                     round(float(np.mean(bleu_scores['bleu2'])), 6),
-            'bleu3':                     round(float(np.mean(bleu_scores['bleu3'])), 6),
-            'bleu4':                     round(float(np.mean(bleu_scores['bleu4'])), 6),
-            'latency_ms_per_sent':       round(float(np.mean(time_stats['latency_ms'])), 4),
-            'model_latency_ms_per_sent': round(float(np.mean(time_stats['model_latency_ms'])), 4),
-            'throughput_sent_per_sec':   round(float(np.mean(time_stats['throughput_sps'])), 2),
-        }
-        if bert_scores:
-            avg_record['bert_f1']        = round(float(np.mean(bert_scores['f1'])),        6)
-            avg_record['bert_precision'] = round(float(np.mean(bert_scores['precision'])), 6)
-            avg_record['bert_recall']    = round(float(np.mean(bert_scores['recall'])),    6)
-        writer.writerow(avg_record)
-
-        sd_record = {
-            'channel':                   args.channel,
-            'checkpoint':                model_tag,
-            'snr_db':                    'Std Dev',
-            'bleu1':                     round(float(seed_stats["bleu_std"]['bleu1']), 6),
-            'bleu2':                     round(float(seed_stats["bleu_std"]['bleu2']), 6),
-            'bleu3':                     round(float(seed_stats["bleu_std"]['bleu3']), 6),
-            'bleu4':                     round(float(seed_stats["bleu_std"]['bleu4']), 6),
-            'latency_ms_per_sent':       round(float(seed_stats["time_std"]['latency_ms']), 4),
-            'model_latency_ms_per_sent': round(float(seed_stats["time_std"]['model_latency_ms']), 4),
-            'throughput_sent_per_sec':   round(float(seed_stats["time_std"]['throughput_sps']), 2),
-        }
-        if bert_scores:
-            sd_record['bert_f1']        = round(float(seed_stats["bert_std"]['f1']),        6)
-            sd_record['bert_precision'] = round(float(seed_stats["bert_std"]['precision']), 6)
-            sd_record['bert_recall']    = round(float(seed_stats["bert_std"]['recall']),    6)
-        writer.writerow(sd_record)
-
-    print(f'\nResults saved to: {csv_path}')
-
-    # -----------------------------------------------------------------------
-    # Save per-sentence predictions to a second CSV
-    # (one row per test sentence × SNR × epoch).
-    # -----------------------------------------------------------------------
-    pred_csv_path = (args.predictions_csv
-                     if args.predictions_csv
-                     else os.path.join(args.checkpoint_path,
-                                       f'predictions_{args.channel}_{model_tag}.csv'))
-
-    pred_fieldnames = ['epoch', 'snr_db', 'sample_idx', 'predicted', 'reference']
-    pred_write_header = not os.path.exists(pred_csv_path)
-    with open(pred_csv_path, 'a', newline='', encoding='utf-8') as f:
-        writer = csv.DictWriter(f, fieldnames=pred_fieldnames)
-        if pred_write_header:
-            writer.writeheader()
-        writer.writerows(all_sentences)
-
-    print(f'Predictions saved to: {pred_csv_path}')
+    csv_path = args.output_csv or os.path.join(
+        args.checkpoint_path, f'deepsc_results_{args.channel}_{model_tag}.csv')
+    pred_csv_path = args.predictions_csv or os.path.join(
+        args.checkpoint_path, f'deepsc_predictions_{args.channel}_{model_tag}.csv')
+    report_results(
+        SNR, run_stats, all_sentences, channel=args.channel, checkpoint=model_tag,
+        results_path=csv_path, predictions_path=pred_csv_path,
+    )
     pipeline_timings['7. Results Export to CSV'] = time.perf_counter() - t_step_csv
 
     # Print out comprehensive timing and bottleneck report

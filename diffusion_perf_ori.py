@@ -57,6 +57,7 @@ import torch.nn as nn
 import torch.nn.functional as F
 from dataclasses import dataclass
 from tqdm import tqdm
+from eval_reporting import report_results
 
 # ---------------------------------------------------------------------------
 # Re-use BLEU helpers from the existing DeepSC utils
@@ -80,9 +81,20 @@ parser.add_argument('--test-pkl', default='txt/test_data.pkl', type=str,
 parser.add_argument('--channel', default='AWGN', type=str,
                     choices=['AWGN', 'Rayleigh', 'Rician', 'None'],
                     help='Physical channel type used during evaluation')
+parser.add_argument('--quantize-latent', action='store_true',
+                    help='Quantize the encoded latent to signed int8 before transmission')
+parser.add_argument('--transmit-quant-scale', action=argparse.BooleanOptionalAction,
+                    default=True,
+                    help='Send the per-batch quantization scale as side information (default: true). '
+                         'Use --no-transmit-quant-scale to feed raw int8 values to the receiver.')
 parser.add_argument('--batch-size', default=64, type=int)
+parser.add_argument('--max-test-samples', default=None, type=int,
+                    help='Limit test sentences for a quick evaluation run')
 parser.add_argument('--epochs', default=2, type=int,
                     help='Number of evaluation sweeps over the test set')
+parser.add_argument('--snr-range', nargs='+', type=int,
+                    default=[-18, -15, -12, -9, -6, -3, 0, 3, 6, 9, 12, 15, 18],
+                    help='SNR sweep in dB, matching DiffusionSC/main.py')
 parser.add_argument('--warmup-batches', default=1, type=int,
                     help='Number of warmup batches before measuring inference time')
 parser.add_argument('--output-csv', default=None, type=str,
@@ -102,9 +114,10 @@ parser.add_argument('--temperature', default=0.0, type=float,
 # Random seed options
 parser.add_argument('--seed', default=10, type=int,
                     help='Base random seed (default: 10). Each eval epoch e is seeded with seed + e.')
-parser.add_argument('--epoch-seeds', nargs='+', type=int, default=None,
-                    help='Explicit seed for each eval epoch (e.g. --epoch-seeds 10 20). '
-                         'If fewer seeds than epochs are given, cycles through them. Overrides --seed.')
+parser.add_argument('--epoch-seeds', '--eval-seeds', dest='epoch_seeds',
+                    nargs='+', type=int, default=None,
+                    help='Explicit evaluation seeds (e.g. --eval-seeds 10 20); '
+                         'overrides --epochs and --seed.')
 # BERTScore options (mirrors performance.py)
 parser.add_argument('--bert-score', action='store_true',
                     help='Compute BERTScore semantic similarity in addition to BLEU')
@@ -196,6 +209,32 @@ def SNR_to_noise(snr_db: float) -> float:
     """Convert SNR in dB to noise standard deviation (AWGN convention)."""
     snr_linear = 10 ** (snr_db / 10)
     return 1.0 / math.sqrt(2 * snr_linear)
+
+
+def _quantize_latent(z: torch.Tensor):
+    """Quantize a latent to symmetric int8, returning its integer values and scale."""
+    max_abs = z.abs().max().item()
+    scale = max_abs / 127.0 if max_abs > 0 else 1.0
+    z_q = (z / scale).round().clamp(-127, 127).to(torch.int8)
+    return z_q, scale
+
+
+def _transmit_latent(model, z, noise_std, channel_type, quantize_latent=False,
+                     transmit_quant_scale=True):
+    """Simulate int8 transmission, optionally restoring the latent scale."""
+    if not quantize_latent:
+        return model.channels.forward(z, noise_std, channel_type=channel_type)
+
+    z_q, scale = _quantize_latent(z)
+    if not transmit_quant_scale:
+        # Channel arithmetic needs floats, but the integer magnitudes are kept.
+        return model.channels.forward(z_q.float(), noise_std, channel_type=channel_type)
+
+    # Express noise in integer units, then restore the latent scale at the
+    # receiver. The effective channel noise remains in the original units.
+    received_q = model.channels.forward(z_q.float(), noise_std / scale,
+                                        channel_type=channel_type)
+    return received_q * scale
 
 
 class Channels:
@@ -531,14 +570,16 @@ class TokenSentenceDataset(IterableDataset):
 @torch.no_grad()
 def decode_batch(model: ChannelDiffusionLM, batch: dict, noise_std: float,
                  tokenizer, channel_type: str = "AWGN",
-                 sampler: str = "ddim", ddim_steps: int = 10, temperature: float = 0.0):
+                 sampler: str = "ddim", ddim_steps: int = 10, temperature: float = 0.0,
+                 quantize_latent: bool = False, transmit_quant_scale: bool = True):
     """
     Run the full encode -> channel -> denoise -> decode pipeline for one batch.
 
     Realistic evaluation pipeline — the attention_mask is NEVER transmitted:
       1. Encode tokens to clean latent z0  (sender has mask: used for encode only).
-      2. Transmit ONLY z_t = channel(z0, noise_std) over the physical channel.
-         The attention_mask stays at the sender and is not sent.
+      2. Optionally quantize z0 to int8 before the physical channel. The
+         receiver dequantizes only if the scale is transmitted; otherwise it
+         receives raw integer magnitudes. The attention_mask stays at the sender.
       3. Receiver Denoise & Decode:
          - If sampler == 'ddim': multi-step DDIM reverse_sample starting from
            t_start = sigma_to_t(noise_std) down to 1 (capped at MAX_DDIM_STEPS).
@@ -563,10 +604,14 @@ def decode_batch(model: ChannelDiffusionLM, batch: dict, noise_std: float,
     # the sender knows its own padding boundaries).
     z0 = model.encode(input_ids, attention_mask)
 
-    # Step 2 — physical channel only (AWGN / Rayleigh / Rician).
-    # Only z_t crosses the channel; the attention_mask is NOT transmitted.
+    # Step 2 — optional quantization and physical channel.
+    # The attention_mask is NOT transmitted.
     # The receiver has no knowledge of which positions are real vs. padding.
-    z_t = model.channels.forward(z0, noise_std, channel_type=channel_type)
+    z_t = _transmit_latent(
+        model, z0, noise_std, channel_type,
+        quantize_latent=quantize_latent,
+        transmit_quant_scale=transmit_quant_scale,
+    )
 
     # SNR conditioning bin (both sides know the operating SNR from a control channel)
     snr_bin_val = noise_to_snr_bin(noise_std, model.cfg.n_snr_bins)
@@ -651,11 +696,7 @@ def performance(args, SNR, model, test_loader, tokenizer, bert_scorer=None):
     """
     Evaluate model over a range of SNR values.
 
-    Returns:
-        bleu_scores:   dict 'bleu1'..'bleu4' -> np.ndarray [len(SNR)]
-        bert_scores:   dict 'f1','precision','recall' -> np.ndarray (empty if no scorer)
-        time_stats:    dict 'latency_ms', 'model_latency_ms', 'throughput_sps' -> np.ndarray [len(SNR)]
-        all_sentences: list of per-sentence dicts
+    Returns per-seed metrics and sentence predictions.
     """
     bleu_scorers = {
         'bleu1': BleuScore(1, 0, 0, 0),
@@ -686,21 +727,20 @@ def performance(args, SNR, model, test_loader, tokenizer, bert_scorer=None):
                              channel_type=args.channel,
                              sampler=args.sampler,
                              ddim_steps=args.ddim_steps,
-                             temperature=args.temperature)
+                             temperature=args.temperature,
+                             quantize_latent=args.quantize_latent,
+                             transmit_quant_scale=args.transmit_quant_scale)
 
+    eval_seeds = args.epoch_seeds if args.epoch_seeds else [args.seed + i for i in range(args.epochs)]
+    if not eval_seeds:
+        raise ValueError('At least one evaluation seed is required')
+    print(f'\nEvaluating channel={args.channel} over SNR={SNR} dB '
+          f'for {len(eval_seeds)} seed(s): {eval_seeds}\n')
     model.eval()
     with torch.no_grad():
-        for epoch in range(args.epochs):
-            if getattr(args, 'epoch_seeds', None) is not None and len(args.epoch_seeds) > 0:
-                epoch_seed = args.epoch_seeds[epoch % len(args.epoch_seeds)]
-            elif getattr(args, 'seed', None) is not None:
-                epoch_seed = args.seed + epoch
-            else:
-                epoch_seed = None
-
-            if epoch_seed is not None:
-                setup_seed(epoch_seed)
-                print(f"\n[*] Epoch {epoch + 1}/{args.epochs} RNG seed set to: {epoch_seed}")
+        for epoch, epoch_seed in enumerate(eval_seeds):
+            setup_seed(epoch_seed)
+            print(f'--- Run {epoch + 1}/{len(eval_seeds)} (Seed: {epoch_seed}) ---')
 
             Tx_word = []
             Rx_word = []
@@ -709,7 +749,7 @@ def performance(args, SNR, model, test_loader, tokenizer, bert_scorer=None):
             epoch_model_latency_ms = []
             epoch_throughput_sps   = []
 
-            for snr in tqdm(SNR, desc=f"Epoch {epoch + 1}/{args.epochs}"):
+            for snr in tqdm(SNR, desc=f"Seed {epoch_seed} (SNR sweep)"):
                 word        = []
                 target_word = []
                 noise_std   = SNR_to_noise(snr)
@@ -725,6 +765,8 @@ def performance(args, SNR, model, test_loader, tokenizer, bert_scorer=None):
                         sampler=args.sampler,
                         ddim_steps=args.ddim_steps,
                         temperature=args.temperature,
+                        quantize_latent=args.quantize_latent,
+                        transmit_quant_scale=args.transmit_quant_scale,
                     )
                     word        += predicted
                     target_word += references
@@ -750,7 +792,7 @@ def performance(args, SNR, model, test_loader, tokenizer, bert_scorer=None):
                 for sample_idx, (pred, ref) in enumerate(zip(word, target_word)):
                     ref = ref[len('<START>'):].lstrip() if ref.startswith('<START>') else ref
                     all_sentences.append({
-                        'epoch':      epoch,
+                        'seed':       epoch_seed,
                         'snr_db':     snr,
                         'sample_idx': sample_idx,
                         'predicted':  pred,
@@ -801,41 +843,14 @@ def performance(args, SNR, model, test_loader, tokenizer, bert_scorer=None):
                 all_bert_p.append(bert_p_epoch)
                 all_bert_r.append(bert_r_epoch)
 
-    bleu_scores = {k: np.mean(np.array(all_bleu[k]), axis=0) for k in bleu_scorers}
-
-    bert_scores = {}
+    run_stats = {key: np.asarray(values) for key, values in all_bleu.items()}
     if bert_scorer is not None:
-        bert_scores['f1']        = np.mean(np.array(all_bert_f1), axis=0)
-        bert_scores['precision'] = np.mean(np.array(all_bert_p),  axis=0)
-        bert_scores['recall']    = np.mean(np.array(all_bert_r),  axis=0)
+        run_stats.update(bert_f1=np.asarray(all_bert_f1),
+                         bert_p=np.asarray(all_bert_p), bert_r=np.asarray(all_bert_r))
+    run_stats['latency_ms'] = np.asarray(all_latency_ms)
+    run_stats['throughput_sent_per_sec'] = np.asarray(all_throughput_sps)
 
-    time_stats = {
-        'latency_ms':       np.mean(np.array(all_latency_ms),       axis=0),
-        'model_latency_ms': np.mean(np.array(all_model_latency_ms), axis=0),
-        'throughput_sps':   np.mean(np.array(all_throughput_sps),   axis=0),
-    }
-
-    # Standard deviation per seed (across evaluation epochs / seeds)
-    n_seeds = len(all_latency_ms)
-    seed_stats = {
-        'n_seeds': n_seeds,
-        'bleu_std': {
-            k: float(np.std(np.mean(np.array(all_bleu[k]), axis=1))) if n_seeds > 1 else 0.0
-            for k in bleu_scorers
-        },
-        'bert_std': {
-            name: float(np.std(np.mean(np.array(all_list), axis=1))) if n_seeds > 1 else 0.0
-            for name, all_list in [('f1', all_bert_f1), ('precision', all_bert_p), ('recall', all_bert_r)]
-        } if bert_scorer is not None else {},
-        'time_std': {
-            name: float(np.std(np.mean(np.array(all_list), axis=1))) if n_seeds > 1 else 0.0
-            for name, all_list in [('latency_ms', all_latency_ms),
-                                   ('model_latency_ms', all_model_latency_ms),
-                                   ('throughput_sps', all_throughput_sps)]
-        },
-    }
-
-    return bleu_scores, bert_scores, time_stats, all_sentences, seed_stats
+    return run_stats, all_sentences
 
 
 # ---------------------------------------------------------------------------
@@ -852,7 +867,7 @@ if __name__ == '__main__':
         initial_seed = 10
     setup_seed(initial_seed)
 
-    SNR = [-18, -15, -12, -9, -6, -3, 0, 3, 6, 9, 12, 15, 18]
+    SNR = args.snr_range
 
     # -----------------------------------------------------------------------
     # 1. Load checkpoint
@@ -942,6 +957,8 @@ if __name__ == '__main__':
     # Load the fixed test split.
     with open(args.test_pkl, 'rb') as f:
         raw_test_data = pickle.load(f)
+    if args.max_test_samples is not None:
+        raw_test_data = raw_test_data[:args.max_test_samples]
     print(f'Loaded {len(raw_test_data)} sentences from {args.test_pkl}')
 
     # Decode custom-vocab IDs → text.
@@ -1009,157 +1026,23 @@ if __name__ == '__main__':
     # -----------------------------------------------------------------------
     # 6. Run evaluation
     # -----------------------------------------------------------------------
-    bleu_scores, bert_scores, time_stats, all_sentences, seed_stats = performance(
+    run_stats, all_sentences = performance(
         args, SNR, model, test_loader, tokenizer, bert_scorer=bert_scorer
     )
 
-    # -----------------------------------------------------------------------
-    # 7. Pretty-print results table (identical format to performance.py)
-    # -----------------------------------------------------------------------
-    sep_width = 10 + 4 * 11 + 3 * 16 + (3 * 11 if bert_scores else 0)
-    model_tag = os.path.splitext(os.path.basename(ckpt_file))[0]
-
-    print('\n' + '='*sep_width)
-    print(' Results for ' + args.channel + ' Channel using ' + ckpt_file + ' model')
-    print('='*sep_width)
-    print(f'{"SNR (dB)":>10} | {"BLEU-1":>8} | {"BLEU-2":>8} | {"BLEU-3":>8} | {"BLEU-4":>8}', end='')
-    if bert_scores:
-        print(f' | {"BERT-F1":>8} | {"BERT-P":>8} | {"BERT-R":>8}', end='')
-    print(f' | {"Latency(ms)":>12} | {"Model(ms)":>12} | {"Throughput(sps)":>15}')
-    print('-'*sep_width)
-    for i, snr in enumerate(SNR):
-        row = (f'{snr:>10}'
-               f' | {bleu_scores["bleu1"][i]:>8.4f}'
-               f' | {bleu_scores["bleu2"][i]:>8.4f}'
-               f' | {bleu_scores["bleu3"][i]:>8.4f}'
-               f' | {bleu_scores["bleu4"][i]:>8.4f}')
-        if bert_scores:
-            row += (f' | {bert_scores["f1"][i]:>8.4f}'
-                    f' | {bert_scores["precision"][i]:>8.4f}'
-                    f' | {bert_scores["recall"][i]:>8.4f}')
-        row += (f' | {time_stats["latency_ms"][i]:>12.3f}'
-                f' | {time_stats["model_latency_ms"][i]:>12.3f}'
-                f' | {time_stats["throughput_sps"][i]:>15.1f}')
-        print(row)
-
-    print('-'*sep_width)
-    row_avg = (f'{"Average":>10}'
-               f' | {np.mean(bleu_scores["bleu1"]):>8.4f}'
-               f' | {np.mean(bleu_scores["bleu2"]):>8.4f}'
-               f' | {np.mean(bleu_scores["bleu3"]):>8.4f}'
-               f' | {np.mean(bleu_scores["bleu4"]):>8.4f}')
-    if bert_scores:
-        row_avg += (f' | {np.mean(bert_scores["f1"]):>8.4f}'
-                    f' | {np.mean(bert_scores["precision"]):>8.4f}'
-                    f' | {np.mean(bert_scores["recall"]):>8.4f}')
-    row_avg += (f' | {np.mean(time_stats["latency_ms"]):>12.3f}'
-                f' | {np.mean(time_stats["model_latency_ms"]):>12.3f}'
-                f' | {np.mean(time_stats["throughput_sps"]):>15.1f}')
-    print(row_avg)
-
-    row_sd = (f'{"Std Dev":>10}'
-              f' | {seed_stats["bleu_std"]["bleu1"]:>8.4f}'
-              f' | {seed_stats["bleu_std"]["bleu2"]:>8.4f}'
-              f' | {seed_stats["bleu_std"]["bleu3"]:>8.4f}'
-              f' | {seed_stats["bleu_std"]["bleu4"]:>8.4f}')
-    if bert_scores:
-        row_sd += (f' | {seed_stats["bert_std"]["f1"]:>8.4f}'
-                   f' | {seed_stats["bert_std"]["precision"]:>8.4f}'
-                   f' | {seed_stats["bert_std"]["recall"]:>8.4f}')
-    row_sd += (f' | {seed_stats["time_std"]["latency_ms"]:>12.3f}'
-               f' | {seed_stats["time_std"]["model_latency_ms"]:>12.3f}'
-               f' | {seed_stats["time_std"]["throughput_sps"]:>15.1f}')
-    print(row_sd)
-    print('='*sep_width)
-
-    # -----------------------------------------------------------------------
-    # 8. Save aggregate CSV
-    # -----------------------------------------------------------------------
+    # Report the same per-SNR means and seed confidence intervals as DiffusionSC/main.py.
     ckpt_dir = os.path.dirname(os.path.abspath(ckpt_file))
-    csv_path = (args.output_csv
-                if args.output_csv
-                else os.path.join(ckpt_dir, f'diffusion_results_{args.channel}_{model_tag}.csv'))
-
-    fieldnames = ['channel', 'checkpoint', 'snr_db',
-                  'bleu1', 'bleu2', 'bleu3', 'bleu4']
-    if bert_scores:
-        fieldnames += ['bert_f1', 'bert_precision', 'bert_recall']
-    fieldnames += ['latency_ms_per_sent', 'model_latency_ms_per_sent', 'throughput_sent_per_sec']
-
-    with open(csv_path, 'w', newline='') as f:
-        writer = csv.DictWriter(f, fieldnames=fieldnames)
-        writer.writeheader()
-        for i, snr in enumerate(SNR):
-            record = {
-                'channel':                   args.channel,
-                'checkpoint':                model_tag,
-                'snr_db':                    snr,
-                'bleu1':                     round(float(bleu_scores['bleu1'][i]), 6),
-                'bleu2':                     round(float(bleu_scores['bleu2'][i]), 6),
-                'bleu3':                     round(float(bleu_scores['bleu3'][i]), 6),
-                'bleu4':                     round(float(bleu_scores['bleu4'][i]), 6),
-                'latency_ms_per_sent':       round(float(time_stats['latency_ms'][i]), 4),
-                'model_latency_ms_per_sent': round(float(time_stats['model_latency_ms'][i]), 4),
-                'throughput_sent_per_sec':   round(float(time_stats['throughput_sps'][i]), 2),
-            }
-            if bert_scores:
-                record['bert_f1']        = round(float(bert_scores['f1'][i]),        6)
-                record['bert_precision'] = round(float(bert_scores['precision'][i]), 6)
-                record['bert_recall']    = round(float(bert_scores['recall'][i]),    6)
-            writer.writerow(record)
-
-        # Summary total stats: Average & Std Dev (per seed across evaluation runs)
-        avg_record = {
-            'channel':                   args.channel,
-            'checkpoint':                model_tag,
-            'snr_db':                    'Average',
-            'bleu1':                     round(float(np.mean(bleu_scores['bleu1'])), 6),
-            'bleu2':                     round(float(np.mean(bleu_scores['bleu2'])), 6),
-            'bleu3':                     round(float(np.mean(bleu_scores['bleu3'])), 6),
-            'bleu4':                     round(float(np.mean(bleu_scores['bleu4'])), 6),
-            'latency_ms_per_sent':       round(float(np.mean(time_stats['latency_ms'])), 4),
-            'model_latency_ms_per_sent': round(float(np.mean(time_stats['model_latency_ms'])), 4),
-            'throughput_sent_per_sec':   round(float(np.mean(time_stats['throughput_sps'])), 2),
-        }
-        if bert_scores:
-            avg_record['bert_f1']        = round(float(np.mean(bert_scores['f1'])),        6)
-            avg_record['bert_precision'] = round(float(np.mean(bert_scores['precision'])), 6)
-            avg_record['bert_recall']    = round(float(np.mean(bert_scores['recall'])),    6)
-        writer.writerow(avg_record)
-
-        sd_record = {
-            'channel':                   args.channel,
-            'checkpoint':                model_tag,
-            'snr_db':                    'Std Dev',
-            'bleu1':                     round(float(seed_stats["bleu_std"]['bleu1']), 6),
-            'bleu2':                     round(float(seed_stats["bleu_std"]['bleu2']), 6),
-            'bleu3':                     round(float(seed_stats["bleu_std"]['bleu3']), 6),
-            'bleu4':                     round(float(seed_stats["bleu_std"]['bleu4']), 6),
-            'latency_ms_per_sent':       round(float(seed_stats["time_std"]['latency_ms']), 4),
-            'model_latency_ms_per_sent': round(float(seed_stats["time_std"]['model_latency_ms']), 4),
-            'throughput_sent_per_sec':   round(float(seed_stats["time_std"]['throughput_sps']), 2),
-        }
-        if bert_scores:
-            sd_record['bert_f1']        = round(float(seed_stats["bert_std"]['f1']),        6)
-            sd_record['bert_precision'] = round(float(seed_stats["bert_std"]['precision']), 6)
-            sd_record['bert_recall']    = round(float(seed_stats["bert_std"]['recall']),    6)
-        writer.writerow(sd_record)
-
-    print(f'\nResults saved to: {csv_path}')
-
-    # -----------------------------------------------------------------------
-    # 9. Save per-sentence predictions CSV
-    # -----------------------------------------------------------------------
-    pred_csv_path = (args.predictions_csv
-                     if args.predictions_csv
-                     else os.path.join(ckpt_dir,
-                                       f'diffusion_predictions_{args.channel}_{model_tag}.csv'))
-
-    pred_fieldnames = ['epoch', 'snr_db', 'sample_idx', 'predicted', 'reference']
-    # [FIX 5] Overwrite each run instead of silently appending forever.
-    with open(pred_csv_path, 'w', newline='', encoding='utf-8') as f:
-        writer = csv.DictWriter(f, fieldnames=pred_fieldnames)
-        writer.writeheader()
-        writer.writerows(all_sentences)
-
-    print(f'Predictions saved to: {pred_csv_path}')
+    model_tag = os.path.splitext(os.path.basename(ckpt_file))[0]
+    quant_tag = ('_int8_scale' if args.transmit_quant_scale else '_int8_raw') if args.quantize_latent else ''
+    csv_path = args.output_csv or os.path.join(
+        ckpt_dir, f'diffusion_results_{args.channel}_{model_tag}{quant_tag}.csv')
+    pred_csv_path = args.predictions_csv or os.path.join(
+        ckpt_dir, f'diffusion_predictions_{args.channel}_{model_tag}{quant_tag}.csv')
+    report_results(
+        SNR, run_stats, all_sentences, channel=args.channel, checkpoint=model_tag,
+        results_path=csv_path, predictions_path=pred_csv_path,
+        extra_fields={
+            'quantize_latent': args.quantize_latent,
+            'transmit_quant_scale': args.transmit_quant_scale if args.quantize_latent else '',
+        },
+    )

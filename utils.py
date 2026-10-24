@@ -14,7 +14,6 @@ import numpy as np
 from w3lib.html import remove_tags
 from nltk.translate.bleu_score import sentence_bleu
 from models.mutual_info import sample_batch, mutual_information
-from sentence_transformers import SentenceTransformer
 import torch.nn.functional as F
 
 device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
@@ -258,6 +257,7 @@ class SemanticSimilarityLoss(nn.Module):
         self._sbert_device = device or torch.device(
             'cuda:0' if torch.cuda.is_available() else 'cpu'
         )
+        from sentence_transformers import SentenceTransformer
         self._sbert = SentenceTransformer(model_name, device=str(self._sbert_device))
         # Freeze all SBERT parameters — it is a *reference* encoder only.
         for param in self._sbert.parameters():

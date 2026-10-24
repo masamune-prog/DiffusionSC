@@ -1,0 +1,363 @@
+==================================================
+Job ID:        69367
+Node:          TC1N04
+Start time:    Fri Oct 23 11:47:14 PM +08 2026
+Submit dir:    /tc1home/UG/zgoh033/DeepSC
+==================================================
+Fri Oct 23 23:47:15 2026       
++-----------------------------------------------------------------------------------------+
+| NVIDIA-SMI 580.173.02             Driver Version: 580.173.02     CUDA Version: 13.0     |
++-----------------------------------------+------------------------+----------------------+
+| GPU  Name                 Persistence-M | Bus-Id          Disp.A | Volatile Uncorr. ECC |
+| Fan  Temp   Perf          Pwr:Usage/Cap |           Memory-Usage | GPU-Util  Compute M. |
+|                                         |                        |               MIG M. |
+|=========================================+========================+======================|
+|   0  Tesla V100-PCIE-32GB           Off |   00000000:D8:00.0 Off |                    0 |
+| N/A   55C    P0             40W /  250W |       0MiB /  32768MiB |      0%      Default |
+|                                         |                        |                  N/A |
++-----------------------------------------+------------------------+----------------------+
+
++-----------------------------------------------------------------------------------------+
+| Processes:                                                                              |
+|  GPU   GI   CI              PID   Type   Process name                        GPU Memory |
+|        ID   ID                                                               Usage      |
+|=========================================================================================|
+|  No running processes found                                                             |
++-----------------------------------------------------------------------------------------+
+torch: 2.6.0+cu124
+cuda available: True
+GPU: Tesla V100-PCIE-32GB
+bf16 supported: True
+cuda
+Loading DeepSC vocab...
+Loading canonical train/val/test splits from pkl files...
+  Loading txt/train_data.pkl...
+  58778 non-empty sentences from train
+  Loading txt/val_data.pkl...
+  7347 non-empty sentences from val
+  Loading txt/test_data.pkl...
+  7347 non-empty sentences from test
+Total: 73472 sentences (58778 train / 7347 val / 7347 test)
+Sample train sentence: the house rose and observed a minute s silence
+Re-tokenizing with diffusion tokenizer...
+Tokenized.  Vocab size: 22235
+Example encoding: [1, 4, 156, 2317, 8, 2761, 14, 684, 33, 1317, 2]
+RUN_MODE: budget_100
+BATCH_SIZE: 16 | GRAD_ACCUM: 4 (Effective: 64)
+TRAIN_MODE: reverse | TRAIN_DDIM_STEPS: 5
+{'input_ids': torch.Size([16, 512]), 'attention_mask': torch.Size([16, 512])}
+Decoded snippet:
+ <START> progress report on turkey debate <END> <END> <PAD> <PAD> <PAD> <PAD> <PAD> <PAD> <PAD> <PAD> <PAD> <PAD> <PAD> <PAD> <PAD> <PAD> <PAD> <PAD> <PAD> <PAD> <PAD> <PAD> <PAD> <PAD> <PAD> <PAD> <PAD> <PAD> <PAD> <PAD> <PAD> <PAD> <PAD> <PAD> <PAD> <PAD> <PAD> <PAD> <PAD> <PAD> <PAD> <PAD> <PAD> <PAD> <PAD> <PAD> <PAD> <PAD> <PAD> <PAD> <PAD> <PAD> <PAD> <PAD> <PAD> <PAD> <PAD> <PAD> <PAD> <PAD> <PAD> <PAD> <PAD> <PAD> <PAD> <PAD> <PAD> <PAD> <PAD> <PAD> <PAD> <PAD> <PAD> <PAD> <PAD> <PAD> <PAD> <PAD> <PAD> <PAD> <PAD> <PAD> <PAD> <PAD> <PAD> <PAD> <PAD> <PAD> <PAD> <PAD> <PAD> <PAD> <PAD> <PAD> <PAD> <PAD> <PAD> <PAD> <PAD> <PAD> <PAD> <PAD> <PAD> <PAD> <PAD> <PAD> <PAD> <PAD> <PAD> <PAD> <PAD> <PAD> <PAD> <PAD>
+Dataset sizes: 58778 train / 7347 val / 7347 test
+Module Name                                   | Shape                | Parameters      | Requires Grad
+-----------------------------------------------------------------------------------------------
+tok_emb.weight                                | [22235, 512]         | 11,384,320      | True
+pos_emb.weight                                | [512, 512]           | 262,144         | True
+time_emb.weight                               | [129, 512]           | 66,048          | True
+mode_emb.weight                               | [2, 512]             | 1,024           | True
+snr_emb.weight                                | [19, 512]            | 9,728           | True
+encoder.layers.0.self_attn.in_proj_weight     | [1536, 512]          | 786,432         | True
+encoder.layers.0.self_attn.in_proj_bias       | [1536]               | 1,536           | True
+encoder.layers.0.self_attn.out_proj.weight    | [512, 512]           | 262,144         | True
+encoder.layers.0.self_attn.out_proj.bias      | [512]                | 512             | True
+encoder.layers.0.linear1.weight               | [2048, 512]          | 1,048,576       | True
+encoder.layers.0.linear1.bias                 | [2048]               | 2,048           | True
+encoder.layers.0.linear2.weight               | [512, 2048]          | 1,048,576       | True
+encoder.layers.0.linear2.bias                 | [512]                | 512             | True
+encoder.layers.0.norm1.weight                 | [512]                | 512             | True
+encoder.layers.0.norm1.bias                   | [512]                | 512             | True
+encoder.layers.0.norm2.weight                 | [512]                | 512             | True
+encoder.layers.0.norm2.bias                   | [512]                | 512             | True
+encoder.layers.1.self_attn.in_proj_weight     | [1536, 512]          | 786,432         | True
+encoder.layers.1.self_attn.in_proj_bias       | [1536]               | 1,536           | True
+encoder.layers.1.self_attn.out_proj.weight    | [512, 512]           | 262,144         | True
+encoder.layers.1.self_attn.out_proj.bias      | [512]                | 512             | True
+encoder.layers.1.linear1.weight               | [2048, 512]          | 1,048,576       | True
+encoder.layers.1.linear1.bias                 | [2048]               | 2,048           | True
+encoder.layers.1.linear2.weight               | [512, 2048]          | 1,048,576       | True
+encoder.layers.1.linear2.bias                 | [512]                | 512             | True
+encoder.layers.1.norm1.weight                 | [512]                | 512             | True
+encoder.layers.1.norm1.bias                   | [512]                | 512             | True
+encoder.layers.1.norm2.weight                 | [512]                | 512             | True
+encoder.layers.1.norm2.bias                   | [512]                | 512             | True
+encoder.layers.2.self_attn.in_proj_weight     | [1536, 512]          | 786,432         | True
+encoder.layers.2.self_attn.in_proj_bias       | [1536]               | 1,536           | True
+encoder.layers.2.self_attn.out_proj.weight    | [512, 512]           | 262,144         | True
+encoder.layers.2.self_attn.out_proj.bias      | [512]                | 512             | True
+encoder.layers.2.linear1.weight               | [2048, 512]          | 1,048,576       | True
+encoder.layers.2.linear1.bias                 | [2048]               | 2,048           | True
+encoder.layers.2.linear2.weight               | [512, 2048]          | 1,048,576       | True
+encoder.layers.2.linear2.bias                 | [512]                | 512             | True
+encoder.layers.2.norm1.weight                 | [512]                | 512             | True
+encoder.layers.2.norm1.bias                   | [512]                | 512             | True
+encoder.layers.2.norm2.weight                 | [512]                | 512             | True
+encoder.layers.2.norm2.bias                   | [512]                | 512             | True
+encoder.layers.3.self_attn.in_proj_weight     | [1536, 512]          | 786,432         | True
+encoder.layers.3.self_attn.in_proj_bias       | [1536]               | 1,536           | True
+encoder.layers.3.self_attn.out_proj.weight    | [512, 512]           | 262,144         | True
+encoder.layers.3.self_attn.out_proj.bias      | [512]                | 512             | True
+encoder.layers.3.linear1.weight               | [2048, 512]          | 1,048,576       | True
+encoder.layers.3.linear1.bias                 | [2048]               | 2,048           | True
+encoder.layers.3.linear2.weight               | [512, 2048]          | 1,048,576       | True
+encoder.layers.3.linear2.bias                 | [512]                | 512             | True
+encoder.layers.3.norm1.weight                 | [512]                | 512             | True
+encoder.layers.3.norm1.bias                   | [512]                | 512             | True
+encoder.layers.3.norm2.weight                 | [512]                | 512             | True
+encoder.layers.3.norm2.bias                   | [512]                | 512             | True
+encoder.layers.4.self_attn.in_proj_weight     | [1536, 512]          | 786,432         | True
+encoder.layers.4.self_attn.in_proj_bias       | [1536]               | 1,536           | True
+encoder.layers.4.self_attn.out_proj.weight    | [512, 512]           | 262,144         | True
+encoder.layers.4.self_attn.out_proj.bias      | [512]                | 512             | True
+encoder.layers.4.linear1.weight               | [2048, 512]          | 1,048,576       | True
+encoder.layers.4.linear1.bias                 | [2048]               | 2,048           | True
+encoder.layers.4.linear2.weight               | [512, 2048]          | 1,048,576       | True
+encoder.layers.4.linear2.bias                 | [512]                | 512             | True
+encoder.layers.4.norm1.weight                 | [512]                | 512             | True
+encoder.layers.4.norm1.bias                   | [512]                | 512             | True
+encoder.layers.4.norm2.weight                 | [512]                | 512             | True
+encoder.layers.4.norm2.bias                   | [512]                | 512             | True
+z_ln.weight                                   | [512]                | 512             | True
+z_ln.bias                                     | [512]                | 512             | True
+denoiser.layers.0.self_attn.in_proj_weight    | [1536, 512]          | 786,432         | True
+denoiser.layers.0.self_attn.in_proj_bias      | [1536]               | 1,536           | True
+denoiser.layers.0.self_attn.out_proj.weight   | [512, 512]           | 262,144         | True
+denoiser.layers.0.self_attn.out_proj.bias     | [512]                | 512             | True
+denoiser.layers.0.linear1.weight              | [2048, 512]          | 1,048,576       | True
+denoiser.layers.0.linear1.bias                | [2048]               | 2,048           | True
+denoiser.layers.0.linear2.weight              | [512, 2048]          | 1,048,576       | True
+denoiser.layers.0.linear2.bias                | [512]                | 512             | True
+denoiser.layers.0.norm1.weight                | [512]                | 512             | True
+denoiser.layers.0.norm1.bias                  | [512]                | 512             | True
+denoiser.layers.0.norm2.weight                | [512]                | 512             | True
+denoiser.layers.0.norm2.bias                  | [512]                | 512             | True
+denoiser.layers.1.self_attn.in_proj_weight    | [1536, 512]          | 786,432         | True
+denoiser.layers.1.self_attn.in_proj_bias      | [1536]               | 1,536           | True
+denoiser.layers.1.self_attn.out_proj.weight   | [512, 512]           | 262,144         | True
+denoiser.layers.1.self_attn.out_proj.bias     | [512]                | 512             | True
+denoiser.layers.1.linear1.weight              | [2048, 512]          | 1,048,576       | True
+denoiser.layers.1.linear1.bias                | [2048]               | 2,048           | True
+denoiser.layers.1.linear2.weight              | [512, 2048]          | 1,048,576       | True
+denoiser.layers.1.linear2.bias                | [512]                | 512             | True
+denoiser.layers.1.norm1.weight                | [512]                | 512             | True
+denoiser.layers.1.norm1.bias                  | [512]                | 512             | True
+denoiser.layers.1.norm2.weight                | [512]                | 512             | True
+denoiser.layers.1.norm2.bias                  | [512]                | 512             | True
+denoiser.layers.2.self_attn.in_proj_weight    | [1536, 512]          | 786,432         | True
+denoiser.layers.2.self_attn.in_proj_bias      | [1536]               | 1,536           | True
+denoiser.layers.2.self_attn.out_proj.weight   | [512, 512]           | 262,144         | True
+denoiser.layers.2.self_attn.out_proj.bias     | [512]                | 512             | True
+denoiser.layers.2.linear1.weight              | [2048, 512]          | 1,048,576       | True
+denoiser.layers.2.linear1.bias                | [2048]               | 2,048           | True
+denoiser.layers.2.linear2.weight              | [512, 2048]          | 1,048,576       | True
+denoiser.layers.2.linear2.bias                | [512]                | 512             | True
+denoiser.layers.2.norm1.weight                | [512]                | 512             | True
+denoiser.layers.2.norm1.bias                  | [512]                | 512             | True
+denoiser.layers.2.norm2.weight                | [512]                | 512             | True
+denoiser.layers.2.norm2.bias                  | [512]                | 512             | True
+denoiser.layers.3.self_attn.in_proj_weight    | [1536, 512]          | 786,432         | True
+denoiser.layers.3.self_attn.in_proj_bias      | [1536]               | 1,536           | True
+denoiser.layers.3.self_attn.out_proj.weight   | [512, 512]           | 262,144         | True
+denoiser.layers.3.self_attn.out_proj.bias     | [512]                | 512             | True
+denoiser.layers.3.linear1.weight              | [2048, 512]          | 1,048,576       | True
+denoiser.layers.3.linear1.bias                | [2048]               | 2,048           | True
+denoiser.layers.3.linear2.weight              | [512, 2048]          | 1,048,576       | True
+denoiser.layers.3.linear2.bias                | [512]                | 512             | True
+denoiser.layers.3.norm1.weight                | [512]                | 512             | True
+denoiser.layers.3.norm1.bias                  | [512]                | 512             | True
+denoiser.layers.3.norm2.weight                | [512]                | 512             | True
+denoiser.layers.3.norm2.bias                  | [512]                | 512             | True
+denoiser.layers.4.self_attn.in_proj_weight    | [1536, 512]          | 786,432         | True
+denoiser.layers.4.self_attn.in_proj_bias      | [1536]               | 1,536           | True
+denoiser.layers.4.self_attn.out_proj.weight   | [512, 512]           | 262,144         | True
+denoiser.layers.4.self_attn.out_proj.bias     | [512]                | 512             | True
+denoiser.layers.4.linear1.weight              | [2048, 512]          | 1,048,576       | True
+denoiser.layers.4.linear1.bias                | [2048]               | 2,048           | True
+denoiser.layers.4.linear2.weight              | [512, 2048]          | 1,048,576       | True
+denoiser.layers.4.linear2.bias                | [512]                | 512             | True
+denoiser.layers.4.norm1.weight                | [512]                | 512             | True
+denoiser.layers.4.norm1.bias                  | [512]                | 512             | True
+denoiser.layers.4.norm2.weight                | [512]                | 512             | True
+denoiser.layers.4.norm2.bias                  | [512]                | 512             | True
+ln_f.weight                                   | [512]                | 512             | True
+ln_f.bias                                     | [512]                | 512             | True
+-----------------------------------------------------------------------------------------------
+Total Unique Parameters:     43,249,152
+Total Trainable Parameters:  43,249,152
+[Auto-Resume] Found latest checkpoint 'channel_diffusion_reverse_ray_latest.pt'. Resuming training...
+[Resume] Loading checkpoint from: channel_diffusion_reverse_ray_latest.pt
+[Resume] Model weights loaded. missing keys: 0, unexpected keys: 0
+[Resume] Resuming from step 18622 | best_val_loss: 0.2272 | prior train time: 17.25h
+[Resume] Optimizer state successfully restored.
+[Resume] Scheduler state successfully restored (LR: 1.96e-04).
+[Resume] Warning: Could not restore RNG states (RNG state must be a torch.ByteTensor).
+[Train] Training starting at step 18622/200000 (Walltime limit: 5.75h, Save every: 500)
+step 18623/200000 | loss 0.4710 (mse 0.9030, ce_d 0.0656, ce_r 0.0182) | t_mean 108.0 | lr 1.96e-04 | session: 7.0s | total: 17.25h
+step 18650/200000 | loss 0.3000 (mse 0.4203, ce_d 0.0360, ce_r 0.0023) | t_mean 99.0 | lr 1.96e-04 | session: 125.3s | total: 17.29h
+step 18700/200000 | loss 0.1943 (mse 0.1406, ce_d 0.0073, ce_r 0.0000) | t_mean 86.0 | lr 1.96e-04 | session: 344.6s | total: 17.35h
+step 18750/200000 | loss 0.5384 (mse 1.0217, ce_d 0.0465, ce_r 0.0006) | t_mean 118.0 | lr 1.96e-04 | session: 563.8s | total: 17.41h
+step 18800/200000 | loss 0.4188 (mse 0.4816, ce_d 0.0101, ce_r 0.0001) | t_mean 109.0 | lr 1.96e-04 | session: 782.9s | total: 17.47h
+step 18850/200000 | loss 0.2292 (mse 0.3508, ce_d 0.0203, ce_r 0.0001) | t_mean 98.0 | lr 1.96e-04 | session: 1002.0s | total: 17.53h
+step 18900/200000 | loss 0.1899 (mse 0.1201, ce_d 0.0113, ce_r 0.0001) | t_mean 81.0 | lr 1.96e-04 | session: 1221.1s | total: 17.59h
+step 18950/200000 | loss 0.2586 (mse 0.1737, ce_d 0.0239, ce_r 0.0004) | t_mean 84.0 | lr 1.96e-04 | session: 1440.3s | total: 17.65h
+step 19000/200000 | loss 0.1454 (mse 0.1156, ce_d 0.0083, ce_r 0.0001) | t_mean 82.0 | lr 1.96e-04 | session: 1659.3s | total: 17.71h
+  [eval] step 19000 | val_loss 0.5469 (mse 0.5116, ce 0.0292)
+  [ckpt] saved latest resumable checkpoint (step=19000) -> channel_diffusion_reverse_ray_latest.pt
+  [sample] step 19000 reverse-diffusion sanity check:
+  [channel=Rayleigh σ=1.0000, t_start=128/128, SNR≈0.7dB]
+  GT     : mr president let us at least have the courage to enforce transparency upon turkey when it comes to respect for human rights
+  Direct : mr president let us at least have the courage to enforce transparency upon turkey when it comes to respect for human rights
+  Diffuse: mr president let us at least have the courage to enforce transparency upon turkey when it comes to respect for human rights
+
+  GT     : once again we condemn the situation but we also wish to condemn the failure to put these measures into practice
+  Direct : once again we condemn the situation but we also wish to condemn the failure to put these measures into practice
+  Diffuse: once again we condemn the situation but we also wish to condemn the failure to put these measures into practice
+
+step 19050/200000 | loss 0.1903 (mse 0.1485, ce_d 0.0097, ce_r 0.0001) | t_mean 83.0 | lr 1.96e-04 | session: 1889.3s | total: 17.78h
+step 19100/200000 | loss 0.1947 (mse 0.1497, ce_d 0.0118, ce_r 0.0001) | t_mean 90.0 | lr 1.96e-04 | session: 2108.7s | total: 17.84h
+step 19150/200000 | loss 0.3366 (mse 0.1182, ce_d 0.0128, ce_r 0.0001) | t_mean 81.0 | lr 1.96e-04 | session: 2327.9s | total: 17.90h
+step 19200/200000 | loss 0.4944 (mse 0.3916, ce_d 0.0077, ce_r 0.0000) | t_mean 115.0 | lr 1.96e-04 | session: 2547.2s | total: 17.96h
+step 19250/200000 | loss 0.1829 (mse 0.2325, ce_d 0.0095, ce_r 0.0000) | t_mean 102.0 | lr 1.96e-04 | session: 2766.4s | total: 18.02h
+step 19300/200000 | loss 0.3455 (mse 0.2225, ce_d 0.0235, ce_r 0.0001) | t_mean 88.0 | lr 1.96e-04 | session: 2985.6s | total: 18.08h
+step 19350/200000 | loss 0.2990 (mse 0.6781, ce_d 0.0340, ce_r 0.0017) | t_mean 120.0 | lr 1.96e-04 | session: 3204.9s | total: 18.14h
+step 19400/200000 | loss 0.4130 (mse 0.1274, ce_d 0.0078, ce_r 0.0000) | t_mean 86.0 | lr 1.96e-04 | session: 3423.9s | total: 18.20h
+step 19450/200000 | loss 0.1612 (mse 0.1460, ce_d 0.0136, ce_r 0.0002) | t_mean 82.0 | lr 1.96e-04 | session: 3642.8s | total: 18.26h
+step 19500/200000 | loss 0.8071 (mse 0.3191, ce_d 0.0129, ce_r 0.0002) | t_mean 100.0 | lr 1.96e-04 | session: 3861.8s | total: 18.32h
+  [eval] step 19500 | val_loss 0.4281 (mse 0.4212, ce 0.0046)
+  [ckpt] saved latest resumable checkpoint (step=19500) -> channel_diffusion_reverse_ray_latest.pt
+step 19550/200000 | loss 0.3068 (mse 0.4787, ce_d 0.0335, ce_r 0.0019) | t_mean 104.0 | lr 1.96e-04 | session: 4091.3s | total: 18.39h
+step 19600/200000 | loss 0.2999 (mse 0.3076, ce_d 0.0171, ce_r 0.0001) | t_mean 83.0 | lr 1.96e-04 | session: 4310.6s | total: 18.45h
+step 19650/200000 | loss 0.4534 (mse 0.2039, ce_d 0.0052, ce_r 0.0000) | t_mean 97.0 | lr 1.96e-04 | session: 4529.8s | total: 18.51h
+step 19700/200000 | loss 0.1995 (mse 0.1653, ce_d 0.0084, ce_r 0.0001) | t_mean 91.0 | lr 1.96e-04 | session: 4749.0s | total: 18.57h
+step 19750/200000 | loss 0.2315 (mse 0.1211, ce_d 0.0087, ce_r 0.0000) | t_mean 82.0 | lr 1.96e-04 | session: 4968.3s | total: 18.63h
+step 19800/200000 | loss 0.3041 (mse 0.1193, ce_d 0.0141, ce_r 0.0001) | t_mean 79.0 | lr 1.96e-04 | session: 5187.5s | total: 18.69h
+step 19850/200000 | loss 0.3349 (mse 0.4091, ce_d 0.0144, ce_r 0.0002) | t_mean 106.0 | lr 1.96e-04 | session: 5406.6s | total: 18.75h
+step 19900/200000 | loss 0.2951 (mse 0.4150, ce_d 0.0277, ce_r 0.0002) | t_mean 102.0 | lr 1.96e-04 | session: 5625.9s | total: 18.81h
+step 19950/200000 | loss 0.4755 (mse 0.4629, ce_d 0.0164, ce_r 0.0002) | t_mean 115.0 | lr 1.96e-04 | session: 5845.0s | total: 18.88h
+step 20000/200000 | loss 0.4375 (mse 0.3578, ce_d 0.0140, ce_r 0.0004) | t_mean 110.0 | lr 1.96e-04 | session: 6063.9s | total: 18.94h
+  [eval] step 20000 | val_loss 0.4030 (mse 0.3890, ce 0.0103)
+  [ckpt] saved latest resumable checkpoint (step=20000) -> channel_diffusion_reverse_ray_latest.pt
+  [sample] step 20000 reverse-diffusion sanity check:
+  [channel=Rayleigh σ=1.0000, t_start=128/128, SNR≈0.8dB]
+  GT     : mr president let us at least have the courage to enforce transparency upon turkey when it comes to respect for human rights
+  Direct : mr president let us at least have the courage to enforce transparency upon turkey when it comes to respect for human rights
+  Diffuse: mr president let us at least have the courage to enforce transparency upon turkey when it comes to respect for human rights
+
+  GT     : once again we condemn the situation but we also wish to condemn the failure to put these measures into practice
+  Direct : once again we condemn the situation but we also wish to condemn the failure to put these measures into practice
+  Diffuse: once again we condemn the situation but we also wish to condemn the failure to put these measures into practice
+
+step 20050/200000 | loss 0.4292 (mse 0.5288, ce_d 0.0491, ce_r 0.0006) | t_mean 111.0 | lr 1.96e-04 | session: 6294.1s | total: 19.00h
+step 20100/200000 | loss 1.0542 (mse 0.9361, ce_d 0.4957, ce_r 0.3511) | t_mean 95.0 | lr 1.95e-04 | session: 6513.5s | total: 19.06h
+step 20150/200000 | loss 0.3762 (mse 0.2755, ce_d 0.0171, ce_r 0.0008) | t_mean 95.0 | lr 1.95e-04 | session: 6732.9s | total: 19.12h
+step 20200/200000 | loss 0.2741 (mse 0.2776, ce_d 0.0335, ce_r 0.0007) | t_mean 100.0 | lr 1.95e-04 | session: 6952.3s | total: 19.18h
+step 20250/200000 | loss 0.5698 (mse 0.2005, ce_d 0.0259, ce_r 0.0016) | t_mean 93.0 | lr 1.95e-04 | session: 7171.8s | total: 19.24h
+step 20300/200000 | loss 0.2163 (mse 0.1536, ce_d 0.0074, ce_r 0.0001) | t_mean 80.0 | lr 1.95e-04 | session: 7391.2s | total: 19.30h
+step 20350/200000 | loss 0.3141 (mse 0.1854, ce_d 0.0381, ce_r 0.0002) | t_mean 91.0 | lr 1.95e-04 | session: 7610.4s | total: 19.37h
+step 20400/200000 | loss 0.4309 (mse 0.9759, ce_d 0.0951, ce_r 0.0143) | t_mean 120.0 | lr 1.95e-04 | session: 7829.6s | total: 19.43h
+step 20450/200000 | loss 0.4299 (mse 0.5286, ce_d 0.0163, ce_r 0.0005) | t_mean 108.0 | lr 1.95e-04 | session: 8048.7s | total: 19.49h
+step 20500/200000 | loss 0.6029 (mse 0.1922, ce_d 0.0101, ce_r 0.0001) | t_mean 82.0 | lr 1.95e-04 | session: 8267.5s | total: 19.55h
+  [eval] step 20500 | val_loss 0.3762 (mse 0.3636, ce 0.0094)
+  [ckpt] saved latest resumable checkpoint (step=20500) -> channel_diffusion_reverse_ray_latest.pt
+step 20550/200000 | loss 0.3799 (mse 0.2652, ce_d 0.0137, ce_r 0.0001) | t_mean 104.0 | lr 1.95e-04 | session: 8498.0s | total: 19.61h
+step 20600/200000 | loss 0.5102 (mse 0.9538, ce_d 0.0512, ce_r 0.0008) | t_mean 119.0 | lr 1.95e-04 | session: 8717.3s | total: 19.67h
+step 20650/200000 | loss 0.3500 (mse 0.1857, ce_d 0.0179, ce_r 0.0001) | t_mean 86.0 | lr 1.95e-04 | session: 8936.5s | total: 19.73h
+step 20700/200000 | loss 0.3607 (mse 0.2096, ce_d 0.0105, ce_r 0.0002) | t_mean 99.0 | lr 1.95e-04 | session: 9155.7s | total: 19.79h
+step 20750/200000 | loss 0.4999 (mse 0.1902, ce_d 0.0157, ce_r 0.0001) | t_mean 91.0 | lr 1.95e-04 | session: 9374.9s | total: 19.86h
+step 20800/200000 | loss 0.5865 (mse 0.1272, ce_d 0.0152, ce_r 0.0001) | t_mean 85.0 | lr 1.95e-04 | session: 9594.0s | total: 19.92h
+step 20850/200000 | loss 0.6194 (mse 1.1151, ce_d 0.2363, ce_r 0.0681) | t_mean 114.0 | lr 1.95e-04 | session: 9813.3s | total: 19.98h
+step 20900/200000 | loss 0.4204 (mse 0.5632, ce_d 0.0304, ce_r 0.0007) | t_mean 109.0 | lr 1.95e-04 | session: 10032.4s | total: 20.04h
+step 20950/200000 | loss 0.5040 (mse 0.3419, ce_d 0.0115, ce_r 0.0001) | t_mean 104.0 | lr 1.95e-04 | session: 10251.6s | total: 20.10h
+step 21000/200000 | loss 0.2370 (mse 0.1627, ce_d 0.0139, ce_r 0.0001) | t_mean 87.0 | lr 1.95e-04 | session: 10470.7s | total: 20.16h
+  [eval] step 21000 | val_loss 0.3154 (mse 0.3132, ce 0.0006)
+  [ckpt] saved latest resumable checkpoint (step=21000) -> channel_diffusion_reverse_ray_latest.pt
+  [sample] step 21000 reverse-diffusion sanity check:
+  [channel=Rayleigh σ=1.0000, t_start=128/128, SNR≈0.8dB]
+  GT     : mr president let us at least have the courage to enforce transparency upon turkey when it comes to respect for human rights
+  Direct : mr president let us at least have the courage to enforce transparency upon turkey when it comes to respect for human rights
+  Diffuse: mr president let us at least have the courage to enforce transparency upon turkey when it comes to respect for human rights
+
+  GT     : once again we condemn the situation but we also wish to condemn the failure to put these measures into practice
+  Direct : once again we condemn the situation but we also wish to condemn the failure to put these measures into practice
+  Diffuse: once again we condemn the situation but we also wish to condemn the failure to put these measures into practice
+
+step 21050/200000 | loss 0.4416 (mse 0.4794, ce_d 0.0281, ce_r 0.0006) | t_mean 113.0 | lr 1.95e-04 | session: 10699.7s | total: 20.22h
+step 21100/200000 | loss 0.3811 (mse 0.1294, ce_d 0.0099, ce_r 0.0000) | t_mean 83.0 | lr 1.95e-04 | session: 10918.8s | total: 20.28h
+step 21150/200000 | loss 0.2037 (mse 0.2959, ce_d 0.0155, ce_r 0.0002) | t_mean 109.0 | lr 1.95e-04 | session: 11138.1s | total: 20.35h
+step 21200/200000 | loss 0.4364 (mse 0.1687, ce_d 0.0117, ce_r 0.0001) | t_mean 94.0 | lr 1.95e-04 | session: 11357.2s | total: 20.41h
+step 21250/200000 | loss 0.3655 (mse 0.2027, ce_d 0.0207, ce_r 0.0001) | t_mean 102.0 | lr 1.95e-04 | session: 11576.4s | total: 20.47h
+step 21300/200000 | loss 0.2208 (mse 0.1367, ce_d 0.0131, ce_r 0.0002) | t_mean 90.0 | lr 1.95e-04 | session: 11795.6s | total: 20.53h
+step 21350/200000 | loss 0.6235 (mse 1.0227, ce_d 0.2577, ce_r 0.1656) | t_mean 119.0 | lr 1.95e-04 | session: 12014.8s | total: 20.59h
+step 21400/200000 | loss 0.3501 (mse 0.1875, ce_d 0.0130, ce_r 0.0000) | t_mean 92.0 | lr 1.95e-04 | session: 12233.5s | total: 20.65h
+step 21450/200000 | loss 0.3999 (mse 0.1527, ce_d 0.0126, ce_r 0.0001) | t_mean 98.0 | lr 1.95e-04 | session: 12452.7s | total: 20.71h
+step 21500/200000 | loss 0.2836 (mse 0.6957, ce_d 0.0858, ce_r 0.0050) | t_mean 117.0 | lr 1.95e-04 | session: 12671.7s | total: 20.77h
+  [eval] step 21500 | val_loss 0.2920 (mse 0.2905, ce 0.0004)
+  [ckpt] saved latest resumable checkpoint (step=21500) -> channel_diffusion_reverse_ray_latest.pt
+step 21550/200000 | loss 0.2898 (mse 0.2478, ce_d 0.0132, ce_r 0.0001) | t_mean 101.0 | lr 1.95e-04 | session: 12899.5s | total: 20.83h
+step 21600/200000 | loss 0.3166 (mse 0.5835, ce_d 0.0130, ce_r 0.0001) | t_mean 114.0 | lr 1.95e-04 | session: 13118.3s | total: 20.90h
+step 21650/200000 | loss 0.3280 (mse 0.2800, ce_d 0.0249, ce_r 0.0004) | t_mean 95.0 | lr 1.95e-04 | session: 13337.2s | total: 20.96h
+step 21700/200000 | loss 0.2736 (mse 0.2539, ce_d 0.0153, ce_r 0.0008) | t_mean 97.0 | lr 1.95e-04 | session: 13556.0s | total: 21.02h
+step 21750/200000 | loss 0.4351 (mse 0.2200, ce_d 0.0178, ce_r 0.0001) | t_mean 105.0 | lr 1.95e-04 | session: 13774.8s | total: 21.08h
+step 21800/200000 | loss 0.2331 (mse 0.1393, ce_d 0.0201, ce_r 0.0007) | t_mean 86.0 | lr 1.95e-04 | session: 13993.6s | total: 21.14h
+step 21850/200000 | loss 0.4710 (mse 0.7179, ce_d 0.0333, ce_r 0.0029) | t_mean 106.0 | lr 1.95e-04 | session: 14212.4s | total: 21.20h
+step 21900/200000 | loss 0.4173 (mse 0.1475, ce_d 0.0105, ce_r 0.0001) | t_mean 87.0 | lr 1.95e-04 | session: 14431.2s | total: 21.26h
+step 21950/200000 | loss 0.7097 (mse 0.2392, ce_d 0.0148, ce_r 0.0001) | t_mean 101.0 | lr 1.95e-04 | session: 14650.0s | total: 21.32h
+step 22000/200000 | loss 0.4377 (mse 0.7789, ce_d 0.0317, ce_r 0.0029) | t_mean 116.0 | lr 1.95e-04 | session: 14868.8s | total: 21.38h
+  [eval] step 22000 | val_loss 0.3117 (mse 0.3077, ce 0.0029)
+  [ckpt] saved latest resumable checkpoint (step=22000) -> channel_diffusion_reverse_ray_latest.pt
+  [sample] step 22000 reverse-diffusion sanity check:
+  [channel=Rayleigh σ=1.0000, t_start=128/128, SNR≈0.8dB]
+  GT     : mr president let us at least have the courage to enforce transparency upon turkey when it comes to respect for human rights
+  Direct : mr president let us at least have the courage to enforce transparency upon turkey when it comes to respect for human rights
+  Diffuse: mr president let us at least have the courage to enforce transparency upon turkey when it comes to respect for human rights
+
+  GT     : once again we condemn the situation but we also wish to condemn the failure to put these measures into practice
+  Direct : once again we condemn the situation but we also wish to condemn the failure to put these measures into practice
+  Diffuse: once again we condemn the situation but we also wish to condemn the failure to put these measures into practice
+
+step 22050/200000 | loss 0.3066 (mse 0.3832, ce_d 0.0180, ce_r 0.0002) | t_mean 113.0 | lr 1.95e-04 | session: 15098.2s | total: 21.45h
+step 22100/200000 | loss 0.4407 (mse 0.5992, ce_d 0.0162, ce_r 0.0002) | t_mean 107.0 | lr 1.95e-04 | session: 15317.1s | total: 21.51h
+step 22150/200000 | loss 0.8371 (mse 1.1688, ce_d 0.0577, ce_r 0.0020) | t_mean 120.0 | lr 1.94e-04 | session: 15535.9s | total: 21.57h
+step 22200/200000 | loss 0.4340 (mse 0.6232, ce_d 0.0280, ce_r 0.0014) | t_mean 113.0 | lr 1.94e-04 | session: 15754.8s | total: 21.63h
+step 22250/200000 | loss 0.2651 (mse 0.3079, ce_d 0.0159, ce_r 0.0003) | t_mean 108.0 | lr 1.94e-04 | session: 15973.7s | total: 21.69h
+step 22300/200000 | loss 0.4241 (mse 0.1665, ce_d 0.0138, ce_r 0.0003) | t_mean 93.0 | lr 1.94e-04 | session: 16192.1s | total: 21.75h
+step 22350/200000 | loss 0.3804 (mse 0.1744, ce_d 0.0083, ce_r 0.0000) | t_mean 94.0 | lr 1.94e-04 | session: 16411.0s | total: 21.81h
+step 22400/200000 | loss 0.2986 (mse 0.3360, ce_d 0.0162, ce_r 0.0001) | t_mean 113.0 | lr 1.94e-04 | session: 16629.9s | total: 21.87h
+step 22450/200000 | loss 0.4666 (mse 0.1087, ce_d 0.0099, ce_r 0.0001) | t_mean 79.0 | lr 1.94e-04 | session: 16848.7s | total: 21.93h
+step 22500/200000 | loss 1.0823 (mse 1.0402, ce_d 0.6586, ce_r 0.5351) | t_mean 81.0 | lr 1.94e-04 | session: 17067.5s | total: 21.99h
+  [eval] step 22500 | val_loss 0.5331 (mse 0.5199, ce 0.0102)
+  [ckpt] saved latest resumable checkpoint (step=22500) -> channel_diffusion_reverse_ray_latest.pt
+step 22550/200000 | loss 0.3166 (mse 0.3745, ce_d 0.0196, ce_r 0.0002) | t_mean 111.0 | lr 1.94e-04 | session: 17296.9s | total: 22.06h
+step 22600/200000 | loss 0.4759 (mse 0.6830, ce_d 0.0860, ce_r 0.0541) | t_mean 107.0 | lr 1.94e-04 | session: 17515.8s | total: 22.12h
+step 22650/200000 | loss 0.4432 (mse 0.2045, ce_d 0.0080, ce_r 0.0001) | t_mean 100.0 | lr 1.94e-04 | session: 17734.6s | total: 22.18h
+step 22700/200000 | loss 0.2505 (mse 0.4471, ce_d 0.0168, ce_r 0.0001) | t_mean 110.0 | lr 1.94e-04 | session: 17953.5s | total: 22.24h
+step 22750/200000 | loss 0.2898 (mse 0.6168, ce_d 0.0638, ce_r 0.0223) | t_mean 87.0 | lr 1.94e-04 | session: 18172.4s | total: 22.30h
+step 22800/200000 | loss 0.3079 (mse 0.1880, ce_d 0.0115, ce_r 0.0001) | t_mean 102.0 | lr 1.94e-04 | session: 18391.2s | total: 22.36h
+step 22850/200000 | loss 0.3374 (mse 0.2616, ce_d 0.0185, ce_r 0.0001) | t_mean 97.0 | lr 1.94e-04 | session: 18610.0s | total: 22.42h
+step 22900/200000 | loss 0.5883 (mse 1.1970, ce_d 0.1430, ce_r 0.0290) | t_mean 115.0 | lr 1.94e-04 | session: 18828.9s | total: 22.48h
+step 22950/200000 | loss 0.5858 (mse 0.2836, ce_d 0.0067, ce_r 0.0001) | t_mean 109.0 | lr 1.94e-04 | session: 19047.7s | total: 22.54h
+step 23000/200000 | loss 0.5067 (mse 0.5152, ce_d 0.0114, ce_r 0.0001) | t_mean 114.0 | lr 1.94e-04 | session: 19266.6s | total: 22.60h
+  [eval] step 23000 | val_loss 0.2882 (mse 0.2866, ce 0.0007)
+  [ckpt] saved latest resumable checkpoint (step=23000) -> channel_diffusion_reverse_ray_latest.pt
+  [sample] step 23000 reverse-diffusion sanity check:
+  [channel=Rayleigh σ=1.0000, t_start=128/128, SNR≈0.8dB]
+  GT     : mr president let us at least have the courage to enforce transparency upon turkey when it comes to respect for human rights
+  Direct : mr president let us at least have the courage to enforce transparency upon turkey when it comes to respect for human rights
+  Diffuse: mr president let us at least have the courage to enforce transparency upon turkey when it comes to respect for human rights
+
+  GT     : once again we condemn the situation but we also wish to condemn the failure to put these measures into practice
+  Direct : once again we condemn the situation but we also wish to condemn the failure to put these measures into practice
+  Diffuse: once again we condemn the situation but we also wish to condemn the failure to put these measures into practice
+
+step 23050/200000 | loss 0.2681 (mse 0.2612, ce_d 0.0110, ce_r 0.0001) | t_mean 112.0 | lr 1.94e-04 | session: 19496.1s | total: 22.67h
+step 23100/200000 | loss 0.2563 (mse 0.2022, ce_d 0.0106, ce_r 0.0001) | t_mean 81.0 | lr 1.94e-04 | session: 19715.0s | total: 22.73h
+step 23150/200000 | loss 0.4153 (mse 0.1743, ce_d 0.0181, ce_r 0.0002) | t_mean 91.0 | lr 1.94e-04 | session: 19933.8s | total: 22.79h
+step 23200/200000 | loss 0.3923 (mse 0.1827, ce_d 0.0140, ce_r 0.0001) | t_mean 95.0 | lr 1.94e-04 | session: 20152.7s | total: 22.85h
+step 23250/200000 | loss 0.1644 (mse 0.1604, ce_d 0.0145, ce_r 0.0001) | t_mean 89.0 | lr 1.94e-04 | session: 20371.2s | total: 22.91h
+step 23300/200000 | loss 0.2625 (mse 0.1710, ce_d 0.0122, ce_r 0.0002) | t_mean 98.0 | lr 1.94e-04 | session: 20590.1s | total: 22.97h
+
+[Time Limit] Reached walltime limit (5.75h >= 5.75h).
+[Time Limit] Saving latest checkpoint at step 23326 to channel_diffusion_reverse_ray_latest.pt and exiting gracefully...
+[Time Limit] Exiting cleanly before Slurm 6h limit.
+==================================================
+Job finished at: Sat Oct 24 05:33:26 AM +08 2026
+==================================================

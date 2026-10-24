@@ -19,7 +19,7 @@ Training via reverse_sample (DDIM trajectory training):
 """
 
 import os
-import math, time, json, random, inspect, argparse
+import math, time, json, random, inspect, argparse, signal
 import numpy as np
 from tqdm.auto import tqdm
 
@@ -33,6 +33,86 @@ import pickle
 from dataclasses import dataclass
 from tokenizers import Tokenizer as _RawTok
 from transformers import PreTrainedTokenizerFast
+
+@dataclass
+class ChannelDiffusionConfig:
+    vocab_size: int = 0
+    seq_len: int = 0
+    d_model: int = 0
+    n_enc_layers: int = 0
+    n_dec_layers: int = 0
+    n_heads: int = 0
+    d_ff: int = 0
+    dropout: float = 0.1
+    diffusion_steps: int = 5
+    sigma_min: float = 0.002
+    sigma_max: float = 1.0
+    channel_type: str = "Rayleigh"
+    snr_gamma: float = 5.0
+    n_snr_bins: int = 19
+
+# Register safe global so torch.load can unpickle config cleanly in PyTorch 2.6+
+if hasattr(torch.serialization, "add_safe_globals"):
+    try:
+        torch.serialization.add_safe_globals([ChannelDiffusionConfig])
+    except Exception:
+        pass
+
+
+def safe_torch_load(filepath, map_location="cpu"):
+    """Safely load checkpoints across different PyTorch versions (including PyTorch 2.6+)."""
+    try:
+        return torch.load(filepath, map_location=map_location, weights_only=False)
+    except TypeError:
+        return torch.load(filepath, map_location=map_location)
+
+
+def _quantize_latent(z: torch.Tensor):
+    """Symmetric 8-bit (int8) quantization of a float32 latent tensor.
+
+    Maps [-max_abs, +max_abs] -> [-127, 127] with zero_point = 0.
+    The scale scalar must be sent as side information to the receiver.
+
+    Returns
+    -------
+    z_q    -- int8 tensor, same shape as z.
+    scale  -- float scalar: z_float ~= z_q.float() * scale
+    """
+    max_abs = z.abs().max().item()
+    scale = max_abs / 127.0 if max_abs > 0 else 1.0
+    z_q = (z / scale).round().clamp(-127, 127).to(torch.int8)
+    return z_q, scale
+
+
+def save_checkpoint(path, model, optimizer, scheduler, step, val_loss, best_val_loss, cfg,
+                    train_mode, tokenizer_type, tokenizer_name, total_time_seconds=0.0):
+    """Atomically save checkpoint dictionary to disk using a temporary file."""
+    os.makedirs(os.path.dirname(os.path.abspath(path)) or ".", exist_ok=True)
+    rng_state = {
+        "python": random.getstate(),
+        "numpy": np.random.get_state(),
+        "torch": torch.get_rng_state(),
+        "cuda": torch.cuda.get_rng_state() if torch.cuda.is_available() else None,
+    }
+    ckpt_dict = {
+        "model_state_dict": model.state_dict(),
+        "optimizer_state_dict": optimizer.state_dict(),
+        "scheduler_state_dict": scheduler.state_dict(),
+        "step": step,
+        "val_loss": val_loss,
+        "best_val_loss": best_val_loss,
+        "cfg": cfg,
+        "model_arch_src": inspect.getsource(ChannelDiffusionLM),
+        "model_arch_cls": "ChannelDiffusionLM",
+        "tokenizer_type": tokenizer_type,
+        "tokenizer_name": tokenizer_name,
+        "train_mode": train_mode,
+        "rng_state": rng_state,
+        "total_time_seconds": total_time_seconds,
+    }
+    tmp_path = path + ".tmp"
+    torch.save(ckpt_dict, tmp_path)
+    os.replace(tmp_path, path)
 
 print("torch:", torch.__version__)
 print("cuda available:", torch.cuda.is_available())
@@ -118,24 +198,82 @@ parser.add_argument(
     default=None,
     help="Override gradient accumulation steps from run profile"
 )
+parser.add_argument(
+    "--channel",
+    type=str,
+    default="Rayleigh",
+    choices=["Rayleigh", "AWGN", "Rician", "None"],
+    help="Channel type for physical simulation: 'Rayleigh', 'AWGN', 'Rician', 'None' (default: 'Rayleigh')"
+)
+parser.add_argument(
+    "--resume",
+    type=str,
+    nargs="?",
+    const="auto",
+    default=None,
+    help="Path to checkpoint to resume training from, or 'auto' to auto-detect latest checkpoint"
+)
+parser.add_argument(
+    "--auto-resume",
+    action=argparse.BooleanOptionalAction,
+    default=True,
+    help="Automatically resume from latest checkpoint if one exists (default: True)"
+)
+parser.add_argument(
+    "--save-every",
+    type=int,
+    default=500,
+    help="Frequency (in steps) to save the latest resumable checkpoint (default: 500)"
+)
+parser.add_argument(
+    "--time-limit-hours",
+    type=float,
+    default=5.75,
+    help="Maximum runtime in hours before clean checkpoint save and graceful exit (default: 5.75 for 6h Slurm job)"
+)
 
 args, _ = parser.parse_known_args()
 USE_T5_TOKENIZER = args.use_t5_tokenizer
 T5_MODEL_NAME = args.t5_model
 TRAIN_MODE = args.train_mode
 TRAIN_DDIM_STEPS = args.train_ddim_steps
+CHANNEL_TYPE = args.channel
+SAVE_EVERY = args.save_every
+TIME_LIMIT_HOURS = args.time_limit_hours
 
-if args.init_checkpoint and not USE_T5_TOKENIZER and os.path.isfile(args.init_checkpoint):
-    try:
-        _tmp_ckpt = torch.load(args.init_checkpoint, map_location="cpu")
-        if isinstance(_tmp_ckpt, dict) and _tmp_ckpt.get("tokenizer_type") == "t5":
-            print(f"[Auto-config] Detected T5 tokenizer in init checkpoint '{args.init_checkpoint}'. Enabling USE_T5_TOKENIZER.")
-            USE_T5_TOKENIZER = True
-        elif "t5" in os.path.basename(args.init_checkpoint).lower():
-            print(f"[Auto-config] Detected 't5' in checkpoint filename '{args.init_checkpoint}'. Enabling USE_T5_TOKENIZER.")
-            USE_T5_TOKENIZER = True
-    except Exception:
-        pass
+CKPT_PATH = args.checkpoint_path or (
+    "channel_diffusion_reverse_ray_eos_long_ctx_t5.pt" if USE_T5_TOKENIZER
+    else "channel_diffusion_reverse_ray_eos_long_ctx.pt"
+)
+_ckpt_root, _ckpt_ext = os.path.splitext(CKPT_PATH)
+if not _ckpt_ext:
+    _ckpt_ext = ".pt"
+LATEST_CKPT_PATH = f"{_ckpt_root}_latest{_ckpt_ext}"
+
+# Auto-detect T5 tokenizer in init or resume checkpoint if not explicitly set
+_check_candidates = []
+if args.init_checkpoint:
+    _check_candidates.append(args.init_checkpoint)
+if args.resume and args.resume.lower() not in ("auto", "latest", "true"):
+    _check_candidates.append(args.resume)
+if args.auto_resume or (args.resume and args.resume.lower() in ("auto", "latest", "true")):
+    _check_candidates.extend([LATEST_CKPT_PATH, CKPT_PATH])
+
+if not USE_T5_TOKENIZER:
+    for _cand in _check_candidates:
+        if os.path.isfile(_cand):
+            try:
+                _tmp_ckpt = safe_torch_load(_cand, map_location="cpu")
+                if isinstance(_tmp_ckpt, dict) and _tmp_ckpt.get("tokenizer_type") == "t5":
+                    print(f"[Auto-config] Detected T5 tokenizer in checkpoint '{_cand}'. Enabling USE_T5_TOKENIZER.")
+                    USE_T5_TOKENIZER = True
+                    break
+                elif "t5" in os.path.basename(_cand).lower():
+                    print(f"[Auto-config] Detected 't5' in checkpoint filename '{_cand}'. Enabling USE_T5_TOKENIZER.")
+                    USE_T5_TOKENIZER = True
+                    break
+            except Exception:
+                pass
 
 
 
@@ -299,22 +437,7 @@ print(f"TRAIN_MODE: {TRAIN_MODE} | TRAIN_DDIM_STEPS: {TRAIN_DDIM_STEPS}")
 # =======================
 
 
-@dataclass
-class ChannelDiffusionConfig:
-    vocab_size: int
-    seq_len: int
-    d_model: int
-    n_enc_layers: int
-    n_dec_layers: int
-    n_heads: int
-    d_ff: int
-    dropout: float = 0.1
-    diffusion_steps: int = 5
-    sigma_min: float = 0.002
-    sigma_max: float = 1.0
-    channel_type: str = "Rayleigh"
-    snr_gamma: float = 5.0
-    n_snr_bins: int = 19
+# ChannelDiffusionConfig is defined at top of file for clean unpickling
 
 
 def SNR_to_noise(snr):
@@ -836,7 +959,7 @@ cfg = ChannelDiffusionConfig(
     diffusion_steps=DIFFUSION_STEPS,
     sigma_min=0.002,
     sigma_max=1.0,
-    channel_type="Rayleigh",
+    channel_type=CHANNEL_TYPE,
     snr_gamma=5.0,
     n_snr_bins=19,
 )
@@ -886,19 +1009,8 @@ LOG_EVERY = 50
 EVAL_EVERY = 500
 SAMPLE_EVERY = 1000
 LAMBDA_CE = 1.0
-CKPT_PATH = args.checkpoint_path or (
-    "channel_diffusion_reverse_ray_eos_long_ctx_t5.pt" if USE_T5_TOKENIZER
-    else "channel_diffusion_reverse_ray_eos_long_ctx.pt"
-)
 
 device = next(model.parameters()).device
-
-if args.init_checkpoint:
-    print(f"Loading initial checkpoint from: {args.init_checkpoint}")
-    ckpt = torch.load(args.init_checkpoint, map_location=device)
-    state_dict = ckpt["model_state_dict"] if "model_state_dict" in ckpt else ckpt
-    missing, unexpected = model.load_state_dict(state_dict, strict=False)
-    print(f"Loaded weights. missing keys: {len(missing)}, unexpected keys: {len(unexpected)}")
 
 
 def make_lr_lambda(warmup_steps, total_steps):
@@ -911,11 +1023,107 @@ def make_lr_lambda(warmup_steps, total_steps):
 
 
 optimizer = AdamW(model.parameters(), lr=LR, weight_decay=WEIGHT_DECAY)
-scheduler = LambdaLR(optimizer, lr_lambda=make_lr_lambda(WARMUP_STEPS, TOTAL_STEPS))
+lr_lambda_fn = make_lr_lambda(WARMUP_STEPS, TOTAL_STEPS)
+scheduler = LambdaLR(optimizer, lr_lambda=lr_lambda_fn)
+
+# ----------------------------------------------------------------------
+# Checkpoint Resolution & Resumption
+# ----------------------------------------------------------------------
+start_step = 0
+best_val_loss = float("inf")
+prev_total_time = 0.0
+
+resume_target = None
+if args.resume:
+    if args.resume.lower() in ("auto", "latest", "true"):
+        if os.path.isfile(LATEST_CKPT_PATH):
+            resume_target = LATEST_CKPT_PATH
+        elif os.path.isfile(CKPT_PATH):
+            resume_target = CKPT_PATH
+        else:
+            print(f"[Resume] Specified --resume auto, but neither '{LATEST_CKPT_PATH}' nor '{CKPT_PATH}' exists.")
+    else:
+        if os.path.isfile(args.resume):
+            resume_target = args.resume
+        else:
+            raise FileNotFoundError(f"Resume checkpoint file not found: {args.resume}")
+elif args.auto_resume and not args.init_checkpoint:
+    if os.path.isfile(LATEST_CKPT_PATH):
+        resume_target = LATEST_CKPT_PATH
+        print(f"[Auto-Resume] Found latest checkpoint '{LATEST_CKPT_PATH}'. Resuming training...")
+    elif os.path.isfile(CKPT_PATH):
+        resume_target = CKPT_PATH
+        print(f"[Auto-Resume] Found checkpoint '{CKPT_PATH}'. Resuming training...")
+
+if resume_target and os.path.isfile(resume_target):
+    print(f"[Resume] Loading checkpoint from: {resume_target}")
+    ckpt = safe_torch_load(resume_target, map_location=device)
+    state_dict = ckpt["model_state_dict"] if "model_state_dict" in ckpt else ckpt
+    missing, unexpected = model.load_state_dict(state_dict, strict=False)
+    print(f"[Resume] Model weights loaded. missing keys: {len(missing)}, unexpected keys: {len(unexpected)}")
+
+    start_step = ckpt.get("step", 0) or 0
+    best_val_loss = ckpt.get("best_val_loss")
+    if best_val_loss is None:
+        best_val_loss = ckpt.get("val_loss")
+    if best_val_loss is None:
+        best_val_loss = float("inf")
+    prev_total_time = ckpt.get("total_time_seconds", 0.0) or 0.0
+    val_loss_str = f"{best_val_loss:.4f}" if best_val_loss != float("inf") else "inf"
+    print(f"[Resume] Resuming from step {start_step} | best_val_loss: {val_loss_str} | prior train time: {prev_total_time/3600:.2f}h")
+
+    if "optimizer_state_dict" in ckpt and ckpt["optimizer_state_dict"] is not None:
+        try:
+            optimizer.load_state_dict(ckpt["optimizer_state_dict"])
+            print("[Resume] Optimizer state successfully restored.")
+        except Exception as e:
+            print(f"[Resume] Warning: Could not restore optimizer state ({e}). Starting with fresh optimizer.")
+    else:
+        print("[Resume] Note: 'optimizer_state_dict' not found in checkpoint. Starting with fresh optimizer.")
+
+    if "scheduler_state_dict" in ckpt and ckpt["scheduler_state_dict"] is not None:
+        try:
+            scheduler.load_state_dict(ckpt["scheduler_state_dict"])
+            print(f"[Resume] Scheduler state successfully restored (LR: {scheduler.get_last_lr()[0]:.2e}).")
+        except Exception as e:
+            print(f"[Resume] Warning: Could not restore scheduler state ({e}). Synchronizing LR to step {start_step}.")
+            scheduler.last_epoch = start_step
+            target_lr = LR * lr_lambda_fn(start_step)
+            for g in optimizer.param_groups:
+                g["lr"] = target_lr
+    else:
+        print(f"[Resume] Synchronizing scheduler to step {start_step}...")
+        scheduler.last_epoch = start_step
+        target_lr = LR * lr_lambda_fn(start_step)
+        for g in optimizer.param_groups:
+            g["lr"] = target_lr
+        print(f"[Resume] Scheduler synchronized (LR: {scheduler.get_last_lr()[0]:.2e}).")
+
+    if "rng_state" in ckpt and ckpt["rng_state"] is not None:
+        try:
+            rng = ckpt["rng_state"]
+            if "python" in rng and rng["python"] is not None:
+                random.setstate(rng["python"])
+            if "numpy" in rng and rng["numpy"] is not None:
+                np.random.set_state(rng["numpy"])
+            if "torch" in rng and rng["torch"] is not None:
+                torch.set_rng_state(rng["torch"])
+            if "cuda" in rng and rng["cuda"] is not None and torch.cuda.is_available():
+                torch.cuda.set_rng_state(rng["cuda"])
+            print("[Resume] RNG states successfully restored.")
+        except Exception as e:
+            print(f"[Resume] Warning: Could not restore RNG states ({e}).")
+
+elif args.init_checkpoint:
+    print(f"Loading initial checkpoint weights from: {args.init_checkpoint}")
+    ckpt = safe_torch_load(args.init_checkpoint, map_location=device)
+    state_dict = ckpt["model_state_dict"] if "model_state_dict" in ckpt else ckpt
+    missing, unexpected = model.load_state_dict(state_dict, strict=False)
+    print(f"Loaded weights. missing keys: {len(missing)}, unexpected keys: {len(unexpected)}")
 
 
 @torch.no_grad()
-def evaluate(model, val_loader, n_batches=20, train_mode=TRAIN_MODE, ddim_steps=TRAIN_DDIM_STEPS):
+def evaluate(model, val_loader, n_batches=20, train_mode=TRAIN_MODE, ddim_steps=TRAIN_DDIM_STEPS, channel_type=CHANNEL_TYPE):
     model.eval()
     total_loss, total_mse, total_ce, n = 0.0, 0.0, 0.0, 0
     for i, batch in enumerate(val_loader):
@@ -923,6 +1131,7 @@ def evaluate(model, val_loader, n_batches=20, train_mode=TRAIN_MODE, ddim_steps=
             break
         batch = {k: v.to(device) for k, v in batch.items()}
         loss, stats = channel_diffusion_loss(model, batch, lambda_ce=LAMBDA_CE,
+                                              channel_type=channel_type,
                                               train_mode=train_mode, ddim_steps=ddim_steps)
         total_loss += loss.item()
         total_mse += stats['mse']
@@ -933,7 +1142,7 @@ def evaluate(model, val_loader, n_batches=20, train_mode=TRAIN_MODE, ddim_steps=
 
 
 @torch.no_grad()
-def sanity_check_sample(model, batch, tokenizer, n_show=2, n_var=None):
+def sanity_check_sample(model, batch, tokenizer, n_show=2, n_var=None, channel_type=CHANNEL_TYPE):
     model.eval()
     batch = {k: v.to(device) for k, v in batch.items()}
     input_ids = batch["input_ids"][:n_show]
@@ -950,7 +1159,8 @@ def sanity_check_sample(model, batch, tokenizer, n_show=2, n_var=None):
     B_show = z0.size(0)
     snr_bin = torch.full((B_show,), snr_bin_val, dtype=torch.long, device=z0.device)
 
-    z_T = model.channels.Rayleigh(z0, noise_std)
+    noise_stds = torch.full((B_show, 1, 1), noise_std, device=z0.device)
+    z_T = model.channels.forward(z0, noise_stds, channel_type=channel_type)
     pred_ids, _ = reverse_sample(model, z_T, attention_mask=attention_mask,
                                   t_start=t_start, snr_bin=snr_bin)
 
@@ -961,7 +1171,7 @@ def sanity_check_sample(model, batch, tokenizer, n_show=2, n_var=None):
                                   snr_bin=snr_bin_clean)
     direct_ids = (model.lm_head(z_clean) / math.sqrt(model.cfg.d_model)).argmax(-1)
 
-    print(f"  [channel σ={noise_std:.4f}, t_start={t_start}/{T}, SNR≈{(z0.std()/noise_std).item():.1f}dB]")
+    print(f"  [channel={channel_type} σ={noise_std:.4f}, t_start={t_start}/{T}, SNR≈{(z0.std()/noise_std).item():.1f}dB]")
     for i in range(n_show):
         mask_i = attention_mask[i]
         gt = tokenizer.decode(input_ids[i][mask_i].tolist(), skip_special_tokens=True)
@@ -975,14 +1185,53 @@ def sanity_check_sample(model, batch, tokenizer, n_show=2, n_var=None):
 
 
 def train(model, train_loader, val_loader, tokenizer, total_steps, grad_accum=1,
-          train_mode=TRAIN_MODE, ddim_steps=TRAIN_DDIM_STEPS):
-    step = 0
-    best_val_loss = float("inf")
+          train_mode=TRAIN_MODE, ddim_steps=TRAIN_DDIM_STEPS, channel_type=CHANNEL_TYPE,
+          start_step=0, initial_best_val_loss=float("inf"), prev_total_time=0.0,
+          save_every=SAVE_EVERY, ckpt_path=CKPT_PATH, latest_ckpt_path=LATEST_CKPT_PATH,
+          time_limit_hours=TIME_LIMIT_HOURS):
+    step = start_step
+    best_val_loss = initial_best_val_loss
     model.train()
 
+    if step >= total_steps:
+        print(f"[Done] Current step {step} is already >= total_steps {total_steps}. Nothing to train.")
+        return
+
     train_iter = iter(train_loader)
-    start_time = time.time()
+    session_start_time = time.time()
+    max_run_seconds = time_limit_hours * 3600.0 if time_limit_hours > 0 else float("inf")
     optimizer.zero_grad(set_to_none=True)
+
+    stop_requested = False
+
+    def handle_signal(signum, frame):
+        nonlocal stop_requested
+        signame = "SIGTERM" if signum == signal.SIGTERM else "SIGINT"
+        print(f"\n[Signal] Received {signame} (signal {signum}). Requesting graceful stop and checkpoint save...")
+        stop_requested = True
+
+    old_sigterm = signal.signal(signal.SIGTERM, handle_signal)
+    old_sigint = signal.signal(signal.SIGINT, handle_signal)
+
+    def _save_state(filepath, val_loss_val=None, is_best=False):
+        elapsed_now = time.time() - session_start_time
+        total_time = prev_total_time + elapsed_now
+        save_checkpoint(
+            path=filepath,
+            model=model,
+            optimizer=optimizer,
+            scheduler=scheduler,
+            step=step,
+            val_loss=val_loss_val,
+            best_val_loss=best_val_loss,
+            cfg=model.cfg,
+            train_mode=train_mode,
+            tokenizer_type="t5" if USE_T5_TOKENIZER else "diffusion",
+            tokenizer_name=T5_MODEL_NAME if USE_T5_TOKENIZER else DIFFUSION_VOCAB_FILE,
+            total_time_seconds=total_time,
+        )
+
+    print(f"[Train] Training starting at step {step}/{total_steps} (Walltime limit: {time_limit_hours:.2f}h, Save every: {save_every})")
 
     while step < total_steps:
         # [FIX 3] Real gradient accumulation: accumulate `grad_accum` micro-batches'
@@ -1000,7 +1249,7 @@ def train(model, train_loader, val_loader, tokenizer, total_steps, grad_accum=1,
 
             batch = {k: v.to(device) for k, v in batch.items()}
             loss, stats = channel_diffusion_loss(model, batch, lambda_ce=LAMBDA_CE,
-                                                  channel_type="Rayleigh",
+                                                  channel_type=channel_type,
                                                   train_mode=train_mode,
                                                   ddim_steps=ddim_steps)
             (loss / grad_accum).backward()
@@ -1013,47 +1262,69 @@ def train(model, train_loader, val_loader, tokenizer, total_steps, grad_accum=1,
         optimizer.step()
         scheduler.step()
         optimizer.zero_grad(set_to_none=True)
+        step += 1
 
-        if step % LOG_EVERY == 0:
+        if step % LOG_EVERY == 0 or step == start_step + 1:
             lr_now = scheduler.get_last_lr()[0]
-            elapsed = time.time() - start_time
+            elapsed_session = time.time() - session_start_time
+            total_elapsed = prev_total_time + elapsed_session
             print(f"step {step}/{total_steps} | loss {accum_loss:.4f} "
                   f"(mse {accum_stats['mse']:.4f}, ce_d {accum_stats['ce_denoise']:.4f}, "
                   f"ce_r {accum_stats['ce_decode']:.4f}) "
-                  f"| t_mean {accum_stats['t_mean']:.1f} | lr {lr_now:.2e} | {elapsed:.1f}s")
+                  f"| t_mean {accum_stats['t_mean']:.1f} | lr {lr_now:.2e} "
+                  f"| session: {elapsed_session:.1f}s | total: {total_elapsed/3600:.2f}h")
 
         if step % EVAL_EVERY == 0 and step > 0:
-            val_stats = evaluate(model, val_loader, train_mode=train_mode, ddim_steps=ddim_steps)
+            val_stats = evaluate(model, val_loader, train_mode=train_mode, ddim_steps=ddim_steps, channel_type=channel_type)
             print(f"  [eval] step {step} | val_loss {val_stats['val_loss']:.4f} "
                   f"(mse {val_stats['val_mse']:.4f}, ce {val_stats['val_ce']:.4f})")
 
             if val_stats["val_loss"] < best_val_loss:
                 best_val_loss = val_stats["val_loss"]
-                torch.save({
-                    "model_state_dict": model.state_dict(),
-                    "cfg": model.cfg,
-                    "step": step,
-                    "val_loss": best_val_loss,
-                    "model_arch_src": inspect.getsource(ChannelDiffusionLM),
-                    "model_arch_cls": "ChannelDiffusionLM",
-                    "tokenizer_type": "t5" if USE_T5_TOKENIZER else "diffusion",
-                    "tokenizer_name": T5_MODEL_NAME if USE_T5_TOKENIZER else DIFFUSION_VOCAB_FILE,
-                    "train_mode": train_mode,
-                }, CKPT_PATH)
-                print(f"  [ckpt] saved new best (val_loss={best_val_loss:.4f}) -> {CKPT_PATH}")
+                _save_state(ckpt_path, val_loss_val=best_val_loss, is_best=True)
+                print(f"  [ckpt] saved new best (val_loss={best_val_loss:.4f}) -> {ckpt_path}")
+
+        if step % save_every == 0 and step > 0:
+            _save_state(latest_ckpt_path, val_loss_val=None, is_best=False)
+            print(f"  [ckpt] saved latest resumable checkpoint (step={step}) -> {latest_ckpt_path}")
 
         if step % SAMPLE_EVERY == 0 and step > 0:
             print(f"  [sample] step {step} reverse-diffusion sanity check:")
             sample_batch = next(iter(val_loader))
-            sanity_check_sample(model, sample_batch, tokenizer)
+            sanity_check_sample(model, sample_batch, tokenizer, channel_type=channel_type)
 
-        step += 1
+        # Check walltime limit
+        elapsed_session = time.time() - session_start_time
+        if elapsed_session >= max_run_seconds:
+            print(f"\n[Time Limit] Reached walltime limit ({elapsed_session / 3600:.2f}h >= {time_limit_hours:.2f}h).")
+            print(f"[Time Limit] Saving latest checkpoint at step {step} to {latest_ckpt_path} and exiting gracefully...")
+            _save_state(latest_ckpt_path, val_loss_val=None, is_best=False)
+            print("[Time Limit] Exiting cleanly before Slurm 6h limit.")
+            break
 
-    print("training complete.")
+        # Check signal termination request
+        if stop_requested:
+            print(f"\n[Exit] Termination signal received. Saving latest checkpoint at step {step} to {latest_ckpt_path}...")
+            _save_state(latest_ckpt_path, val_loss_val=None, is_best=False)
+            print("[Exit] Checkpoint saved. Exiting gracefully.")
+            break
+
+    signal.signal(signal.SIGTERM, old_sigterm)
+    signal.signal(signal.SIGINT, old_sigint)
+
+    if step >= total_steps:
+        print(f"training complete. Reached {step}/{total_steps} steps.")
+        _save_state(latest_ckpt_path, val_loss_val=None, is_best=False)
+        print(f"Final training state saved to {latest_ckpt_path}.")
 
 
 train(
     model, train_loader, val_loader, hf_tokenizer,
     total_steps=TOTAL_STEPS, grad_accum=GRAD_ACCUM,
-    train_mode=TRAIN_MODE, ddim_steps=TRAIN_DDIM_STEPS
+    train_mode=TRAIN_MODE, ddim_steps=TRAIN_DDIM_STEPS,
+    channel_type=CHANNEL_TYPE,
+    start_step=start_step, initial_best_val_loss=best_val_loss,
+    prev_total_time=prev_total_time,
+    save_every=SAVE_EVERY, ckpt_path=CKPT_PATH, latest_ckpt_path=LATEST_CKPT_PATH,
+    time_limit_hours=TIME_LIMIT_HOURS
 )
